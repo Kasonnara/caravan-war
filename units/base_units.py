@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-
+from abc import abstractmethod
 from collections import defaultdict
 from statistics import mean
 from typing import Iterable, Union, List, Optional, Type
@@ -33,27 +33,6 @@ MAX_LEVEL = 7
 DPS_SCORE_FACTOR = 135 * 0.5  # Based on Guard units attack value
 HP_SCORE_FACTOR = 1610 / 0.815  # Based on Guard units hp value
 
-LEVEL_BOOST_FACTOR = 1.15
-STAR_BOOST_FACTOR = 1.05
-
-
-def fill_upgrades_by_simulation(data: dict):
-    try:
-        # Pick a value (it doesn't care which one)
-        known_level, known_value = tuple(data.items())[0]
-        # Fill missing values
-        for level in range(1, MAX_LEVEL+1):
-            data.setdefault(level, round(known_value*(1.15**(level-known_level))))
-    except IndexError:
-        # Data dict is empty, nothing can be done
-        pass
-
-
-def damage_formule(attacker: Union['BaseUnitType', Type['BaseUnitType']],
-                   target: Union['MovableUnit', Type['MovableUnit']], attacker_level=1, star=0,
-                   weapon: Weapon=None):
-    return attacker.u_attack(attacker_level, stars=star, weapon=weapon) * armor_reduction(target.armor - attacker.armor_piercing)
-
 
 class AOE:
     multiple_target_limit = 100
@@ -65,7 +44,6 @@ class COE(AOE):
 
 
 class BaseUnitType(Card):
-    #_u_attack = {}
     attack_base = None
     atk_speed: int = None
     range: int = None
@@ -75,27 +53,19 @@ class BaseUnitType(Card):
     multiple_target_limit = 1
     can_miss = True
 
+    level_grow_factor = 1.15
+    star_grow_factor = 1.05
+
     def __init__(self, level: int, stars=0, weapon: Weapon=None):
         super().__init__(level, stars)
         self.weapon = weapon
-
-    #@classmethod
-    #def u_attack(cls, level, star=0, simulate_missing_values=True, weapon: Weapon=None):
-    #    try:
-    #        return cls._u_attack[level] * STAR_BOOST_FACTOR**star
-    #    except KeyError:
-    #        if simulate_missing_values:
-    #            fill_upgrades_by_simulation(cls._u_attack)
-    #            return cls.u_attack(level, simulate_missing_values=False)
-    #        else:
-    #            return None
 
     @classmethod
     def u_attack(cls, level, stars=0, weapon: Weapon=None) -> int:
         if cls.attack_base is None:
             return None
-        return round(cls.attack_base * 1.15 ** (level-1) * STAR_BOOST_FACTOR ** stars) \
-               + (0 if weapon is None else weapon.attack_bonus_ratio * cls.attack_base)
+        return round(cls.attack_base * cls.level_grow_factor ** (level-1) * cls.star_grow_factor ** stars) \
+               + (0 if weapon is None else weapon.bonus_factor * cls.attack_base)
 
     @property
     def attack(self):
@@ -118,15 +88,19 @@ class BaseUnitType(Card):
         return [target for target in targets if cls.shoot_to.can_fire_on(target.shooted_as)]
 
     @classmethod
-    def damage_formule(cls, target, target_index, attacker_level=1, star=0, weapon: Weapon=None):
-        return damage_formule(cls, target, attacker_level=attacker_level, star=star, weapon=weapon) if target_index < cls.multiple_target_limit else 0
+    def damage_formule(cls, target: Union['MovableUnit', Type['MovableUnit']], attacker_level=1, stars=0,
+                       weapon: Weapon = None, target_index=0):
+        if target_index >= cls.multiple_target_limit:
+            return 0
+        return cls.u_attack(attacker_level, stars=stars, weapon=weapon) * armor_reduction(
+            target.armor - cls.armor_piercing)
 
     @classmethod
-    def dps(cls, targets: Union['MovableUnit', List['MovableUnit']], attacker_level=1, star=0, weapon: Weapon=None) -> Optional[float]:
+    def dps(cls, targets: Union['MovableUnit', List['MovableUnit']], attacker_level=1, stars=0, weapon: Weapon=None) -> Optional[float]:
         # WARNING: if modified report changes to the classes :Lightning
         targets: List['MovableUnit'] = cls.get_reachable_targets(targets)
 
-        damages = [cls.damage_formule(target, k, attacker_level=attacker_level, star=star) * (target.esquive_rate if cls.can_miss else 1)
+        damages = [cls.damage_formule(target, target_index=k, attacker_level=attacker_level, stars=stars, weapon=weapon) * (target.esquive_rate if cls.can_miss else 1)
                    for k, target in enumerate(targets)]
         damages = [damage for damage in damages if damage is not None]
         if len(damages) == 0 or cls.atk_speed is None:
@@ -134,19 +108,18 @@ class BaseUnitType(Card):
         return sum(damages) * cls.atk_speed
 
     @classmethod
-    def dps_ratio(cls, targets: Union['MovableUnit', List['MovableUnit']], attacker_level=1, star=0, weapon: Weapon=None) -> Optional[float]:
-        dps = cls.dps(targets, attacker_level, star=star, weapon=weapon)
+    def dps_ratio(cls, targets: Union['MovableUnit', List['MovableUnit']], attacker_level=1, stars=0, weapon: Weapon=None) -> Optional[float]:
+        dps = cls.dps(targets, attacker_level, stars=stars, weapon=weapon)
         if dps is None or cls.cost is None:
             return None
         return dps / cls.cost
 
     @classmethod
-    def score(cls, enemies: Union['MovableUnit', List['MovableUnit']], unit_level=1, star=0, weapon: Weapon=None):
-        return (cls.dps_ratio(enemies, attacker_level=unit_level, star=star, weapon=weapon) or 0) / DPS_SCORE_FACTOR
+    def score(cls, enemies: Union['MovableUnit', List['MovableUnit']], unit_level=1, stars=0, weapon: Weapon=None):
+        return (cls.dps_ratio(enemies, attacker_level=unit_level, stars=stars, weapon=weapon) or 0) / DPS_SCORE_FACTOR
 
 
 class MovableUnit(BaseUnitType):
-    #_u_hp = {}
     hp_base = None
     shooted_as: TargetType = None
     armor: int = None
@@ -159,42 +132,69 @@ class MovableUnit(BaseUnitType):
         super().__init__(level, stars, weapon_item)
         self.armor_item = armor_item
 
-    #@classmethod
-    #def u_hp(cls, level, star=0, simulate_missing_values=True):
-    #    try:
-    #        return cls._u_hp[level] * STAR_BOOST_FACTOR**star
-    #    except KeyError:
-    #        if simulate_missing_values:
-    #            fill_upgrades_by_simulation(cls._u_hp)
-    #            return cls.u_hp(level, simulate_missing_values=False)
-    #        else:
-    #            return None
-
     @classmethod
     def u_hp(cls, level, stars=0, armor_item: Armor = None):
-        return cls.hp_base * 1.15 ** (level-1) * STAR_BOOST_FACTOR ** stars \
-               + (0 if armor_item is None else Armor.hp_bonus_ratio * cls.hp_base)
+        return cls.hp_base * cls.level_grow_factor ** (level-1) * cls.star_grow_factor ** stars \
+               + (0 if armor_item is None else Armor.bonus_factor * cls.hp_base)
 
     @property
     def hp(self):
         return type(self).u_hp(self.level, stars=self.stars, armor_item=self.armor_item)
 
     @classmethod
-    def hp_ratio(cls, attackers: List[BaseUnitType], defenser_level=1, star=0, weapon_item: Weapon = None, armor_item: Armor = None) -> float:
+    def hp_ratio(cls, attackers: List[BaseUnitType], defenser_level=1, stars=0, armor_item: Armor = None) -> float:
         # TODO take into account that multiple small units are more sensible to AOE? or that faster units take less attacks
         # TODO: sum or mean or ... ? Do we want the hp part of the score to change when fighting multiple units?
         armor_esquive_factor = mean([armor_reduction(cls.armor - attacker.armor_piercing) / (cls.esquive_rate if attacker.can_miss else 1)
                                      for attacker in attackers])
-        return cls.u_hp(defenser_level, star, armor_item=armor_item) * armor_esquive_factor / cls.cost
+        return cls.u_hp(defenser_level, stars=stars, armor_item=armor_item) * armor_esquive_factor / cls.cost
 
     @classmethod
-    def score(cls, enemies: Union['MovableUnit', List['MovableUnit']], unit_level=1, star=0, weapon_item: Weapon = None, armor_item: Armor = None):
-        return (super().score(enemies, unit_level, star=star)
-                + cls.hp_ratio(enemies, defenser_level=unit_level, star=star) / HP_SCORE_FACTOR)
+    def score(cls, enemies: Union['MovableUnit', List['MovableUnit']], unit_level=1, stars=0, weapon_item: Weapon = None, armor_item: Armor = None):
+        return (super().score(enemies, unit_level=unit_level, stars=stars)
+                + cls.hp_ratio(enemies, defenser_level=unit_level, stars=stars) / HP_SCORE_FACTOR)
 
     @classmethod
     def to_string(cls):
         return cls.__name__.lower()
+
+    @classmethod
+    def dpm(cls, target: 'MovableUnit', attacker_level=1, stars=0, weapon: Weapon = None) -> Optional[float]:
+        """
+        return the damage per meter of the unit when chaising the target unit
+        (its mainly usefull for simulating vehicule et clan boss damage)
+        :param target: the chased unit
+        :param attacker_level: level of the unit
+        :param stars: stars of the unit
+        :param weapon: weapon of the unit
+        :return: float = (damage dealt to the target)  / (distance walked by the target including chasing time)
+        """
+        # Distance = TargetSpeed * (ChaseTime + AttackTime) = AttackerSpeed * (ChaseTime)
+        #  ==> ChaseTime = (TargetSpeed * AttackTime) / (AttackerSpeed - TargetSpeed)
+        #  ==> Distance = AttackerSpeed * (TargetSpeed * AttackTime) / (AttackerSpeed - TargetSpeed)
+        if cls.move_speed <= target.move_speed:
+            return None
+        distance = cls.move_speed * (target.move_speed * 1/cls.atk_speed) / (cls.move_speed - target.move_speed)
+        return (
+            cls.damage_formule(target, attacker_level=attacker_level, stars=stars, weapon=weapon)
+            * (target.esquive_rate if cls.can_miss else 1)
+            / distance
+            )
+
+    @classmethod
+    def chase_damage(cls, target: 'MovableUnit', path_length, **kwargs):
+        """
+        return the total damages dealt when chaising the target unit on the given distance
+        (its similar to dpm, but take into account effect that depend on the number of hit (e.g vikings, sparte, etc))
+        (its mainly usefull for simulating vehicule et clan boss damage)
+        :param target: the chased unit
+        :param path_length: chase length
+        :param attacker_level: level of the unit
+        :param stars: stars of the unit
+        :param weapon: weapon of the unit
+        :return: float, damage dealt to the target over the entire path
+        """
+        return path_length * cls.dpm(target, **kwargs)
 
 
 class FakeMovableUnit(MovableUnit):
@@ -209,36 +209,38 @@ class FakeMovableUnit(MovableUnit):
 
 
 class Heal:
+    base_heal = None
     @classmethod
-    def u_heal(cls, level, star=0, simulate_missing_values=True):
-        try:
-            return cls._u_heal[level] * STAR_BOOST_FACTOR**star
-        except KeyError:
-            if simulate_missing_values:
-                fill_upgrades_by_simulation(cls._u_heal)
-                return cls.u_heal(level, simulate_missing_values=False)
-            else:
-                return None
+    def u_heal(cls, level, stars=0, weapon_item: Weapon = None):
+        return cls.base_heal * cls.level_grow_factor ** (level-1) * cls.star_grow_factor**stars \
+               + (0 if weapon_item is None else weapon_item.bonus_factor * cls.base_heal)
 
     @classmethod
-    def hps(cls, allies, healer_level=1, star=0):
-        raw_heal = cls.u_heal(healer_level, star)
+    def hps(cls, allies, healer_level=1, stars=0, weapon_item: Weapon = None):
+        raw_heal = cls.u_heal(healer_level, stars=stars, weapon_item=weapon_item)
         if raw_heal is None:
             return None
         return raw_heal * cls.heal_speed * len(allies)
 
     @classmethod
-    def hps_ratio(cls, allies, healer_level=1, star=0):
-        hps = cls.hps(allies, healer_level, star)
+    def hps_ratio(cls, allies, healer_level=1, stars=0, weapon_item: Weapon = None):
+        hps = cls.hps(allies, healer_level, stars=stars, weapon_item=weapon_item)
         if hps is None or cls.cost is None:
             return None
         return hps / cls.cost
 
     @classmethod
-    def score(cls, enemies: Union['MovableUnit', List['MovableUnit']], unit_level=1, star=0):
+    def score(cls, enemies: Union['MovableUnit', List['MovableUnit']], unit_level=1, stars=0, weapon_item: Weapon = None, armor_item: Armor = None):
         # FIXME: heal doesn't apply to enely but to allies!
-        return (cls.hps_ratio(enemies, unit_level, star) / DPS_SCORE_FACTOR
-                + cls.hp_ratio(enemies, unit_level, star) / HP_SCORE_FACTOR)
+        return (cls.hps_ratio(enemies, unit_level, stars=stars, weapon_item=weapon_item) / DPS_SCORE_FACTOR
+                + (cls.hp_ratio(enemies, unit_level, stars=stars, armor_item=armor_item) / HP_SCORE_FACTOR if issubclass(cls, MovableUnit) else 0))
+
+
+class Summon:
+    summon_number = None
+    summon_hp_base = None
+    summon_attack_base = None
+    summon_atk_speed = None
 
 
 UNIT_DICTIONNARY = defaultdict(list)
@@ -258,6 +260,10 @@ def reincarnation(cls: Type[BaseUnitType]):
 
     if issubclass(cls, MovableUnit):
         cls.hp_base = cls.__base__.hp_base * 1.1
+
+    if issubclass(cls, Summon):
+        cls.summon_hp_base = cls.__base__.summon_hp_base * 1.1
+        cls.summon_attack_base = cls.__base__.summon_attack_base * 1.1
+
     cls.rarity = Rarity.Legendary
-    # TODO modify summoning capacity too
     return cls

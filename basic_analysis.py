@@ -15,12 +15,13 @@ import units.weapons as weapons
 
 COST_DISPLAY = {'Towers': "cost", 'Weapons': "1", 'Bandits': "cost", 'Guardians': "used cell", 'Vehicules': "used cell"}
 
+# TODO: split output scores in different labelized pandas dataframe (to sum in general case and plot in different colors in bar plot)
 
 class XAxis(Enum):
     LEVEL = "Level", "(constant: stars={stars), enemies in AOE=[{enemies}])"
-    ENEMY_NUMBER = "Enemy count inside area of effect", "(constant: level={level}, stars={stars})"
+    ENEMY_NUMBER = "Enemy count inside area of effect", "(constant: level={level}, stars={stars}, enemies in AOE=Nx[{enemies}])"
     STAR = "Card stars", "(constant: level={level}, enemies in AOE=[{enemies}])"
-    NONE = "", "(constant: level={level}, enemies in AOE=[{enemies}], stars={stars})"
+    NONE = "", "(constant: level={level},  stars={stars}, enemies in AOE=[{enemies}], stars={stars})"
 
     def iter(self, constant_level=1, constant_enemy_number=1, constant_star=1, variable_range=7):
         self.cache = {"level": constant_level, "enemy_count": constant_enemy_number ,"star": constant_star}
@@ -41,7 +42,7 @@ class XAxis(Enum):
     def get_subtitle(self, targets, constant_level=1, constant_enemy_number=1, constant_star=1):
         return self.value[1].format(
             level=constant_level,
-            enemies=str(constant_enemy_number)+'x[' + ','.join(targets) + ']',
+            enemies=str(constant_enemy_number)+'x[' + ','.join(target.to_string() for target in targets) + ']',
             stars=constant_star,
             )
 
@@ -86,13 +87,14 @@ def plot_dps(targets_sample: List[MovableUnit], x_axis=XAxis.LEVEL, y_axis: YAxi
                     xs.append(x)
             if len(ys) > 0:
                 if x_axis is not XAxis.NONE:
-                    ax.plot(xs, ys, ("+-" if k < 10 else "+-."), label=unit_type.__name__)
+                    ax.plot(xs, ys, ["+-", "+-.", "+:"][k//10], label=unit_type.__name__)
                 else:
                     xs_if_no_x_axis.append(unit_type.__name__)
                     ys_if_no_x_axis.append(y)
                 y_max = max(y_max, max(ys))
         if x_axis is XAxis.NONE:
-            ax
+            ax.bar(*(list(t) for t in zip(*sorted(zip(xs_if_no_x_axis, ys_if_no_x_axis), key=lambda x: x[1]))))
+            plt.xticks(rotation=70)
         ax.set_ylim(0, y_max * 1.05)
         ax.legend(ncol=2, fontsize='xx-small')
         figures.append(fig)
@@ -103,8 +105,9 @@ if __name__ == '__main__':
     # Generate target sample
 
     #targets_sample = [FakeMovableUnit(TargetType.AIR_GROUND, armor=0, armor_piercing=0, can_miss=True)]
-    targets_sample = [bandits.Demon]
+    targets_sample = [bandits.Mecha(1, stars=4)]
 
 
-    figures = plot_dps(targets_sample, x_axis=XAxis.ENEMY_NUMBER)
+    #figures = plot_dps(targets_sample, x_axis=XAxis.ENEMY_NUMBER)
+    figures = plot_dps(targets_sample, x_axis=XAxis.ENEMY_NUMBER, y_axis=YAxis.SCORE)
     plt.show()

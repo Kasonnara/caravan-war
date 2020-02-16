@@ -1,6 +1,9 @@
+from typing import Union, Type
+
 from cards import Rarity
-from units.base_units import AOE, COE, BaseUnitType, register_unit_type
+from units.base_units import AOE, COE, BaseUnitType, register_unit_type, reincarnation
 from target_types import TargetType
+from units.equipments import Weapon
 
 
 class ModuleWeapon(BaseUnitType):
@@ -10,7 +13,6 @@ class ModuleWeapon(BaseUnitType):
 @register_unit_type('Weapons')
 class Balista(ModuleWeapon):
     attack_base = 53
-    # _u_attack = {5: 93, 6: 107}
     atk_speed = 2
     range = 7
     armor_piercing = 0
@@ -21,7 +23,6 @@ class Balista(ModuleWeapon):
 @register_unit_type('Weapons')
 class Mortar(AOE, ModuleWeapon):
     attack_base = 115
-    # _u_attack = {5: 201, 6:231}
     atk_speed = 0.4
     range = 8
     armor_piercing = 0
@@ -32,7 +33,6 @@ class Mortar(AOE, ModuleWeapon):
 @register_unit_type('Weapons')
 class Shotgun(COE, ModuleWeapon):
     attack_base = 77
-    # _u_attack = {5: 135, 6: 155}
     atk_speed = 0.8
     range = 6
     armor_piercing = 0
@@ -43,18 +43,35 @@ class Shotgun(COE, ModuleWeapon):
 @register_unit_type('Weapons')
 class Chaingun(ModuleWeapon):
     attack_base = 125
-    # _u_attack = {5: 220, 6: 253}
     atk_speed = 2
     range = 7
     armor_piercing = 3
     shoot_to = TargetType.AIR_GROUND
     rarity = Rarity.Epic
+    anti_air_bonus = 1.5
+
+    @classmethod
+    def damage_formule(cls, target: Union['MovableUnit', Type['MovableUnit']], attacker_level=1, stars=0,
+                       weapon: Weapon = None, target_index=0):
+        return super().damage_formule(target, attacker_level, stars, weapon, target_index) * (1 if target.shooted_as is TargetType.GROUND else cls.anti_air_bonus)
+
+
+@register_unit_type('Weapons')
+@reincarnation
+class ChaingunLeg(Chaingun):
+    multiple_target_limit = 2
+    # FIXME the 2nd target must be at less than 1m
+    anti_air_bonus = 1.6
+
+    @classmethod
+    def damage_formule(cls, target: Union['MovableUnit', Type['MovableUnit']], attacker_level=1, stars=0,
+                       weapon: Weapon = None, target_index=0):
+        return super().damage_formule(target, attacker_level, stars, weapon, target_index) * max(1 - 0.5 * target_index, 0)
 
 
 @register_unit_type('Weapons')
 class Laser(ModuleWeapon):
     attack_base = 86
-    # _u_attack = {1: 86}
     atk_speed = 2
     range = 7
     armor_piercing = 6
@@ -65,7 +82,6 @@ class Laser(ModuleWeapon):
 @register_unit_type('Weapons')
 class FlameTrower(COE, ModuleWeapon):
     attack_base = 43
-    # _u_attack = {1: 43}
     atk_speed = 2
     range = 4
     armor_piercing = 0
@@ -76,7 +92,6 @@ class FlameTrower(COE, ModuleWeapon):
 @register_unit_type('Weapons')
 class Tesla(COE, ModuleWeapon):
     attack_base = 144
-    # _u_attack = {1: 144, 2: 166, 3: 191, 4: 191, 5: 253, 6: 291}
     atk_speed = 1
     range = 7
     armor_piercing = 0
@@ -85,5 +100,5 @@ class Tesla(COE, ModuleWeapon):
     rarity = Rarity.Legendary
 
     @classmethod
-    def damage_formule(cls, attacker, target, attacker_level=1, star=0):
-        return super().damage_formule(attacker, target, attacker_level, star) * (1.7 if target.is_summoned else 1)
+    def damage_formule(cls, target, attacker_level=1, stars=0, target_index=0, weapon=None):
+        return super().damage_formule(target, attacker_level=attacker_level, stars=stars, target_index=target_index) * (1.7 if target.is_summoned else 1)

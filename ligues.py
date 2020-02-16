@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class Ligue(Enum):
+    # name = index, exchange_base(e.g 10km exchange cost), goods bonus in raid (can be omitted if not irregular)
     Dunkey1 = (0, 2000, 500)
     Dunkey2 = (1, 2600, 700)
     Dunkey3 = (2, 3200, 800)
@@ -56,3 +57,8 @@ class Ligue(Enum):
         self.bestex_goods_cost, self.bestex_gold_reward = exchange_base * 4, exchange_base * 8
         self.raid_goods_bonus = raid_goods_bonus or (exchange_base / 2)
 
+if __name__ == '__main__':
+    l = list(Ligue.__members__.values())
+    print(l)
+    for k in range(len(l)-1):
+        print(l[k+1].value[1] / l[k].value[1])
