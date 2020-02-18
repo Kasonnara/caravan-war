@@ -2,11 +2,10 @@ from typing import Union, List, Optional
 
 from class_property import classproperty
 from target_types import TargetType
-from units.base_units import BaseUnitType, register_unit_type, AOE, Heal
-from units.equipments import Weapon
+from units.base_units import BaseUnit, register_unit_type, AOE, Heal
 
 
-class Tower(BaseUnitType):
+class Tower(BaseUnit):
     parent_tower = None
     _cost = None
 
@@ -33,7 +32,7 @@ class Tower(BaseUnitType):
 @register_unit_type('Towers')
 class Sentinelle(Tower):
     attack_base = 72
-    atk_speed = 1.6
+    hit_frequency = 1.6
     range = 9
     shoot_to = TargetType.AIR_GROUND
     armor_piercing = 0
@@ -44,7 +43,7 @@ class Sentinelle(Tower):
 @register_unit_type('Towers')
 class Arbalete(Tower):
     attack_base = 100
-    atk_speed = 1.6
+    hit_frequency = 1.6
     range = 11
     shoot_to = TargetType.AIR_GROUND
     armor_piercing = 0
@@ -56,7 +55,7 @@ class Arbalete(Tower):
 @register_unit_type('Towers')
 class Eolance(Tower):
     attack_base = 538
-    atk_speed = 0.6
+    hit_frequency = 0.6
     range = 11
     shoot_to = TargetType.AIR_GROUND
     armor_piercing = 0
@@ -67,7 +66,7 @@ class Eolance(Tower):
 @register_unit_type('Towers')
 class Sniper(Tower):
     attack_base = 330
-    atk_speed = 0.5
+    hit_frequency = 0.5
     range = 13
     shoot_to = TargetType.AIR_GROUND
     armor_piercing = 0
@@ -78,7 +77,7 @@ class Sniper(Tower):
 @register_unit_type('Towers')
 class HeavySniper(Tower):
     attack_base = 200
-    atk_speed = 1.5
+    hit_frequency = 1.5
     range = 13
     shoot_to = TargetType.AIR_GROUND
     armor_piercing = 0
@@ -89,7 +88,7 @@ class HeavySniper(Tower):
 @register_unit_type('Towers')
 class Mage(Tower):
     attack_base = 85
-    atk_speed = 1.2
+    hit_frequency = 1.2
     range = 8
     shoot_to = TargetType.AIR_GROUND
     armor_piercing = 6
@@ -100,7 +99,7 @@ class Mage(Tower):
 @register_unit_type('Towers')
 class Lightning(Tower):
     attack_base = 137
-    atk_speed = 0.8
+    hit_frequency = 0.8
     range = 8
     shoot_to = TargetType.AIR_GROUND
     armor_piercing = 6
@@ -108,15 +107,17 @@ class Lightning(Tower):
     parent_tower = Mage
     multiple_target_limit = 8
 
-    @classmethod
-    def damage_formule(cls, target, target_index, attacker_level=1, stars=0, weapon=None):
-        return super().damage_formule(target, target_index=target_index, attacker_level=attacker_level, stars=stars) * (0.25 * max(0, 4 - target_index))
+    def damage_formule(self, target: 'MovableUnit', target_index=0):
+        return (
+            super().damage_formule(target, target_index=target_index)
+            * (0.25 * max(0, 4 - target_index))  # Reduction factor
+            )
 
 
 @register_unit_type('Towers')
 class Stormspire(Tower, AOE):
     attack_base = 0
-    atk_speed = 0.25
+    hit_frequency = 0.25
     range = 3.5
     shoot_to = TargetType.AIR_GROUND
     armor_piercing = 6
@@ -127,7 +128,7 @@ class Stormspire(Tower, AOE):
 @register_unit_type('Towers')
 class Fire(Tower):
     attack_base = 130
-    atk_speed = 2
+    hit_frequency = 2
     range = 8
     shoot_to = TargetType.AIR_GROUND
     armor_piercing = 2
@@ -138,7 +139,7 @@ class Fire(Tower):
 @register_unit_type('Towers')
 class Bomber(AOE, Tower):
     attack_base = 88
-    atk_speed = 0.4
+    hit_frequency = 0.4
     range = 10
     shoot_to = TargetType.GROUND
     armor_piercing = 0
@@ -149,7 +150,7 @@ class Bomber(AOE, Tower):
 @register_unit_type('Towers')
 class Canon(Tower):
     attack_base = 184
-    atk_speed = 0.5
+    hit_frequency = 0.5
     range = 10
     shoot_to = TargetType.GROUND
     armor_piercing = 0
@@ -161,7 +162,7 @@ class Canon(Tower):
 @register_unit_type('Towers')
 class Hydra(Tower):
     attack_base = 200
-    atk_speed = 1
+    hit_frequency = 1
     range = 150
     shoot_to = TargetType.AIR_GROUND
     armor_piercing = 0
@@ -172,7 +173,7 @@ class Hydra(Tower):
 @register_unit_type('Towers')
 class MissileLaucher(AOE, Tower):
     attack_base = 240
-    atk_speed = 0.8
+    hit_frequency = 0.8
     range = 12
     shoot_to = TargetType.AIR
     armor_piercing = 0
@@ -183,15 +184,13 @@ class MissileLaucher(AOE, Tower):
 @register_unit_type('Towers')
 class Hospital(AOE, Heal, Tower):
     base_heal = 20
-    heal_speed = 1
+    heal_frequency = 1
     range = None
     shoot_to = TargetType.AIR_GROUND
     _cost = 120
     parent_tower = None
 
-    @classmethod
-    def dps(cls, targets: Union['MovableUnit', List['MovableUnit']], attacker_level=1, stars=0,
-            weapon: Weapon = None) -> Optional[float]:
+    def dps(self, targets: Union['MovableUnit', List['MovableUnit']]) -> Optional[float]:
         return None
 
 

@@ -1,7 +1,8 @@
 from typing import Union, List
 
 from cards import Rarity
-from units.base_units import MovableUnit, Heal, AOE, register_unit_type, reincarnation
+from units.base_units import MovableUnit, Heal, AOE, register_unit_type, reincarnation, DPS_SCORE_FACTOR, \
+    HP_SCORE_FACTOR
 from target_types import TargetType
 
 
@@ -14,7 +15,7 @@ class Guardian(MovableUnit):
 class Scout(Guardian):
     hp_base = 700
     attack_base = 87
-    atk_speed = 0.5
+    hit_frequency = 0.5
     range = 3
     shoot_to = TargetType.GROUND
     shooted_as = TargetType.GROUND
@@ -29,7 +30,7 @@ class Scout(Guardian):
 class Guard(Guardian):
     hp_base = 800
     attack_base = 67
-    atk_speed = 0.5
+    hit_frequency = 0.5
     range = 1
     shoot_to = TargetType.GROUND
     shooted_as = TargetType.GROUND
@@ -44,7 +45,7 @@ class Guard(Guardian):
 class Healer(AOE, Heal, Guardian):
     hp_base = 800
     base_heal = 60
-    heal_speed = 1/8
+    heal_frequency = 1/8
     heal_range = 5.5
     heal_to = TargetType.AIR_GROUND
     shooted_as = TargetType.GROUND
@@ -59,7 +60,7 @@ class Healer(AOE, Heal, Guardian):
 class Follet(Guardian):
     hp_base = 760
     attack_base = 135
-    atk_speed = 0.4
+    hit_frequency = 0.4
     range = 2
     shoot_to = TargetType.AIR_GROUND
     shooted_as = TargetType.AIR
@@ -74,7 +75,7 @@ class Follet(Guardian):
 class Shield(Guardian):
     hp_base = 1425
     attack_base = 205
-    atk_speed = 0.4
+    hit_frequency = 0.4
     range = 1
     shoot_to = TargetType.GROUND
     shooted_as = TargetType.GROUND
@@ -89,7 +90,7 @@ class Shield(Guardian):
 class Jetpack(Guardian):
     hp_base = 990
     attack_base = 175
-    atk_speed = 0.5
+    hit_frequency = 0.5
     range = 4
     shoot_to = TargetType.AIR_GROUND
     shooted_as = TargetType.AIR
@@ -105,7 +106,7 @@ class Jetpack(Guardian):
 class Knight(Guardian):
     hp_base = 1254
     attack_base = 135
-    atk_speed = 0.6
+    hit_frequency = 0.6
     range = 1
     shoot_to = TargetType.GROUND
     shooted_as = TargetType.GROUND
@@ -121,7 +122,7 @@ class Knight(Guardian):
 class Sword(AOE, Guardian):
     hp_base = 1024
     attack_base = 143
-    atk_speed = 0.5
+    hit_frequency = 0.5
     range = 1
     shoot_to = TargetType.GROUND
     shooted_as = TargetType.GROUND
@@ -137,7 +138,7 @@ class Sword(AOE, Guardian):
 class Sparte(Guardian):
     hp_base = 2895
     attack_base = 260
-    atk_speed = 0.7
+    hit_frequency = 0.7
     range = 2
     shoot_to = TargetType.GROUND
     shooted_as = TargetType.GROUND
@@ -161,7 +162,7 @@ class SparteLeg(Sparte):
 class Paladin(Guardian):
     hp_base = 2561
     attack_base = 253
-    atk_speed = 0.8
+    hit_frequency = 0.8
     range = 1
     shoot_to = TargetType.GROUND
     shooted_as = TargetType.GROUND
@@ -183,7 +184,7 @@ class PaladinLeg(Paladin):
 class Marchal(Guardian):
     hp_base = 2500
     attack_base = 299
-    atk_speed = 0.5
+    hit_frequency = 0.5
     range = 6
     shoot_to = TargetType.AIR_GROUND
     shooted_as = TargetType.GROUND
@@ -205,7 +206,7 @@ class MarchalLeg(Marchal):
 class Griffon(Guardian):
     hp_base = 1794
     attack_base = 347
-    atk_speed = 0.4
+    hit_frequency = 0.4
     range = 4
     shoot_to = TargetType.AIR_GROUND
     shooted_as = TargetType.AIR
@@ -228,7 +229,7 @@ class GriffonLeg(Griffon):
 class Hammer(Guardian):
     hp_base = 2145
     attack_base = 364
-    atk_speed = 0.5
+    hit_frequency = 0.5
     range = 1
     shoot_to = TargetType.GROUND
     shooted_as = TargetType.GROUND
@@ -250,7 +251,7 @@ class HammerLeg(Hammer):
 class Canonner(Guardian, AOE):
     hp_base = 4000
     attack_base = 204
-    atk_speed = 0.5
+    hit_frequency = 0.5
     range = 8
     shoot_to = TargetType.AIR_GROUND
     shooted_as = TargetType.GROUND
@@ -265,7 +266,7 @@ class Canonner(Guardian, AOE):
 class DemonSlayer(Guardian):
     hp_base = 3750
     attack_base = 230
-    atk_speed = 1
+    hit_frequency = 1
     range = 6
     shoot_to = TargetType.AIR_GROUND
     shooted_as = TargetType.GROUND
@@ -282,7 +283,7 @@ class DemonSlayer(Guardian):
 class Golem(AOE, Guardian):
     hp_base = 4849
     attack_base = 367
-    atk_speed = 0.4
+    hit_frequency = 0.4
     range = 1
     shoot_to = TargetType.GROUND
     shooted_as = TargetType.GROUND
@@ -298,11 +299,11 @@ class Golem(AOE, Guardian):
 class Seraphin(Guardian, Heal):
     hp_base = 3718
     attack_base = 478
-    atk_speed = 1
+    hit_frequency = 1
     range = 2
     shoot_to = TargetType.AIR_GROUND
-    _u_heal = {6: 60}
-    heal_speed = 1
+    base_heal = 30
+    heal_frequency = 1
     heal_range = 4
     heal_to = TargetType.AIR_GROUND
     shooted_as = TargetType.GROUND
@@ -313,12 +314,20 @@ class Seraphin(Guardian, Heal):
     bossfight_cost = 200
     rarity = Rarity.Legendary
 
+    def score(self, allies_targets: Union['MovableUnit', List['MovableUnit']]):
+        # FIXME: heal doesn't apply to ennemy but to allies!
+        return (
+                self.dps_score(allies_targets) / DPS_SCORE_FACTOR
+                + self.hps_score(allies_targets) / DPS_SCORE_FACTOR
+                + self.hp_score(allies_targets) / HP_SCORE_FACTOR
+            )
+
 
 @register_unit_type('Guardians')
 class Wizard(Guardian):
     hp_base = 4400
     attack_base = 500
-    atk_speed = 0.7
+    hit_frequency = 0.7
     range = 2
     shoot_to = TargetType.AIR_GROUND
     shooted_as = TargetType.AIR

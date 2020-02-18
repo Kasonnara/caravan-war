@@ -49,6 +49,7 @@ class Card:
     def __init__(self, level: int, stars=0):
         self.level = level
         self.stars = stars
+        self._repr = None
 
     @classproperty
     def gem_cost(cls):

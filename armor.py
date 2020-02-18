@@ -50,11 +50,10 @@ def f(x):
     # poly4 : 0x4 + 0.04x3 - 0.58x2 +6.43x +0.01
     return x/0.15
 
-print(armor_table)
-
-
 
 if __name__ == '__main__':
+    # print(armor_table)
+
     plt.plot(sorted(list(armor_table.keys())), sorted(list(armor_table.values())), "+", label="real values")
     xs = range(20)
     ys = list(f(x) for x in xs)

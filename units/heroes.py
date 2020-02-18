@@ -18,7 +18,7 @@ class Zora(Hero):
     hp_base = 18000
     attack_base = 3150
 
-    atk_speed = 0.7
+    hit_frequency = 0.7
     range = 10
     move_speed = 1.3
     armor = 0
@@ -32,35 +32,23 @@ class Zora(Hero):
         slow_duration = 3
         ultimate = True
 
-        @classmethod
-        def damage_factor(self, level=1):
-            return 1.5 + 0.5 * level
-
         @property
-        def dmg_factor(self):
-            return self.damage_factor(self.level)
+        def damage_factor(self):
+            return 1.5 + 0.5 * self.level
 
     class ArrowFlight(HeroSpell):
         arrow_number = 10
         effect_radius = 3
         hit_chance = 0.2
 
-        @classmethod
-        def damage_factor(self, level=1):
-            return 0.55 + 0.05 * level
-
         @property
-        def dmg_factor(self):
-            return self.damage_factor(self.level)
+        def damage_factor(self):
+            return 0.55 + 0.05 * self.level
 
     class FastHand(HeroSpell):
-        @classmethod
-        def attack_speed_factor(self, level=1):
-            return 15 + None * level
-
         @property
-        def atk_speed_factor(self):
-            return self.arttack_speed_factor(self.level)
+        def attack_speed_factor(self):
+            return 15 + None * self.level
 
     class PiercingShot(HeroSpell):
         pass
@@ -77,9 +65,9 @@ class Zora(Hero):
             self.spells.append(self.ArrowFlight(arrow_flight))
         if fast_hand is not None:
             self.spells.append(self.FastHand(fast_hand))
-        if arrow_flight is not None:
+        if percing_shot is not None:
             self.spells.append(self.PiercingShot(percing_shot))
-        if arrow_flight is not None:
+        if bounce_arrow is not None:
             self.spells.append(self.BounceArrow(bounce_arrow))
 
 
@@ -87,7 +75,7 @@ class Dalvir(Hero):
     hp_base = 27000
     attack_base = 2750
 
-    atk_speed = 0.5
+    hit_frequency = 0.5
     range = 1.5
     move_speed = 1.35
     armor = 2
@@ -99,27 +87,26 @@ class Dalvir(Hero):
         aoe_lenght = 10
         stun_duration = 2
         ultimate = True
-        damage_factor = {1:80, 2:90, 3:100, 4:125, 5:150}
+        _damage_factor = {1:80, 2:90, 3:100, 4:125, 5:150}
 
         @property
-        def dmg_factor(self):
-            return self.damage_factor[self.level]
+        def damage_factor(self):
+            return self._damage_factor[self.level]
 
     class ButalShield(HeroSpell):
         damage_reduction = 0.85
-        @classmethod
-        def armor_bonus(cls, level):
-            return 9 + level
+        @property
+        def armor_bonus(self):
+            return 9 + self.level
         armor_bonus_duration = 5
         hit_chance = 0.15
 
     class StrongWill(HeroSpell):
         radius = 10
         heath_threshold = 0.5
-
-        @classmethod
-        def armor_bonus(cls, level):
-            return 2 + level
+        @property
+        def armor_bonus(self):
+            return 2 + self.level
 
     class KnightFury(HeroSpell):
         damage_reduction = 0.6
@@ -128,9 +115,9 @@ class Dalvir(Hero):
         hit_chance = 0.1
 
     class IronProtection(HeroSpell):
-        @classmethod
-        def hp_bonus(cls, level):
-            return 0.05 + None * level
+        @property
+        def hp_bonus(self):
+            return 0.05 + None * self.level
 
     def __init__(self, level: int, warrior_rage=1, butal_shield=None, strong_will=None, knight_fury=None, iron_protection=None):
         super().__init__(level, 0, None, None)

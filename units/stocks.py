@@ -10,10 +10,13 @@ from units.bandits import Demon, Djin, Inferno, VikingLeg, StealerLeg, Chaman, D
 from units.base_units import MovableUnit
 from units.equipments import Weapon, Armor
 from units.guardians import Seraphin, Golem, DemonSlayer, Canonner, Paladin, Hammer, Sparte, Griffon, Marchal, Sword, \
-    Jetpack, Shield, Knight, Healer, Guard, Scout, Follet, Wizard, SparteLeg, GriffonLeg, HammerLeg, PaladinLeg
+    Jetpack, Shield, Knight, Healer, Guard, Scout, Follet, Wizard, SparteLeg, GriffonLeg, HammerLeg, PaladinLeg, \
+    MarchalLeg
 from units.heroes import Zora, Dalvir
-from units.vehicules import Train, Dirigeable, Helicopter, Wagon, Chariot, Charrette
-from units.weapons import Shotgun, Mortar, Chaingun, Laser, Tesla, FlameTrower, Balista
+from units.vehicules import Train, Dirigeable, Helicopter, Wagon, Chariot, Charrette, Speeder, Buggy, WagonLeg, \
+    HelicopterLeg, BuggyLeg
+from units.weapons import Shotgun, Mortar, Chaingun, Laser, Tesla, FlameTrower, Balista, LaserLeg, ChaingunLeg, \
+    FlameTrowerLeg, Barrier
 
 CardStock = namedtuple('CardStock', 'card quantity')
 
@@ -132,3 +135,13 @@ heroes = [
     CardStock(Zora(12), 1),
     CardStock(Dalvir(2), 1),
     ]
+
+STOCK_DICTIONNARY = {
+        'Guardians': guardians,
+        "Bandits": bandits,
+        "Vehicules": vehicules,
+        "Modules": modules,
+        "spells": spells,
+        "Convoy Boosts": convoy_boosts,
+        "heroes": heroes,
+    }

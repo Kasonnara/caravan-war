@@ -72,7 +72,7 @@ def evaluate(bandit_stocks: List[CardStock] = stocks.bandits):
     chase_damage = [
         (stock.card,
          stock.quantity,
-         stock.card.dpm(ClanBoss, attacker_level=stock.card.level, stars=stock.card.level, weapon=stock.card.weapon))
+         stock.card.dpm(ClanBoss))
         for stock in bandit_stocks
         ]
     # Remove the unit too slow (dpm == None) and multiply by the chaising distance

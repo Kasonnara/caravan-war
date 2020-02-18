@@ -5,17 +5,18 @@ from typing import List
 import matplotlib.pyplot as plt
 
 from target_types import TargetType
-from units.base_units import UNIT_DICTIONNARY, MAX_LEVEL, FakeMovableUnit, MovableUnit
+from units.base_units import UNIT_DICTIONNARY, MAX_LEVEL, FakeMovableUnit, MovableUnit, BaseUnit
 import units.bandits as bandits
 import units.guardians as guardians
 import units.towers as towers
 import units.vehicules as vehicules
 import units.weapons as weapons
-
+from units.stocks import STOCK_DICTIONNARY
 
 COST_DISPLAY = {'Towers': "cost", 'Weapons': "1", 'Bandits': "cost", 'Guardians': "used cell", 'Vehicules': "used cell"}
 
 # TODO: split output scores in different labelized pandas dataframe (to sum in general case and plot in different colors in bar plot)
+
 
 class XAxis(Enum):
     LEVEL = "Level", "(constant: stars={stars), enemies in AOE=[{enemies}])"
@@ -42,28 +43,41 @@ class XAxis(Enum):
     def get_subtitle(self, targets, constant_level=1, constant_enemy_number=1, constant_star=1):
         return self.value[1].format(
             level=constant_level,
-            enemies=str(constant_enemy_number)+'x[' + ','.join(target.to_string() for target in targets) + ']',
+            enemies=str(constant_enemy_number)+'x[' + ','.join(target.__repr__() for target in targets) + ']',
             stars=constant_star,
             )
 
 
 class YAxis(Enum):
-    DPS = ('Towers', 'Weapons', 'Bandits', 'Guardians'), "damage / sec{divide_cost}", lambda unit_type: unit_type.dps_ratio
-    HP = ('Vehicules', 'Bandits', 'Guardians'), "hp * armor * esquive {divide_cost}", lambda unit_type: unit_type.hp_ratio
-    SCORE = ('Towers', 'Weapons', 'Vehicules', 'Bandits', 'Guardians'), "score", lambda unit_type: unit_type.score
+    DPS = (('Towers', 'Weapons', 'Bandits', 'Guardians'),
+           "damage / sec{divide_cost}",
+           lambda unit_type, targets: unit_type.dps_score(targets))
+    HP = (('Vehicules', 'Bandits', 'Guardians'),
+          "hp * armor * esquive {divide_cost}",
+          lambda unit_type, targets: unit_type.hp_score(targets))
+    SCORE = (('Towers', 'Weapons', 'Vehicules', 'Bandits', 'Guardians'),
+             "score",
+             lambda unit_type, targets: unit_type.score(targets))
 
-    @property
-    def evaluable_categories(self):
-        return self.value[0]
+    def __init__(self, evaluable_categories, legend_string, exec_func):
+        self.evaluable_categories = evaluable_categories
+        self.legend_string = legend_string
+        self.exec_func = exec_func
 
     def get_legend(self, category: str):
-        return self.value[1].format(divide_cost=" / "+COST_DISPLAY[category] if COST_DISPLAY[category] is not None else "")
+        return self.legend_string.format(divide_cost=" / "+COST_DISPLAY[category] if COST_DISPLAY[category] is not None else "")
 
-    def exec(self, unit_type, targets, level):
-        return self.value[2](unit_type)(targets, level)
+    def exec(self, unit: BaseUnit, targets):
+        return self.exec_func(unit, targets)
 
 
-def plot_dps(targets_sample: List[MovableUnit], x_axis=XAxis.LEVEL, y_axis: YAxis = YAxis.SCORE, **kwargs):
+def plot_dps(targets_sample: List[MovableUnit], x_axis=XAxis.ENEMY_NUMBER, y_axis: YAxis = YAxis.SCORE, use_stock=False, **kwargs):
+    # Check incompatible configurations
+    assert (not use_stock) or (x_axis is not XAxis.LEVEL and x_axis is not XAxis.STAR), "You can't use your card stock (that define level and star of card) when using LEVEL or STAR as X avis variable"
+
+    # Select the unit reference set (e.g. your own card stock or the absolute unit class list)
+    unit_dictionnary = STOCK_DICTIONNARY if use_stock else UNIT_DICTIONNARY
+
     figures = []
     for category in y_axis.evaluable_categories:
         # generate plot window
@@ -75,13 +89,21 @@ def plot_dps(targets_sample: List[MovableUnit], x_axis=XAxis.LEVEL, y_axis: YAxi
         y_max = 0
         xs_if_no_x_axis = []
         ys_if_no_x_axis = []
-        for k, unit_type in enumerate(UNIT_DICTIONNARY[category]):
+        for k, unit_type in enumerate(unit_dictionnary[category]):
             print(unit_type)
             ys = []
             xs = []
-            for x, level, num_enemy, star in x_axis.iter(**kwargs):
+            for x, level, num_enemy, stars in x_axis.iter(**kwargs):
+                if use_stock:
+                    # unit_type is a CardStock
+                    # assert (x_axis is not XAxis.LEVEL and x_axis is not XAxis.STAR), "You can't use your card stock (that define level and star of card) when using LEVEL or STAR as X avis variable"
+                    unit = unit_type.card
+                else:
+                    # unit_type is a subclass of BaseUnit
+                    unit = unit_type(level, stars)
                 targets = targets_sample * num_enemy
-                y = y_axis.exec(unit_type, targets, level)
+
+                y = y_axis.exec(unit, targets)
                 if y is not None:
                     ys.append(y)
                     xs.append(x)

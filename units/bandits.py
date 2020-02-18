@@ -11,7 +11,7 @@ class Bandit(MovableUnit):
 class Maraudeur(Bandit):
     hp_base = 451
     attack_base = 120
-    atk_speed = 0.4
+    hit_frequency = 0.4
     range = 1
     shoot_to = TargetType.GROUND
     shooted_as = TargetType.GROUND
@@ -26,7 +26,7 @@ class Maraudeur(Bandit):
 class Archer(Bandit):
     hp_base = 300
     attack_base = 71
-    atk_speed = 1
+    hit_frequency = 1
     range = 8
     shoot_to = TargetType.AIR_GROUND
     shooted_as = TargetType.GROUND
@@ -41,7 +41,7 @@ class Archer(Bandit):
 class Drone(Bandit):
     hp_base = 500
     attack_base = 95
-    atk_speed = 0.75
+    hit_frequency = 0.75
     range = 3
     shoot_to = TargetType.AIR_GROUND
     shooted_as = TargetType.AIR
@@ -56,7 +56,7 @@ class Drone(Bandit):
 class Brute(Bandit):
     hp_base = 1125
     attack_base = 130
-    atk_speed = 0.5
+    hit_frequency = 0.5
     range = 1
     shoot_to = TargetType.GROUND
     shooted_as = TargetType.GROUND
@@ -71,7 +71,7 @@ class Brute(Bandit):
 class Lutin(Bandit):
     hp_base = 650
     attack_base = 110
-    atk_speed = 0.8
+    hit_frequency = 0.8
     range = 4
     shoot_to = TargetType.AIR_GROUND
     shooted_as = TargetType.AIR
@@ -86,7 +86,7 @@ class Lutin(Bandit):
 class Berserk(Bandit):
     hp_base = 960
     attack_base = 150
-    atk_speed = 0.6
+    hit_frequency = 0.6
     range = 1
     shoot_to = TargetType.GROUND
     shooted_as = TargetType.GROUND
@@ -100,7 +100,7 @@ class Berserk(Bandit):
 class Hunter(Bandit):
     hp_base = 500
     attack_base = 122
-    atk_speed = 0.6
+    hit_frequency = 0.6
     range = 9
     shoot_to = TargetType.AIR_GROUND
     shooted_as = TargetType.GROUND
@@ -115,7 +115,7 @@ class Hunter(Bandit):
 class Spider(AOE, Bandit):
     hp_base = 1140
     attack_base = 110
-    atk_speed = 0.35
+    hit_frequency = 0.35
     range = 1
     shoot_to = TargetType.GROUND
     shooted_as = TargetType.GROUND
@@ -130,7 +130,7 @@ class Spider(AOE, Bandit):
 class Alchimist(AOE, Bandit):
     hp_base = 482
     attack_base = 140
-    atk_speed = 0.4
+    hit_frequency = 0.4
     range = 4
     shoot_to = TargetType.AIR_GROUND
     shooted_as = TargetType.GROUND
@@ -145,7 +145,7 @@ class Alchimist(AOE, Bandit):
 class Viking(Bandit):
     hp_base = 1900
     attack_base = 200
-    atk_speed = 1
+    hit_frequency = 1
     range = 1
     shoot_to = TargetType.GROUND
     shooted_as = TargetType.GROUND
@@ -159,14 +159,14 @@ class Viking(Bandit):
 @register_unit_type('Bandits')
 @reincarnation
 class VikingLeg(Viking):
-    atk_speed = 1.25
+    hit_frequency = 1.25
 
 
 @register_unit_type('Bandits')
 class Momie(Bandit):
     hp_base = 1400
     attack_base = 240
-    atk_speed = 0.6
+    hit_frequency = 0.6
     range = 7
     shoot_to = TargetType.AIR_GROUND
     shooted_as = TargetType.GROUND
@@ -187,7 +187,7 @@ class MomieLeg(Momie):
 class DarkKnight(Bandit):
     hp_base = 1677
     attack_base = 394
-    atk_speed = 0.8
+    hit_frequency = 0.8
     range = 1
     shoot_to = TargetType.GROUND
     shooted_as = TargetType.GROUND
@@ -208,7 +208,7 @@ class DarkKnightLeg(DarkKnight):
 class Condor(Bandit):
     hp_base = 1469
     attack_base = 260
-    atk_speed = 0.7
+    hit_frequency = 0.7
     range = 8
     shoot_to = TargetType.AIR_GROUND
     shooted_as = TargetType.AIR
@@ -231,7 +231,7 @@ class CondorLeg(Condor):
 class Stealer(Bandit):
     hp_base = 1430
     attack_base = 328
-    atk_speed = 0.9
+    hit_frequency = 0.9
     range = 1
     shoot_to = TargetType.GROUND
     shooted_as = TargetType.GROUND
@@ -245,7 +245,7 @@ class Stealer(Bandit):
 @register_unit_type('Bandits')
 @reincarnation
 class StealerLeg(Stealer):
-    atk_speed = 1.2
+    hit_frequency = 1.2
     shoot_to = TargetType.AIR_GROUND
     vehicule_damage_factor = 2.5
 
@@ -254,7 +254,7 @@ class StealerLeg(Stealer):
 class Lich(Bandit):
     hp_base = 1072
     attack_base = 390
-    atk_speed = 0.4
+    hit_frequency = 0.4
     range = 5
     shoot_to = TargetType.AIR_GROUND
     shooted_as = TargetType.GROUND
@@ -280,7 +280,7 @@ class LichLeg(Lich):
 class Inferno(Bandit):
     hp_base = 4407
     attack_base = 630
-    atk_speed = 0.7
+    hit_frequency = 0.7
     range = 1
     shoot_to = TargetType.GROUND
     shooted_as = TargetType.GROUND
@@ -295,7 +295,7 @@ class Inferno(Bandit):
 class Demon(Bandit):
     hp_base = 3900
     attack_base = 500
-    atk_speed = 1
+    hit_frequency = 1
     range = 2
     shoot_to = TargetType.AIR_GROUND
     shooted_as = TargetType.GROUND
@@ -310,7 +310,7 @@ class Demon(Bandit):
 class Chaman(Bandit):
     hp_base = 1605
     attack_base = 504
-    atk_speed = 0.5
+    hit_frequency = 0.5
     range = 8
     shoot_to = TargetType.AIR_GROUND
     shooted_as = TargetType.GROUND
@@ -326,7 +326,7 @@ class Chaman(Bandit):
 class Djin(Bandit, AOE):
     hp_base = 1456
     attack_base = 370
-    atk_speed = 0.5
+    hit_frequency = 0.5
     range = 6
     shoot_to = TargetType.AIR_GROUND
     shooted_as = TargetType.GROUND
@@ -346,7 +346,7 @@ class Djin(Bandit, AOE):
 class Mecha(Bandit):
     hp_base = 1885
     attack_base = 331
-    atk_speed = 0.6
+    hit_frequency = 0.6
     range = 7
     shoot_to = TargetType.AIR_GROUND
     shooted_as = TargetType.GROUND
