@@ -153,6 +153,8 @@ class Viking(Bandit):
     armor_piercing = 2
     cost = 8
     move_speed = 1.9
+    consecutive_hit_attack_boost = 0.4
+    max_consecutive_boost = 3.
     rarity = Rarity.Epic
 
 
@@ -160,6 +162,7 @@ class Viking(Bandit):
 @reincarnation
 class VikingLeg(Viking):
     hit_frequency = 1.25
+    # FIXME: viking combo doesn't behave like other combo
 
 
 @register_unit_type('Bandits')

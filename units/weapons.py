@@ -81,13 +81,16 @@ class Laser(ModuleWeapon):
     range = 7
     armor_piercing = 6
     shoot_to = TargetType.AIR_GROUND
+    consecutive_hit_attack_boost = 0.4
+    max_consecutive_boost = 3.
     rarity = Rarity.Epic
 
 
 @register_unit_type('Weapons')
 @reincarnation
 class LaserLeg(Laser):
-    pass
+    consecutive_hit_attack_boost = 0.5
+    # TODO: slowdown effect
 
 
 @register_unit_type('Weapons')

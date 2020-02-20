@@ -68,26 +68,23 @@ def rec_choice(damage_table: List[Tuple[Bandit, int, float]], remaining_space=st
 
 
 def evaluate(bandit_stocks: List[CardStock] = stocks.bandits):
+    boss_unit = ClanBoss(1)
     # Get damage par metter for all units
     chase_damage = [
         (stock.card,
          stock.quantity,
-         stock.card.dpm(ClanBoss))
+         stock.card.chase_damage(boss_unit,
+                                 (PATH_LENGHT if isinstance(stock.card, (Demon, Chaman)) else (PATH_LENGHT-FIRST_BUSH_DISTANCE))))
         for stock in bandit_stocks
         ]
-    # Remove the unit too slow (dpm == None) and multiply by the chaising distance
+    # Remove the unit too slow (dmg == None)
     chase_damage = [
-        (card,
-         quantity,
-         dpm * (PATH_LENGHT if isinstance(card, (Demon, Chaman)) else (PATH_LENGHT-FIRST_BUSH_DISTANCE)))
-        for card, quantity, dpm in chase_damage
-        if dpm is not None
+        (card, quantity, dmg)
+        for card, quantity, dmg in chase_damage
+        if dmg is not None
         ]
     # Sort
-    chase_damage = sorted([
-        (card, quantity, dpm)
-        for card, quantity, dpm in chase_damage
-        ], key=lambda x: x[2]/x[0].cost, reverse=True)
+    chase_damage = sorted(chase_damage, key=lambda x: x[2]/x[0].cost, reverse=True)
 
     print("Damage predicted per unit type:",{card.__class__.__name__: dpm/card.cost for card, quantity, dpm in chase_damage})
 

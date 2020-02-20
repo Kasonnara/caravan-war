@@ -58,6 +58,10 @@ class BaseUnit(Card):
     level_grow_factor = 1.15
     star_grow_factor = 1.05
 
+    consecutive_hit_attack_boost = 0.
+    """Damage boost """
+    max_consecutive_boost = 1.
+
     def __init__(self, level: int, stars=0, weapon: Weapon=None):
         super().__init__(level, stars)
         self.weapon = weapon
@@ -88,10 +92,17 @@ class BaseUnit(Card):
         # Remove unreachable targets
         return [target for target in targets if cls.shoot_to.can_fire_on(target.shooted_as)]
 
-    def damage_formule(self, target: 'MovableUnit', target_index=0):
+    def damage_formule(self, target: 'MovableUnit', target_index=0, hit_combo=0):
         if target_index >= self.multiple_target_limit:
             return None
-        return self.attack * armor_reduction(target.armor - self.armor_piercing)
+        atk = self.attack
+        if atk is None:
+            return None
+        return (
+            atk
+            * armor_reduction(target.armor - self.armor_piercing)
+            * (min(1 + self.consecutive_hit_attack_boost * hit_combo, self.max_consecutive_boost))
+            )
 
     def dps(self, targets: Union['MovableUnit', List['MovableUnit']]) -> Optional[float]:
         # WARNING: if modified report changes to the classes :Lightning
@@ -178,6 +189,21 @@ class MovableUnit(BaseUnit):
             self._repr = self.__class__.__name__.lower() + ('['+','.join(internal_values)+']' if len(internal_values) > 0 else "")
         return self._repr
 
+    def chase_distance(self, target: 'MovableUnit') -> Optional[float]:
+        """
+        Return the distance walked by the target, between two hits while chased by self
+        :param target: MovableUnit
+        :return: float or None if the target is faster than self
+        """
+        # Distance = TargetSpeed * (ChaseTime + AttackTime) = AttackerSpeed * (ChaseTime)
+        #  ==> ChaseTime = (TargetSpeed * AttackTime) / (AttackerSpeed - TargetSpeed)
+        #  ==> Distance = AttackerSpeed * (TargetSpeed * AttackTime) / (AttackerSpeed - TargetSpeed)
+        if self.move_speed <= target.move_speed:
+            return None
+        distance = self.move_speed * (target.move_speed * 1 / self.hit_frequency) / (
+                    self.move_speed - target.move_speed)
+        return distance
+
     def dpm(self, target: 'MovableUnit') -> Optional[float]:
         """
         return the damage per meter of the unit when chaising the target unit
@@ -185,19 +211,15 @@ class MovableUnit(BaseUnit):
         :param target: the chased unit
         :return: float = (damage dealt to the target)  / (distance walked by the target including chasing time)
         """
-        # Distance = TargetSpeed * (ChaseTime + AttackTime) = AttackerSpeed * (ChaseTime)
-        #  ==> ChaseTime = (TargetSpeed * AttackTime) / (AttackerSpeed - TargetSpeed)
-        #  ==> Distance = AttackerSpeed * (TargetSpeed * AttackTime) / (AttackerSpeed - TargetSpeed)
-        if self.move_speed <= target.move_speed:
+        distance = self.chase_distance(target)
+        if distance is None:
             return None
-        distance = self.move_speed * (target.move_speed * 1 / self.hit_frequency) / (self.move_speed - target.move_speed)
         return (
             self.damage_formule(target)
             * (target.esquive_rate if self.can_miss else 1)
             / distance
             )
 
-    @classmethod
     def chase_damage(self, target: 'MovableUnit', path_length):
         """
         return the total damages dealt when chaising the target unit on the given distance
@@ -207,7 +229,14 @@ class MovableUnit(BaseUnit):
         :param path_length: chase length
         :return: float, damage dealt to the target over the entire path
         """
-        return path_length * self.dpm(target)
+        distance = self.chase_distance(target)
+        if distance is None:
+            return None
+
+        return sum(
+            self.damage_formule(target, hit_combo=hit_index)
+            for hit_index in range(int(path_length // distance))
+            )
 
 
 class FakeMovableUnit(MovableUnit):
