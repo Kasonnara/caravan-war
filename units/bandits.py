@@ -1,6 +1,7 @@
 from cards import Rarity
 from units.base_units import MovableUnit, AOE, register_unit_type, reincarnation
 from target_types import TargetType
+from units.vehicules import Vehicule
 
 
 class Bandit(MovableUnit):
@@ -242,7 +243,18 @@ class Stealer(Bandit):
     armor_piercing = 2
     cost = 7
     move_speed = 2
+    vehicule_damage_factor = 2  # Fixme: check if it's "200% damages" or "200% additional damages"
     rarity = Rarity.Epic
+    # TODO: invisibility effect
+
+    def damage_formule(self, target: 'MovableUnit', target_index=0, hit_combo=0):
+        dmg = super().damage_formule(target, target_index, hit_combo)
+        if dmg is None:
+            return None
+        if isinstance(target, Vehicule):
+            return dmg * self.vehicule_damage_factor
+        else:
+            return dmg
 
 
 @register_unit_type('Bandits')
