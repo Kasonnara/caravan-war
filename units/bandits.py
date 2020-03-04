@@ -1,4 +1,4 @@
-from common.cards import Rarity
+from common.rarity import Rarity
 from units.base_units import MovableUnit, AOE, register_unit_type, reincarnation
 from common.target_types import TargetType
 from units.vehicules import Vehicule

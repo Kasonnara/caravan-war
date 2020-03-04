@@ -1,4 +1,5 @@
-from common.cards import Card, Rarity
+from common.cards import Card
+from common.rarity import Rarity
 from utils.class_property import classproperty
 
 

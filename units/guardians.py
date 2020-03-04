@@ -1,6 +1,6 @@
 from typing import Union, List
 
-from common.cards import Rarity
+from common.rarity import Rarity
 from units.base_units import MovableUnit, Heal, AOE, register_unit_type, reincarnation, DPS_SCORE_FACTOR, \
     HP_SCORE_FACTOR
 from common.target_types import TargetType
