@@ -58,7 +58,7 @@ class BaseUnit(Card):
     """If false the unit is not affected by evasion abilities (deamon slayer, fire tower, etc)"""
 
     level_grow_factor = 1.15
-    star_grow_factor = 1.05
+    star_factor = .05
 
     consecutive_hit_attack_boost = 0.
     """Damage boost """
@@ -75,8 +75,12 @@ class BaseUnit(Card):
         """
         if self.attack_base is None:
             return None
-        return round(self.attack_base * self.level_grow_factor ** (self.level-1) * self.star_grow_factor ** self.stars) \
-               + (0 if self.weapon is None else self.weapon.bonus_factor * self.attack_base)
+        return round(
+            self.attack_base                            # base stat
+            * self.level_grow_factor ** (self.level-1)  # exponential grows with level
+            * (1 + self.star_factor * self.stars)       # linear grows with stars
+            + (0 if self.weapon is None else self.weapon.bonus_factor * self.attack_base) # equipment bonus
+            )
 
     @classmethod
     def get_reachable_targets(cls, targets: Union['MovableUnit', List['MovableUnit']]) -> List['MovableUnit']:
@@ -157,10 +161,14 @@ class MovableUnit(BaseUnit):
 
     @property
     def hp(self):
-        return (
-            self.hp_base * self.level_grow_factor ** (self.level-1)
-            * self.star_grow_factor ** self.stars
-            + (0 if self.armor_item is None else Armor.bonus_factor * self.hp_base)
+        # TODO: is it possible to factorize the formula (also used in attack and heal property), using for exemple a
+        #       decorator, without using a 'self.get_attr(<stat_base>)' to get the base and the item that depend on
+        #       the runtime unit and the stat considerated?
+        return round(
+            self.hp_base
+            * self.level_grow_factor ** (self.level-1)
+            * (1 + self.star_factor * self.stars)
+            + (0 if self.armor_item is None else self.armor_item.bonus_factor * self.hp_base)
             )
 
     def hp_score(self, attackers: List[BaseUnit]) -> float:
@@ -272,9 +280,10 @@ class Heal:
 
     @property
     def heal(self) -> float:
-        return (
-            self.base_heal * self.level_grow_factor ** (self.level-1)
-            * self.star_grow_factor**self.stars \
+        return round(
+            self.base_heal
+            * self.level_grow_factor ** (self.level-1)
+            * (1 + self.star_factor * self.stars)
             + (0 if self.weapon is None else self.weapon.bonus_factor * self.base_heal)
             )
 
