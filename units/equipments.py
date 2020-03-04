@@ -1,5 +1,5 @@
 from typing import Tuple
-from cards import Card
+from common.cards import Card
 
 
 class Equipement(Card):

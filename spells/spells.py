@@ -1,5 +1,5 @@
-from cards import Card, Rarity
-from class_property import classproperty
+from common.cards import Card, Rarity
+from utils.class_property import classproperty
 
 
 class Spell(Card):

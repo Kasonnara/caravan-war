@@ -25,7 +25,7 @@ class XAxis(Enum):
     NONE = "", "(constant: level={level},  stars={stars}, enemies in AOE=[{enemies}], stars={stars})"
 
     def iter(self, constant_level=1, constant_enemy_number=1, constant_star=1, variable_range=7):
-        self.cache = {"level": constant_level, "enemy_count": constant_enemy_number ,"star": constant_star}
+        self.cache = {"level": constant_level, "enemy_count": constant_enemy_number,"star": constant_star}
 
         if self is self.NONE:
             return [(None, constant_level, constant_enemy_number, constant_star,)]

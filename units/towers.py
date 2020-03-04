@@ -1,7 +1,7 @@
 from typing import Union, List, Optional
 
-from class_property import classproperty
-from target_types import TargetType
+from utils.class_property import classproperty
+from common.target_types import TargetType
 from units.base_units import BaseUnit, register_unit_type, AOE, Heal
 
 

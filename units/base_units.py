@@ -24,10 +24,11 @@ from typing import Iterable, Union, List, Optional, Type
 
 import collections.abc
 
-from armor import armor_reduction
-from cards import Card, Rarity
-from target_types import TargetType
+from common.armor import armor_reduction
+from common.cards import Card, Rarity
+from common.target_types import TargetType
 from units.equipments import Weapon, Armor
+from utils.class_property import classproperty
 
 MAX_LEVEL = 7
 DPS_SCORE_FACTOR = 135 * 0.5  # Based on Guard units attack value

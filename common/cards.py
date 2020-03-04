@@ -1,7 +1,7 @@
 from enum import Enum, auto
 from typing import Optional
 
-from class_property import classproperty
+from utils.class_property import classproperty
 
 
 class Rarity(Enum):

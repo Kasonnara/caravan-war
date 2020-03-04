@@ -1,8 +1,8 @@
 from collections import namedtuple
 from typing import Type
 
-from cards import Card
-from spells import Ice, Storm, Meteor, Poison, Landmine, Arrow, VehiculeBoost, ModuleBoost, SpeedBoost, \
+from common.cards import Card
+from spells.spells import Ice, Storm, Meteor, Poison, Landmine, Arrow, VehiculeBoost, ModuleBoost, SpeedBoost, \
     AttackSpeedBoost, AttackBoost, LifeBoost
 from units.bandits import Demon, Djin, Inferno, VikingLeg, StealerLeg, Chaman, DarkKnightLeg, Mecha, DarkKnight, Lich, \
     Viking, Stealer, Berserk, Spider, Hunter, Brute, Alchimist, Maraudeur, Lutin, Drone, Archer, Condor, Momie, LichLeg, \
