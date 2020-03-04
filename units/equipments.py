@@ -9,7 +9,7 @@ class Equipement(Card):
 
     @property
     def bonus_factor(self):
-        return 0.02 * 1.15 ** (self.level-1)  # FIXME how level impact the bonus factor?
+        return 0.05 * 1.15 ** (self.level-1)
 
 
 class Weapon(Equipement):
