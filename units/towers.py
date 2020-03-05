@@ -74,7 +74,7 @@ class Arbalete(Tower):
 
 @register_card_type('Towers')
 class Eolance(Tower):
-    attack_base = 538
+    attack_base = 535
     hit_frequency = 0.6
     range = 11
     shoot_to = TargetType.AIR_GROUND
