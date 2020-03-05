@@ -17,10 +17,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from abc import abstractmethod
-from collections import defaultdict
 from statistics import mean
-from typing import Iterable, Union, List, Optional, Type
+from typing import Union, List, Optional, Type
 
 import collections.abc
 

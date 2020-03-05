@@ -19,7 +19,6 @@
 """
 from common.target_types import TargetType
 from units.base_units import MovableUnit
-from units.equipments import Weapon, Armor
 
 
 class Hero(MovableUnit):

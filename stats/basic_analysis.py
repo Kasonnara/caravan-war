@@ -23,14 +23,9 @@ from typing import List
 
 import matplotlib.pyplot as plt
 
-from target_types import TargetType
 from units.base_units import MAX_LEVEL, FakeMovableUnit, MovableUnit, BaseUnit
 from common.cards import CARD_DICTIONNARY
 import units.bandits as bandits
-import units.guardians as guardians
-import units.towers as towers
-import units.vehicules as vehicules
-import units.weapons as weapons
 from units.stocks import STOCK_DICTIONNARY
 
 COST_DISPLAY = {'Towers': "cost", 'Weapons': "1", 'Bandits': "cost", 'Guardians': "used cell", 'Vehicules': "used cell"}

@@ -17,14 +17,23 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+
+"""
+Record data and attempt to find exact armor formula
+"""
+
 from math import sqrt, log, log10
 
 import matplotlib.pyplot as plt
 
 armor_table = {0: 0, 0.5: 3.10, 1: 5.91, 1.5: 8.48, 2: 10.83, 3: 15.00, 4: 18.57, 4.5: 20.17, 5: 21.67, 6: 24.37, 7:26.78, 8: 28.89, 9.5: 31.67}
-
+"""Known armor value"""
 
 def armor_reduction(armor_level: int) -> float:
+    """
+    :param armor_level: int, level of armor to apply (after subtraction of the attacker armor piercing)
+    :return: float, damage reduction factor for the corresponding armor value
+    """
     return (100 - armor_table[max(0, armor_level)]) / 100
 
 

@@ -17,8 +17,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-class ClassPropertyDescriptor(object):
 
+class _ClassPropertyDescriptor(object):
     def __init__(self, fget, fset=None):
         self.fget = fget
         self.fset = fset
@@ -42,7 +42,10 @@ class ClassPropertyDescriptor(object):
 
 
 def classproperty(func):
+    """
+    A function decorator, similar to @property but that apply to class variables
+    """
     if not isinstance(func, (classmethod, staticmethod)):
         func = classmethod(func)
 
-    return ClassPropertyDescriptor(func)
+    return _ClassPropertyDescriptor(func)

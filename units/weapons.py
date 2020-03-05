@@ -21,7 +21,6 @@ from typing import Union, Type
 
 from common.rarity import Rarity
 from units.base_units import AOE, COE, BaseUnit, reincarnation
-from units.equipments import Weapon
 from common.cards import register_card_type
 from common.target_types import TargetType
 

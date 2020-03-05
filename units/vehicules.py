@@ -19,10 +19,10 @@
 """
 from typing import List
 
-from common.cards import Rarity, register_card_type
+from common.rarity import Rarity
+from common.cards import register_card_type
 from units.base_units import MovableUnit, BaseUnit, reincarnation
 from common.target_types import TargetType
-from units.equipments import Armor
 
 
 class Vehicule(MovableUnit):
