@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 """
-    <Software description> 
+    This is a personal project to understand and improve my knowledge/tactics in the game Caravan War.
     Copyright (C) 2019  Kasonnara <kasonnara@laposte.net>
 
     This program is free software: you can redistribute it and/or modify
