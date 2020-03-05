@@ -24,7 +24,8 @@ from typing import List
 import matplotlib.pyplot as plt
 
 from target_types import TargetType
-from units.base_units import UNIT_DICTIONNARY, MAX_LEVEL, FakeMovableUnit, MovableUnit, BaseUnit
+from units.base_units import MAX_LEVEL, FakeMovableUnit, MovableUnit, BaseUnit
+from common.cards import CARD_DICTIONNARY
 import units.bandits as bandits
 import units.guardians as guardians
 import units.towers as towers
@@ -95,7 +96,7 @@ def plot_dps(targets_sample: List[MovableUnit], x_axis=XAxis.ENEMY_NUMBER, y_axi
     assert (not use_stock) or (x_axis is not XAxis.LEVEL and x_axis is not XAxis.STAR), "You can't use your card stock (that define level and star of card) when using LEVEL or STAR as X avis variable"
 
     # Select the unit reference set (e.g. your own card stock or the absolute unit class list)
-    unit_dictionnary = STOCK_DICTIONNARY if use_stock else UNIT_DICTIONNARY
+    unit_dictionnary = STOCK_DICTIONNARY if use_stock else CARD_DICTIONNARY
 
     figures = []
     for category in y_axis.evaluable_categories:

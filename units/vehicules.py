@@ -19,8 +19,8 @@
 """
 from typing import List
 
-from common.cards import Rarity
-from units.base_units import MovableUnit, register_unit_type, BaseUnit, reincarnation
+from common.cards import Rarity, register_card_type
+from units.base_units import MovableUnit, BaseUnit, reincarnation
 from common.target_types import TargetType
 from units.equipments import Armor
 
@@ -30,7 +30,7 @@ class Vehicule(MovableUnit):
     weapon_slot = 1
 
 
-@register_unit_type('Vehicules')
+@register_card_type('Vehicules')
 class Charrette(Vehicule):
     hp_base = 2280
     shooted_as = TargetType.GROUND
@@ -39,7 +39,7 @@ class Charrette(Vehicule):
     rarity = Rarity.Common
 
 
-@register_unit_type('Vehicules')
+@register_card_type('Vehicules')
 class Chariot(Vehicule):
     hp_base = 1710
     shooted_as = TargetType.GROUND
@@ -49,7 +49,7 @@ class Chariot(Vehicule):
     rarity = Rarity.Rare
 
 
-@register_unit_type('Vehicules')
+@register_card_type('Vehicules')
 class Dirigeable(Vehicule):
     hp_base = 3705
     shooted_as = TargetType.AIR
@@ -59,7 +59,7 @@ class Dirigeable(Vehicule):
     rarity = Rarity.Legendary
 
 
-@register_unit_type('Vehicules')
+@register_card_type('Vehicules')
 class Speeder(Vehicule):
     hp_base = 3800
     shooted_as = TargetType.AIR
@@ -70,7 +70,7 @@ class Speeder(Vehicule):
     rarity = Rarity.Legendary
 
 
-@register_unit_type('Vehicules')
+@register_card_type('Vehicules')
 class Train(Vehicule):
     hp_base = 4251
     shooted_as = TargetType.GROUND
@@ -86,7 +86,7 @@ class Train(Vehicule):
             )
 
 
-@register_unit_type('Vehicules')
+@register_card_type('Vehicules')
 class Helicopter(Vehicule):
     hp_base = 2444
     shooted_as = TargetType.AIR
@@ -95,13 +95,13 @@ class Helicopter(Vehicule):
     rarity = Rarity.Epic
 
 
-@register_unit_type('Vehicules')
+@register_card_type('Vehicules')
 @reincarnation
 class HelicopterLeg(Helicopter):
     pass
 
 
-@register_unit_type('Vehicules')
+@register_card_type('Vehicules')
 class Wagon(Vehicule):
     hp_base = 3250
     shooted_as = TargetType.GROUND
@@ -110,13 +110,13 @@ class Wagon(Vehicule):
     rarity = Rarity.Epic
 
 
-@register_unit_type('Vehicules')
+@register_card_type('Vehicules')
 @reincarnation
 class WagonLeg(Wagon):
     pass
 
 
-@register_unit_type('Vehicules')
+@register_card_type('Vehicules')
 class Buggy(Vehicule):
     hp_base = 3000
     move_speed = 1.8
@@ -126,7 +126,7 @@ class Buggy(Vehicule):
     # TODO spell
 
 
-@register_unit_type('Vehicules')
+@register_card_type('Vehicules')
 @reincarnation
 class BuggyLeg(Buggy):
     pass

@@ -26,7 +26,7 @@ class Spell(Card):
     category = "Spells"
 
     def __init__(self, level: int):
-        super().__init__(level, 0)
+        super().__init__(level)
 
     @classproperty
     def gem_cost(cls):

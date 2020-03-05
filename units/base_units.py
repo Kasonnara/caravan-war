@@ -65,7 +65,8 @@ class BaseUnit(Card):
     max_consecutive_boost = 1.
 
     def __init__(self, level: int, stars=0, weapon: Weapon=None):
-        super().__init__(level, stars)
+        super().__init__(level)
+        self.stars = stars
         self.weapon = weapon
 
     @property
@@ -144,6 +145,14 @@ class BaseUnit(Card):
                 internal_values.append("weapon=" + self.weapon.level)
             self._repr = self.__class__.__name__.lower() + ('['+','.join(internal_values)+']' if len(internal_values) > 0 else "")
         return self._repr
+
+    _upgrade_cost = None
+
+    @classproperty
+    def upgrade_cost(cls):
+        if cls._upgrade_cost is None:
+            return None
+        return ((0, gold_cost) for gold_cost in cls._upgrade_cost)
 
 
 class MovableUnit(BaseUnit):
@@ -308,17 +317,6 @@ class Summon:
     summon_hp_base = None
     summon_attack_base = None
     summon_atk_speed = None
-
-
-UNIT_DICTIONNARY = defaultdict(list)
-
-
-def register_unit_type(category: str):
-    def register_unit_type_aux(cls):
-        cls.category = category
-        UNIT_DICTIONNARY[category].append(cls)
-        return cls
-    return register_unit_type_aux
 
 
 def reincarnation(cls: Type[BaseUnit]):

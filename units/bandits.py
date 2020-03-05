@@ -18,7 +18,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from common.rarity import Rarity
-from units.base_units import MovableUnit, AOE, register_unit_type, reincarnation
+from units.base_units import MovableUnit, AOE, reincarnation
+from common.cards import register_card_type
 from common.target_types import TargetType
 from units.vehicules import Vehicule
 
@@ -27,7 +28,7 @@ class Bandit(MovableUnit):
     pass
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 class Maraudeur(Bandit):
     hp_base = 451
     attack_base = 120
@@ -42,7 +43,7 @@ class Maraudeur(Bandit):
     rarity = Rarity.Common
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 class Archer(Bandit):
     hp_base = 300
     attack_base = 71
@@ -57,7 +58,7 @@ class Archer(Bandit):
     rarity = Rarity.Common
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 class Drone(Bandit):
     hp_base = 500
     attack_base = 95
@@ -72,7 +73,7 @@ class Drone(Bandit):
     rarity = Rarity.Common
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 class Brute(Bandit):
     hp_base = 1125
     attack_base = 130
@@ -87,7 +88,7 @@ class Brute(Bandit):
     rarity = Rarity.Rare
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 class Lutin(Bandit):
     hp_base = 650
     attack_base = 110
@@ -102,7 +103,7 @@ class Lutin(Bandit):
     rarity = Rarity.Rare
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 class Berserk(Bandit):
     hp_base = 960
     attack_base = 150
@@ -116,7 +117,7 @@ class Berserk(Bandit):
     move_speed = 1.8
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 class Hunter(Bandit):
     hp_base = 500
     attack_base = 122
@@ -131,7 +132,7 @@ class Hunter(Bandit):
     rarity = Rarity.Rare
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 class Spider(AOE, Bandit):
     hp_base = 1140
     attack_base = 110
@@ -146,7 +147,7 @@ class Spider(AOE, Bandit):
     rarity = Rarity.Rare
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 class Alchimist(AOE, Bandit):
     hp_base = 482
     attack_base = 140
@@ -161,7 +162,7 @@ class Alchimist(AOE, Bandit):
     rarity = Rarity.Rare
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 class Viking(Bandit):
     hp_base = 1900
     attack_base = 200
@@ -178,14 +179,14 @@ class Viking(Bandit):
     rarity = Rarity.Epic
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 @reincarnation
 class VikingLeg(Viking):
     hit_frequency = 1.25
     # FIXME: viking combo doesn't behave like other combo
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 class Momie(Bandit):
     hp_base = 1400
     attack_base = 240
@@ -200,13 +201,13 @@ class Momie(Bandit):
     rarity = Rarity.Epic
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 @reincarnation
 class MomieLeg(Momie):
     pass
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 class DarkKnight(Bandit):
     hp_base = 1677
     attack_base = 394
@@ -221,13 +222,13 @@ class DarkKnight(Bandit):
     rarity = Rarity.Epic
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 @reincarnation
 class DarkKnightLeg(DarkKnight):
     stun_duration = 2.5
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 class Condor(Bandit):
     hp_base = 1469
     attack_base = 260
@@ -244,13 +245,13 @@ class Condor(Bandit):
     rarity = Rarity.Epic
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 @reincarnation
 class CondorLeg(Condor):
     armor_reduction = 100
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 class Stealer(Bandit):
     hp_base = 1430
     attack_base = 328
@@ -276,7 +277,7 @@ class Stealer(Bandit):
             return dmg
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 @reincarnation
 class StealerLeg(Stealer):
     hit_frequency = 1.2
@@ -284,7 +285,7 @@ class StealerLeg(Stealer):
     vehicule_damage_factor = 2.5
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 class Lich(Bandit):
     hp_base = 1072
     attack_base = 390
@@ -303,14 +304,14 @@ class Lich(Bandit):
     rarity = Rarity.Epic
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 @reincarnation
 class LichLeg(Lich):
     summon_number = 5
     summon_atk_speed = 1 / 7
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 class Inferno(Bandit):
     hp_base = 4407
     attack_base = 630
@@ -325,7 +326,7 @@ class Inferno(Bandit):
     rarity = Rarity.Legendary
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 class Demon(Bandit):
     hp_base = 3900
     attack_base = 500
@@ -340,7 +341,7 @@ class Demon(Bandit):
     rarity = Rarity.Legendary
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 class Chaman(Bandit):
     hp_base = 1605
     attack_base = 504
@@ -356,7 +357,7 @@ class Chaman(Bandit):
     # TODO heal effect
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 class Djin(Bandit, AOE):
     hp_base = 1456
     attack_base = 370
@@ -376,7 +377,7 @@ class Djin(Bandit, AOE):
     rarity = Rarity.Legendary
 
 
-@register_unit_type('Bandits')
+@register_card_type('Bandits')
 class Mecha(Bandit):
     hp_base = 1885
     attack_base = 331
