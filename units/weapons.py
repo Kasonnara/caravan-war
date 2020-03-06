@@ -158,3 +158,14 @@ class Barrier(ModuleWeapon):
     shoot_to = TargetType.AIR_GROUND
     # Todo protective effect
     rarity = Rarity.Legendary
+
+
+@register_card_type('Weapons')
+class Harpon(ModuleWeapon):
+    attack_base = 639
+    hit_frequency = .7
+    range = 7
+    armor_piercing = 7
+    shoot_to = TargetType.AIR_GROUND
+    # Todo slow effect
+    rarity = Rarity.Legendary

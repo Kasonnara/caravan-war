@@ -30,7 +30,7 @@ from units.towers import Sentinelle, Arbalete, Eolance, Sniper, HeavySniper, Mag
 from units.vehicules import Train, Dirigeable, Helicopter, Wagon, Chariot, Charrette, Speeder, Buggy, WagonLeg, \
     HelicopterLeg, BuggyLeg
 from units.weapons import Shotgun, Mortar, Chaingun, Laser, Tesla, FlameTrower, Balista, LaserLeg, ChaingunLeg, \
-    FlameTrowerLeg, Barrier
+    FlameTrowerLeg, Barrier, Harpon
 
 CardStock = namedtuple('CardStock', 'card quantity')
 """A named tuple containing a unit type and the number of copies owned for units of which more than one copy c
@@ -134,6 +134,7 @@ vehicules = {
 }
 
 modules = {
+    CardStock(Harpon(FILL_MODULE_LEVEL, stars=0), FILL_QUANTITY),
     CardStock(Tesla(FILL_MODULE_LEVEL, stars=0), FILL_QUANTITY),
     CardStock(Barrier(FILL_MODULE_LEVEL, stars=0), FILL_QUANTITY),
     CardStock(Laser(FILL_MODULE_LEVEL, stars=0), FILL_QUANTITY),
