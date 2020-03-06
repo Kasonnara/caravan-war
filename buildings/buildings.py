@@ -86,7 +86,15 @@ class Laboratory(Building):
 
 @register_card_type('Building')
 class Tavern(Building):
-    pass
+    @property
+    def bandit_power(self):
+        # TODO optimization, if necessary to get multiple time this value while level isn't changing it would be more
+        #   economical to compute this value once in __init__ and store it under <bandit_power> attribute.
+        return (
+            25                                  # base (in theory at level 0)
+            + 15 * min(self.level, 15)          # from level 1 to 15, you get 15 power per level
+            + 20 * max(self.level - 15, 0)      # from level 16 to ?, you get 20 power per level
+        )
 
 
 @register_card_type('Building')

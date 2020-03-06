@@ -20,12 +20,10 @@
 from time import sleep
 from typing import List, Tuple
 
-from target_types import TargetType
-from units import stocks
+from common.target_types import TargetType
+from config import my_cards
 from units.bandits import Berserk, Demon, Chaman, Bandit
-from units.base_units import MovableUnit
-from units.guardians import Guardian
-from units.stocks import CardStock
+from config.my_cards import CardStock
 from units.vehicules import Vehicule
 
 PATH_LENGHT = 85  # Not used yet
@@ -47,7 +45,10 @@ class ClanBoss(Vehicule):
     is_immune_to_effect = True
 
 
-def rec_choice(damage_table: List[Tuple[Bandit, int, float]], remaining_space=stocks.BANDIT_POWER, remaining_slots=8, allowed_worst_compo_attempts=ALLOWED_WORST_ATTEMPT):
+def rec_choice(damage_table: List[Tuple[Bandit, int, float]],
+               remaining_space=my_cards.buildings_dict['Tavern'].bandit_power,
+               remaining_slots=8,
+               allowed_worst_compo_attempts=ALLOWED_WORST_ATTEMPT):
     #print(dpss, remaining_space, remaining_slots)
     assert remaining_space >= 0, "Problem in space managment"
     assert remaining_slots >= 0, "Problem in slot managment"
@@ -86,7 +87,7 @@ def rec_choice(damage_table: List[Tuple[Bandit, int, float]], remaining_space=st
     return best_compo, best_damage
 
 
-def evaluate(bandit_stocks: List[CardStock] = stocks.bandits):
+def evaluate(bandit_stocks: List[CardStock] = my_cards.bandits):
     boss_unit = ClanBoss(1)
     # Get damage par metter for all units
     chase_damage = [

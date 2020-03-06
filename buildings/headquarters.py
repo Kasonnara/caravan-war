@@ -17,6 +17,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+from typing import Tuple
+
 from buildings.base_buildings import Building
 from common.cards import Upgrade, register_card_type
 
@@ -64,6 +66,21 @@ class HQ(Building):
             return Upgrade(*self.upgrade_cost[self.level - 1],
                            [building_type(self.level - 1) for building_type in
                             self.upgrade_requirements[self.level - 1]])
+
+    @property
+    def wave_number(self) -> Tuple[float, float]:
+        return (
+            min(5, (self.level + 1) * 0.5),             # first convoy
+            max(0, min(5, (self.level - 15) * 0.5)),    # second convoy
+        )
+
+    @property
+    def wave_lenght(self):
+        return max(10, min(15, self.level))
+
+    @property
+    def guardian_power(self):
+        return 6 * self.wave_lenght * sum(self.wave_number) # FIXME verify formulas for level > 15. Does the 2nd convoy follow the same rules?
 
 
 if __name__ == '__main__':
