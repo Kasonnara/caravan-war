@@ -25,6 +25,8 @@ from utils.class_property import classproperty
 
 Upgrade = namedtuple('Upgrade', 'goods_cost gold_cost requirements')
 
+MAX_LEVEL = 30
+
 
 class Upgradable:
     upgrade_cost: List[Tuple[int, int]] = None
@@ -35,6 +37,7 @@ class Upgradable:
     category: str = None
 
     def __init__(self, level=1):
+        assert 0 < level <= MAX_LEVEL, "Level should be in range [1;{}], {} is forbidden".format(MAX_LEVEL, level)
         self.level = level
 
     def get_upgrade(self):
