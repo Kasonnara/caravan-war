@@ -28,7 +28,7 @@ from common.cards import CARD_DICTIONNARY
 import units.bandits as bandits
 from config.my_cards import MY_CARDS, CardStock
 
-COST_DISPLAY = {'Towers': "cost", 'Weapons': "1", 'Bandits': "cost", 'Guardians': "used cell", 'Vehicules': "used cell"}
+COST_DISPLAY = {'Towers': "cost", 'Modules': "1", 'Bandits': "cost", 'Guardians': "used cell", 'Vehicules': "used cell"}
 
 # TODO: split output scores in different labelized pandas dataframe (to sum in general case and plot in different colors in bar plot)
 
@@ -64,13 +64,13 @@ class XAxis(Enum):
 
 
 class YAxis(Enum):
-    DPS = (('Towers', 'Weapons', 'Bandits', 'Guardians'),
+    DPS = (('Towers', 'Modules', 'Bandits', 'Guardians'),
            "damage / sec{divide_cost}",
            lambda unit_type, targets: unit_type.dps_score(targets))
     HP = (('Vehicules', 'Bandits', 'Guardians'),
           "hp * armor * esquive {divide_cost}",
           lambda unit_type, targets: unit_type.hp_score(targets))
-    SCORE = (('Towers', 'Weapons', 'Vehicules', 'Bandits', 'Guardians'),
+    SCORE = (('Towers', 'Modules', 'Vehicules', 'Bandits', 'Guardians'),
              "score",
              lambda unit_type, targets: unit_type.score(targets))
 

@@ -27,7 +27,7 @@ from units.towers import Sentinelle, Arbalete, Eolance, Sniper, HeavySniper, Mag
     Canon, Hydra, MissileLaucher, Hospital, Armory, Tambour, Garnison
 from units.vehicules import Train, Dirigeable, Helicopter, Wagon, Chariot, Charrette, Speeder, Buggy, WagonLeg, \
     HelicopterLeg, BuggyLeg
-from units.weapons import Shotgun, Mortar, Chaingun, Laser, Tesla, FlameTrower, Balista, LaserLeg, ChaingunLeg, \
+from units.modules import Shotgun, Mortar, Chaingun, Laser, Tesla, FlameTrower, Balista, LaserLeg, ChaingunLeg, \
     FlameTrowerLeg, Barrier, Harpon
 
 CardStock = namedtuple('CardStock', 'card quantity')
