@@ -79,7 +79,7 @@ class Eolance(Tower):
     range = 11
     shoot_to = TargetType.AIR_GROUND
     armor_piercing = 0
-    _cost = None
+    _cost = 150
     parent_tower = Arbalete
 
 
@@ -90,7 +90,7 @@ class Sniper(Tower):
     range = 13
     shoot_to = TargetType.AIR_GROUND
     armor_piercing = 0
-    _cost = None
+    _cost = 160
     parent_tower = Sentinelle
 
 
@@ -101,7 +101,7 @@ class HeavySniper(Tower):
     range = 13
     shoot_to = TargetType.AIR_GROUND
     armor_piercing = 0
-    _cost = None
+    _cost = 150
     parent_tower = Sniper
     # TODO special effect
     _upgrade_cost = [570, 3200, 14500, 33000, 71000, 163000, 345000, 485000, 710000, 1030000, 1920000, 3360000]
