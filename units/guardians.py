@@ -19,10 +19,10 @@
 """
 from typing import Union, List
 
+from common.card_categories import GUARDIANS
 from common.rarity import Rarity
 from units.base_units import MovableUnit, Heal, AOE, reincarnation, DPS_SCORE_FACTOR, \
     HP_SCORE_FACTOR
-from common.cards import register_card_type
 from common.target_types import TargetType
 
 
@@ -31,7 +31,6 @@ class Guardian(MovableUnit):
     bossfight_cost = None
 
 
-@register_card_type('Guardians')
 class Scout(Guardian):
     hp_base = 700
     attack_base = 87
@@ -46,7 +45,6 @@ class Scout(Guardian):
     rarity = Rarity.Common
 
 
-@register_card_type('Guardians')
 class Guard(Guardian):
     hp_base = 800
     attack_base = 67
@@ -61,7 +59,6 @@ class Guard(Guardian):
     rarity = Rarity.Common
 
 
-@register_card_type('Guardians')
 class Healer(AOE, Heal, Guardian):
     hp_base = 800
     base_heal = 60
@@ -76,7 +73,6 @@ class Healer(AOE, Heal, Guardian):
     rarity = Rarity.Rare
 
 
-@register_card_type('Guardians')
 class Follet(Guardian):
     hp_base = 760
     attack_base = 135
@@ -91,7 +87,6 @@ class Follet(Guardian):
     rarity = Rarity.Common
 
 
-@register_card_type('Guardians')
 class Shield(Guardian):
     hp_base = 1425
     attack_base = 205
@@ -106,7 +101,6 @@ class Shield(Guardian):
     rarity = Rarity.Rare
 
 
-@register_card_type('Guardians')
 class Jetpack(Guardian):
     hp_base = 990
     attack_base = 175
@@ -122,7 +116,6 @@ class Jetpack(Guardian):
     rarity = Rarity.Rare
 
 
-@register_card_type('Guardians')
 class Knight(Guardian):
     hp_base = 1254
     attack_base = 135
@@ -138,7 +131,6 @@ class Knight(Guardian):
     rarity = Rarity.Rare
 
 
-@register_card_type('Guardians')
 class Sword(AOE, Guardian):
     hp_base = 1024
     attack_base = 143
@@ -154,7 +146,6 @@ class Sword(AOE, Guardian):
     gold_cost = 10000
 
 
-@register_card_type('Guardians')
 class Sparte(Guardian):
     hp_base = 2895
     attack_base = 260
@@ -170,7 +161,6 @@ class Sparte(Guardian):
     rarity = Rarity.Epic
 
 
-@register_card_type('Guardians')
 @reincarnation
 class SparteLeg(Sparte):
     armor_boost = 2
@@ -178,7 +168,6 @@ class SparteLeg(Sparte):
     max_armor_boost = 16
 
 
-@register_card_type('Guardians')
 class Paladin(Guardian):
     hp_base = 2561
     attack_base = 253
@@ -194,13 +183,11 @@ class Paladin(Guardian):
     rarity = Rarity.Epic
 
 
-@register_card_type('Guardians')
 @reincarnation
 class PaladinLeg(Paladin):
     charge_resistance = 0.5
 
 
-@register_card_type('Guardians')
 class Marchal(Guardian):
     hp_base = 2500
     attack_base = 299
@@ -216,13 +203,11 @@ class Marchal(Guardian):
     rarity = Rarity.Epic
 
 
-@register_card_type('Guardians')
 @reincarnation
 class MarchalLeg(Marchal):
     multiple_target_limit = 3
 
 
-@register_card_type('Guardians')
 class Griffon(Guardian):
     hp_base = 1794
     attack_base = 347
@@ -239,13 +224,11 @@ class Griffon(Guardian):
     rarity = Rarity.Epic
 
 
-@register_card_type('Guardians')
 @reincarnation
 class GriffonLeg(Griffon):
     esquive_next_attack_boost = 3.0
 
 
-@register_card_type('Guardians')
 class Hammer(Guardian):
     hp_base = 2145
     attack_base = 364
@@ -261,13 +244,11 @@ class Hammer(Guardian):
     rarity = Rarity.Epic
 
 
-@register_card_type('Guardians')
 @reincarnation
 class HammerLeg(Hammer):
     spell_max_stacking = 3
 
 
-@register_card_type('Guardians')
 class Canonner(Guardian, AOE):
     hp_base = 4000
     attack_base = 204
@@ -282,7 +263,6 @@ class Canonner(Guardian, AOE):
     rarity = Rarity.Legendary
 
 
-@register_card_type('Guardians')
 class DemonSlayer(Guardian):
     hp_base = 3750
     attack_base = 230
@@ -299,7 +279,6 @@ class DemonSlayer(Guardian):
     rarity = Rarity.Legendary
 
 
-@register_card_type('Guardians')
 class Golem(AOE, Guardian):
     hp_base = 4849
     attack_base = 367
@@ -315,7 +294,6 @@ class Golem(AOE, Guardian):
     rarity = Rarity.Legendary
 
 
-@register_card_type('Guardians')
 class Seraphin(Guardian, Heal):
     hp_base = 3718
     attack_base = 478
@@ -343,7 +321,6 @@ class Seraphin(Guardian, Heal):
             )
 
 
-@register_card_type('Guardians')
 class Wizard(Guardian):
     hp_base = 4400
     attack_base = 500
@@ -357,3 +334,7 @@ class Wizard(Guardian):
     # TODO: stun
     bossfight_cost = 190
     rarity = Rarity.Legendary
+
+
+# Register all defined cards
+GUARDIANS.register_cards_in_module(Guardian, __name__)

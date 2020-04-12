@@ -19,9 +19,9 @@
 """
 from typing import Union, Type
 
+from common.card_categories import MODULES
 from common.rarity import Rarity
 from units.base_units import AOE, COE, BaseUnit, reincarnation
-from common.cards import register_card_type
 from common.target_types import TargetType
 
 
@@ -32,7 +32,6 @@ class ModuleWeapon(BaseUnit):
         super().__init__(level, stars, None)
 
 
-@register_card_type('Modules')
 class Balista(ModuleWeapon):
     attack_base = 53
     hit_frequency = 2
@@ -42,7 +41,6 @@ class Balista(ModuleWeapon):
     rarity = Rarity.Common
 
 
-@register_card_type('Modules')
 class Mortar(AOE, ModuleWeapon):
     attack_base = 115
     hit_frequency = 0.4
@@ -52,7 +50,6 @@ class Mortar(AOE, ModuleWeapon):
     rarity = Rarity.Rare
 
 
-@register_card_type('Modules')
 class Shotgun(COE, ModuleWeapon):
     attack_base = 77
     hit_frequency = 0.8
@@ -62,7 +59,6 @@ class Shotgun(COE, ModuleWeapon):
     rarity = Rarity.Rare
 
 
-@register_card_type('Modules')
 class Chaingun(ModuleWeapon):
     attack_base = 125
     hit_frequency = 2
@@ -79,7 +75,6 @@ class Chaingun(ModuleWeapon):
         return dmg * (1 if target.shooted_as is TargetType.GROUND else self.anti_air_bonus)  # Damage boost against air unit
 
 
-@register_card_type('Modules')
 @reincarnation
 class ChaingunLeg(Chaingun):
     multiple_target_limit = 2
@@ -93,7 +88,6 @@ class ChaingunLeg(Chaingun):
         return dmg * (1. if target_index == 0 else 0.5)  # Damage reduced on the second target
 
 
-@register_card_type('Modules')
 class Laser(ModuleWeapon):
     attack_base = 86
     hit_frequency = 2
@@ -105,14 +99,12 @@ class Laser(ModuleWeapon):
     rarity = Rarity.Epic
 
 
-@register_card_type('Modules')
 @reincarnation
 class LaserLeg(Laser):
     consecutive_hit_attack_boost = 0.5
     # TODO: slowdown effect
 
 
-@register_card_type('Modules')
 class FlameTrower(COE, ModuleWeapon):
     attack_base = 43
     hit_frequency = 2
@@ -122,13 +114,11 @@ class FlameTrower(COE, ModuleWeapon):
     rarity = Rarity.Epic
 
 
-@register_card_type('Modules')
 @reincarnation
 class FlameTrowerLeg(FlameTrower):
     pass
 
 
-@register_card_type('Modules')
 class Tesla(COE, ModuleWeapon):
     attack_base = 144
     hit_frequency = 1
@@ -149,7 +139,6 @@ class Tesla(COE, ModuleWeapon):
             )
 
 
-@register_card_type('Modules')
 class Barrier(ModuleWeapon):
     attack_base = 300
     hit_frequency = 1
@@ -160,7 +149,6 @@ class Barrier(ModuleWeapon):
     rarity = Rarity.Legendary
 
 
-@register_card_type('Modules')
 class Harpon(ModuleWeapon):
     attack_base = 639
     hit_frequency = .7
@@ -169,3 +157,7 @@ class Harpon(ModuleWeapon):
     shoot_to = TargetType.AIR_GROUND
     # Todo slow effect
     rarity = Rarity.Legendary
+
+
+# Register all defined cards
+MODULES.register_cards_in_module(ModuleWeapon, __name__)

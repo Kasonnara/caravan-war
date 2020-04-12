@@ -17,48 +17,54 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from common.card_categories import SPELLS
+from common.card_categories import CONVOY_BOOSTS
 from common.cards import Card
 from common.rarity import Rarity
-from utils.class_property import classproperty
 
 
-class Spell(Card):
-    def __init__(self, level: int):
-        super().__init__(level)
-
-    @classproperty
-    def gem_cost(cls):
-        return cls.rarity.spell_gem_cost
-
-    @classmethod
-    def gold_cost(cls, ligue: 'Ligue'):
-        return cls.rarity.spell_gold_cost(ligue)
+class ConvoyBoost(Card):
+    pass
 
 
-class Arrow(Spell):
-    rarity = Rarity.Common
-
-
-class Landmine(Spell):
-    rarity = Rarity.Common
-
-
-class Storm(Spell):
-    rarity = Rarity.Epic
-
-
-class Ice(Spell):
-    rarity = Rarity.Epic
-
-
-class Poison(Spell):
+class AttackSpeedBoost(ConvoyBoost):
+    boost = 8
     rarity = Rarity.Rare
+    # upgrade cost : 11->12=407000, 12->13=711000, 14=1255000
+    # speed_factor lvl 13 = 11.6
 
 
-class Meteor(Spell):
+class AttackBoost(ConvoyBoost):
+    boost = 4
+    rarity = Rarity.Common
+    # atk_factor lvl 11=1.06, 12=1.065
+
+
+class LifeBoost(ConvoyBoost):
+    boost = 4
+    rarity = Rarity.Common
+    # life_factor lvl 11=1.06, 12=1.065
+
+
+class SpeedBoost(ConvoyBoost):
+    boost = 8
     rarity = Rarity.Rare
+    # upgrade cost : 12->13=711000, 14=1255000
+    # speed_factor lvl 13 = 11.6
+
+
+class VehicleArmor(ConvoyBoost):
+    boost = 15
+    rarity = Rarity.Epic
+    # upgrade cost : 11->12=542000, 12->13=948000, 14=1673000, 15=2.865
+    # hp_boost 11=1.2, 12=1.205
+
+
+class ModuleBoost(ConvoyBoost):
+    boost = 15
+    rarity = Rarity.Epic
+    # upgrade cost : 11->12=542000, 12->13=948000, 14=1673000, 15=2.865
+    # damage_boost 11=1.2, 12=1.205
 
 
 # Register all defined cards
-SPELLS.register_cards_in_module(Spell, __name__)
+CONVOY_BOOSTS.register_cards_in_module(ConvoyBoost, __name__)

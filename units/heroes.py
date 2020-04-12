@@ -17,6 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+from common.card_categories import HEROES
 from common.target_types import TargetType
 from units.base_units import MovableUnit
 
@@ -24,6 +25,7 @@ from units.base_units import MovableUnit
 class Hero(MovableUnit):
     level_grow_factor = 1.018
     ultimate = False
+    cost = 1
 
 
 class HeroSpell:
@@ -150,3 +152,7 @@ class Dalvir(Hero):
             self.spells.append(self.KnightFury(knight_fury))
         if iron_protection is not None:
             self.spells.append(self.IronProtection(iron_protection))
+
+
+# Register all defined cards
+HEROES.register_cards_in_module(Hero, __name__)

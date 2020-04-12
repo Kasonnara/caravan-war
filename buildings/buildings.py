@@ -18,10 +18,9 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from buildings.base_buildings import Building
-from common.cards import register_card_type
+from common.card_categories import BUILDINGS
 
 
-@register_card_type('Building')
 class Mill(Building):
     upgrade_cost = [
         (0, gold) for gold in [
@@ -43,22 +42,18 @@ class Mill(Building):
         ]
 
 
-@register_card_type('Building')
 class TransportStation(Building):
     pass
 
 
-@register_card_type('Building')
 class Bank(Building):
     pass
 
 
-@register_card_type('Building')
 class Storage(Building):
     pass
 
 
-@register_card_type('Building')
 class Laboratory(Building):
     upgrade_cost = [
         (0, gold) for gold in [
@@ -84,7 +79,6 @@ class Laboratory(Building):
         ]
 
 
-@register_card_type('Building')
 class Tavern(Building):
     @property
     def bandit_power(self):
@@ -97,41 +91,39 @@ class Tavern(Building):
         )
 
 
-@register_card_type('Building')
 class Camp(Building):
     pass
 
 
-@register_card_type('Building')
 class Academy(Building):
     pass
 
 
-@register_card_type('Building')
 class Weaponsmith(Building):
     pass
 
 
-@register_card_type('Building')
 class Garage(Building):
     pass
 
 
-@register_card_type('Building')
 class WorkShop(Building):
     pass
 
 
-@register_card_type('Building')
 class Forge(Building):
     pass
 
 
-@register_card_type('Building')
 class HeroTemple(Building):
     pass
 
 
-@register_card_type('Building')
 class Altar(Building):
     pass
+
+
+# Register all defined cards
+BUILDINGS.register_cards_in_module(Building, __name__)
+
+

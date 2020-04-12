@@ -20,10 +20,10 @@
 from typing import Tuple
 
 from buildings.base_buildings import Building
-from common.cards import Upgrade, register_card_type
+from common.cards import Upgrade
+from common.card_categories import BUILDINGS
 
 
-@register_card_type('Building')
 class HQ(Building):
     upgrade_cost = [
         (400, 800),
@@ -81,6 +81,10 @@ class HQ(Building):
     @property
     def guardian_power(self):
         return 6 * self.wave_lenght * sum(self.wave_number) # FIXME verify formulas for level > 15. Does the 2nd convoy follow the same rules?
+
+
+# Register all defined cards
+BUILDINGS.register_cards_in_module(Building, __name__)
 
 
 if __name__ == '__main__':

@@ -5,7 +5,7 @@ their levels, their stars, theirs equipments, etc.
 You must a least replace all occurrences of "FILL_*" for example <FILL_BUILDING_LEVEL>
 
 To simplify filling value I suggest that you Find+ReplaceAll occurrences of <FILL_BUILDING_LEVEL>, <FILL_ITEM_LEVEL>,
-<FILL_BANDIT_LEVEL>, <FILL_GUARDIAN_LEVEL>, <FILL_VEHICULE_LEVEL> and <FILL_TOWER_LEVEL> to the value that correspond to
+<FILL_BANDIT_LEVEL>, <FILL_GUARDIAN_LEVEL>, <FILL_VEHICLE_LEVEL> and <FILL_TOWER_LEVEL> to the value that correspond to
 the majority of your units, then finish by manually setting remaining values.
 
 """
@@ -15,8 +15,9 @@ from typing import Type
 
 from buildings.buildings import Mill, TransportStation, Bank, Storage, Laboratory, Tavern, Camp, Academy, Weaponsmith, \
     Garage, WorkShop, Forge, HeroTemple, Altar
-from spells.spells import Ice, Storm, Meteor, Poison, Landmine, Arrow, VehiculeBoost, ModuleBoost, SpeedBoost, \
-    AttackSpeedBoost, AttackBoost, LifeBoost
+from common.card_categories import CardCategories
+from spells.spells import Ice, Storm, Meteor, Poison, Landmine, Arrow
+from spells.convoy_boosts import AttackSpeedBoost, AttackBoost, LifeBoost, SpeedBoost, VehicleArmor, ModuleBoost
 from units.bandits import Demon, Djin, Inferno, VikingLeg, StealerLeg, Chaman, DarkKnightLeg, Mecha, DarkKnight, Lich, \
     Viking, Stealer, Berserk, Spider, Hunter, Brute, Alchimist, Maraudeur, Lutin, Drone, Archer, Condor, Momie, LichLeg, \
     MomieLeg, CondorLeg
@@ -27,7 +28,7 @@ from units.guardians import Seraphin, Golem, DemonSlayer, Canonner, Paladin, Ham
 from units.heroes import Zora, Dalvir
 from units.towers import Sentinelle, Arbalete, Eolance, Sniper, HeavySniper, Mage, Lightning, Stormspire, Fire, Bomber, \
     Canon, Hydra, MissileLaucher, Hospital, Armory, Tambour, Garnison
-from units.vehicules import Train, Dirigeable, Helicopter, Wagon, Chariot, Charrette, Speeder, Buggy, WagonLeg, \
+from units.vehicles import Train, Dirigeable, Helicopter, Wagon, Chariot, Charrette, Speeder, Buggy, WagonLeg, \
     HelicopterLeg, BuggyLeg
 from units.modules import Shotgun, Mortar, Chaingun, Laser, Tesla, FlameTrower, Balista, LaserLeg, ChaingunLeg, \
     FlameTrowerLeg, Barrier, Harpon
@@ -119,18 +120,18 @@ bandits = {
     CardStock(Drone(FILL_BANDIT_LEVEL, stars=0, weapon_item=Weapon(FILL_ITEM_LEVEL), armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
     }
 
-vehicules = {
-    CardStock(Train(FILL_VEHICULE_LEVEL, stars=0, armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
-    CardStock(Dirigeable(FILL_VEHICULE_LEVEL, stars=0, armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
-    CardStock(Helicopter(FILL_VEHICULE_LEVEL, stars=0, armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
-    CardStock(Wagon(FILL_VEHICULE_LEVEL, stars=0, armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
-    CardStock(Charrette(FILL_VEHICULE_LEVEL, stars=0, armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
-    CardStock(Chariot(FILL_VEHICULE_LEVEL, stars=0, armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
-    CardStock(Speeder(FILL_VEHICULE_LEVEL, stars=0, armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
-    CardStock(Buggy(FILL_VEHICULE_LEVEL, stars=0, armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
-    CardStock(WagonLeg(FILL_VEHICULE_LEVEL, stars=0, armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
-    CardStock(HelicopterLeg(FILL_VEHICULE_LEVEL, stars=0, armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
-    CardStock(BuggyLeg(FILL_VEHICULE_LEVEL, stars=0, armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
+vehicles = {
+    CardStock(Train(FILL_VEHICLE_LEVEL, stars=0, armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
+    CardStock(Dirigeable(FILL_VEHICLE_LEVEL, stars=0, armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
+    CardStock(Helicopter(FILL_VEHICLE_LEVEL, stars=0, armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
+    CardStock(Wagon(FILL_VEHICLE_LEVEL, stars=0, armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
+    CardStock(Charrette(FILL_VEHICLE_LEVEL, stars=0, armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
+    CardStock(Chariot(FILL_VEHICLE_LEVEL, stars=0, armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
+    CardStock(Speeder(FILL_VEHICLE_LEVEL, stars=0, armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
+    CardStock(Buggy(FILL_VEHICLE_LEVEL, stars=0, armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
+    CardStock(WagonLeg(FILL_VEHICLE_LEVEL, stars=0, armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
+    CardStock(HelicopterLeg(FILL_VEHICLE_LEVEL, stars=0, armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
+    CardStock(BuggyLeg(FILL_VEHICLE_LEVEL, stars=0, armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
 }
 
 modules = {
@@ -158,7 +159,7 @@ spells = {
     }
 
 convoy_boosts = {
-    VehiculeBoost(FILL_SPELL_LEVEL),
+    VehicleArmor(FILL_SPELL_LEVEL),
     ModuleBoost(FILL_SPELL_LEVEL),
     SpeedBoost(FILL_SPELL_LEVEL),
     AttackSpeedBoost(FILL_SPELL_LEVEL),
@@ -200,14 +201,14 @@ towers = {
     }
 
 MY_CARDS = {
-        'Guardians': guardians,
-        "Bandits": bandits,
-        "Vehicules": vehicules,
-        "Modules": modules,
-        "spells": spells,
-        "Convoy Boosts": convoy_boosts,
-        "Heroes": heroes,
-        'Buildings': buildings,
-        'Towers': towers,
+        CardCategories.GUARDIANS: guardians,
+        CardCategories.BANDITS: bandits,
+        CardCategories.VEHICLES: vehicles,
+        CardCategories.MODULES: modules,
+        CardCategories.SPELLS: spells,
+        CardCategories.CONVOY_BOOSTS: convoy_boosts,
+        CardCategories.HEROES: heroes,
+        CardCategories.BUILDINGS: buildings,
+        CardCategories.TOWERS: towers,
     }
 """Just a dictionary to access stocks of this module using category strings"""

@@ -24,11 +24,18 @@ from typing import List
 import matplotlib.pyplot as plt
 
 from units.base_units import MAX_LEVEL, FakeMovableUnit, MovableUnit, BaseUnit
-from common.cards import CARD_DICTIONNARY
+from common.card_categories import TOWERS, MODULES, BANDITS, GUARDIANS, HEROES, VEHICLES, ALL_CARD_TYPES
 import units.bandits as bandits
 from config.my_cards import MY_CARDS, CardStock
 
-COST_DISPLAY = {'Towers': "cost", 'Modules': "1", 'Bandits': "cost", 'Guardians': "used cell", 'Vehicules': "used cell"}
+COST_DISPLAY = {
+    TOWERS: "cost",
+    MODULES: "1",
+    BANDITS: "cost",
+    GUARDIANS: "used cell",
+    VEHICLES: "used cell",
+    HEROES: "1",
+    }
 
 # TODO: split output scores in different labelized pandas dataframe (to sum in general case and plot in different colors in bar plot)
 
@@ -64,13 +71,13 @@ class XAxis(Enum):
 
 
 class YAxis(Enum):
-    DPS = (('Towers', 'Modules', 'Bandits', 'Guardians'),
+    DPS = ((TOWERS, MODULES, BANDITS, GUARDIANS, HEROES),
            "damage / sec{divide_cost}",
            lambda unit_type, targets: unit_type.dps_score(targets))
-    HP = (('Vehicules', 'Bandits', 'Guardians'),
+    HP = ((VEHICLES, BANDITS, GUARDIANS, HEROES),
           "hp * armor * esquive {divide_cost}",
           lambda unit_type, targets: unit_type.hp_score(targets))
-    SCORE = (('Towers', 'Modules', 'Vehicules', 'Bandits', 'Guardians'),
+    SCORE = ((TOWERS, MODULES, VEHICLES, BANDITS, GUARDIANS, HEROES),
              "score",
              lambda unit_type, targets: unit_type.score(targets))
 
@@ -91,13 +98,13 @@ def plot_dps(targets_sample: List[MovableUnit], x_axis=XAxis.ENEMY_NUMBER, y_axi
     assert (not use_stock) or (x_axis is not XAxis.LEVEL and x_axis is not XAxis.STAR), "You can't use your card stock (that define level and star of card) when using LEVEL or STAR as X avis variable"
 
     # Select the unit reference set (e.g. your own card stock or the absolute unit class list)
-    unit_dictionnary = MY_CARDS if use_stock else CARD_DICTIONNARY
+    unit_dictionnary = MY_CARDS if use_stock else ALL_CARD_TYPES
 
     figures = []
     for category in y_axis.evaluable_categories:
         # generate plot window
         fig = plt.figure()
-        ax = plt.subplot(1, 1, 1, title=category + '\n' + x_axis.get_subtitle(targets_sample, **kwargs))
+        ax = plt.subplot(1, 1, 1, title=category.display_name + '\n' + x_axis.get_subtitle(targets_sample, **kwargs))
         ax.set_xlabel(x_axis.get_legend())
         ax.set_ylabel(y_axis.get_legend(category))
 

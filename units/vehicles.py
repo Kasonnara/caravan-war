@@ -19,19 +19,18 @@
 """
 from typing import List
 
+from common.card_categories import VEHICLES
 from common.rarity import Rarity
-from common.cards import register_card_type
 from units.base_units import MovableUnit, BaseUnit, reincarnation
 from common.target_types import TargetType
 
 
-class Vehicule(MovableUnit):
+class Vehicle(MovableUnit):
     move_speed = 1.2
     weapon_slot = 1
 
 
-@register_card_type('Vehicules')
-class Charrette(Vehicule):
+class Charrette(Vehicle):
     hp_base = 2280
     shooted_as = TargetType.GROUND
     armor = 3
@@ -39,8 +38,7 @@ class Charrette(Vehicule):
     rarity = Rarity.Common
 
 
-@register_card_type('Vehicules')
-class Chariot(Vehicule):
+class Chariot(Vehicle):
     hp_base = 1710
     shooted_as = TargetType.GROUND
     armor = 3
@@ -49,8 +47,7 @@ class Chariot(Vehicule):
     rarity = Rarity.Rare
 
 
-@register_card_type('Vehicules')
-class Dirigeable(Vehicule):
+class Dirigeable(Vehicle):
     hp_base = 3705
     shooted_as = TargetType.AIR
     armor = 3
@@ -59,8 +56,7 @@ class Dirigeable(Vehicule):
     rarity = Rarity.Legendary
 
 
-@register_card_type('Vehicules')
-class Speeder(Vehicule):
+class Speeder(Vehicle):
     hp_base = 3800
     shooted_as = TargetType.AIR
     armor = 5
@@ -70,8 +66,7 @@ class Speeder(Vehicule):
     rarity = Rarity.Legendary
 
 
-@register_card_type('Vehicules')
-class Train(Vehicule):
+class Train(Vehicle):
     hp_base = 4251
     shooted_as = TargetType.GROUND
     armor = 8
@@ -86,8 +81,7 @@ class Train(Vehicule):
             )
 
 
-@register_card_type('Vehicules')
-class Helicopter(Vehicule):
+class Helicopter(Vehicle):
     hp_base = 2444
     shooted_as = TargetType.AIR
     armor = 0
@@ -95,14 +89,12 @@ class Helicopter(Vehicule):
     rarity = Rarity.Epic
 
 
-@register_card_type('Vehicules')
 @reincarnation
 class HelicopterLeg(Helicopter):
     pass
 
 
-@register_card_type('Vehicules')
-class Wagon(Vehicule):
+class Wagon(Vehicle):
     hp_base = 3250
     shooted_as = TargetType.GROUND
     armor = 5
@@ -110,14 +102,12 @@ class Wagon(Vehicule):
     rarity = Rarity.Epic
 
 
-@register_card_type('Vehicules')
 @reincarnation
 class WagonLeg(Wagon):
     pass
 
 
-@register_card_type('Vehicules')
-class Buggy(Vehicule):
+class Buggy(Vehicle):
     hp_base = 3000
     move_speed = 1.8
     armor = 4
@@ -126,7 +116,10 @@ class Buggy(Vehicule):
     # TODO spell
 
 
-@register_card_type('Vehicules')
 @reincarnation
 class BuggyLeg(Buggy):
     pass
+
+
+# Register all defined cards in CARD_DICTIONNARY
+VEHICLES.register_cards_in_module(Vehicle, __name__)

@@ -77,14 +77,3 @@ class Card(Upgradable):
     @classmethod
     def gold_cost(cls, ligue: 'Ligue'):
         return cls.rarity.gold_cost(ligue)
-
-
-CARD_DICTIONNARY = defaultdict(list)
-
-
-def register_card_type(category: str):
-    def register_card_type_aux(cls: Type[Upgradable]):
-        cls.category = category
-        CARD_DICTIONNARY[category].append(cls)
-        return cls
-    return register_card_type_aux

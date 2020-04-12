@@ -13,8 +13,9 @@ from typing import Type
 
 from buildings.buildings import Mill, TransportStation, Bank, Storage, Laboratory, Tavern, Camp, Academy, Weaponsmith, \
     Garage, WorkShop, Forge, HeroTemple, Altar
-from spells.spells import Ice, Storm, Meteor, Poison, Landmine, Arrow, VehiculeBoost, ModuleBoost, SpeedBoost, \
-    AttackSpeedBoost, AttackBoost, LifeBoost
+from common.card_categories import CardCategories
+from spells.spells import Ice, Storm, Meteor, Poison, Landmine, Arrow
+from spells.convoy_boosts import AttackSpeedBoost, AttackBoost, LifeBoost, SpeedBoost, VehicleArmor, ModuleBoost
 from units.bandits import Demon, Djin, Inferno, VikingLeg, StealerLeg, Chaman, DarkKnightLeg, Mecha, DarkKnight, Lich, \
     Viking, Stealer, Berserk, Spider, Hunter, Brute, Alchimist, Maraudeur, Lutin, Drone, Archer, Condor, Momie, LichLeg, \
     MomieLeg, CondorLeg
@@ -25,7 +26,7 @@ from units.guardians import Seraphin, Golem, DemonSlayer, Canonner, Paladin, Ham
 from units.heroes import Zora, Dalvir
 from units.towers import Sentinelle, Arbalete, Eolance, Sniper, HeavySniper, Mage, Lightning, Stormspire, Fire, Bomber, \
     Canon, Hydra, MissileLaucher, Hospital, Armory, Tambour, Garnison
-from units.vehicules import Train, Dirigeable, Helicopter, Wagon, Chariot, Charrette, Speeder, Buggy, WagonLeg, \
+from units.vehicles import Train, Dirigeable, Helicopter, Wagon, Chariot, Charrette, Speeder, Buggy, WagonLeg, \
     HelicopterLeg, BuggyLeg
 from units.modules import Shotgun, Mortar, Chaingun, Laser, Tesla, FlameTrower, Balista, LaserLeg, ChaingunLeg, \
     FlameTrowerLeg, Barrier, Harpon
@@ -117,7 +118,7 @@ bandits = {
     CardStock(Drone(15, stars=0, weapon_item=Weapon(7), armor_item=Armor(7)), 100),
     }
 
-vehicules = {
+vehicles = {
     CardStock(Train(15, stars=0, armor_item=Armor(7)), 6),
     CardStock(Dirigeable(15, stars=0, armor_item=Armor(7)), 6),
     CardStock(Helicopter(15, stars=0, armor_item=Armor(7)), 1),
@@ -156,7 +157,7 @@ spells = {
     }
 
 convoy_boosts = {
-    VehiculeBoost(15),
+    VehicleArmor(15),
     ModuleBoost(15),
     SpeedBoost(15),
     AttackSpeedBoost(15),
@@ -198,14 +199,14 @@ towers = {
     }
 
 MY_CARDS = {
-        'Guardians': guardians,
-        "Bandits": bandits,
-        "Vehicules": vehicules,
-        "Modules": modules,
-        "spells": spells,
-        "Convoy Boosts": convoy_boosts,
-        "Heroes": heroes,
-        'Buildings': buildings,
-        'Towers': towers,
+        CardCategories.GUARDIANS: guardians,
+        CardCategories.BANDITS: bandits,
+        CardCategories.VEHICLES: vehicles,
+        CardCategories.MODULES: modules,
+        CardCategories.SPELLS: spells,
+        CardCategories.CONVOY_BOOSTS: convoy_boosts,
+        CardCategories.HEROES: heroes,
+        CardCategories.BUILDINGS: buildings,
+        CardCategories.TOWERS: towers,
     }
 """Just a dictionary to access stocks of this module using category strings"""
