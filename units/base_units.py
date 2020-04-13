@@ -136,11 +136,11 @@ class BaseUnit(Card):
             # Compute and cache representation value
             internal_values = []
             if self.level > 1:
-                internal_values.append("lvl=" + self.level)
+                internal_values.append("lvl=" + str(self.level))
             if self.stars > 0:
-                internal_values.append("stars=" + self.stars)
+                internal_values.append("stars=" + str(self.stars))
             if self.weapon is not None:
-                internal_values.append("weapon=" + self.weapon.level)
+                internal_values.append("weapon=" + str(self.weapon.level))
             self._repr = self.__class__.__name__.lower() + ('['+','.join(internal_values)+']' if len(internal_values) > 0 else "")
         return self._repr
 
@@ -276,7 +276,7 @@ class FakeMovableUnit(MovableUnit):
                 internal_values.append("weapon=" + self.weapon.level)
             if self.weapon is not None:
                 internal_values.append("armor=" + self.weapon.level)
-            self._repr = self.shooted_as.__name__.lower() + "-unit" + (
+            self._repr = self.shooted_as.name.lower() + "-unit" + (
                 '[' + ','.join(internal_values) + ']' if len(internal_values) > 0 else "")
         return self._repr
 
