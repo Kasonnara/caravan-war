@@ -18,6 +18,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from buildings.base_buildings import Building
+from buildings.headquarters import HQ
+
 from common.card_categories import BUILDINGS
 
 
@@ -127,3 +129,19 @@ class Altar(Building):
 BUILDINGS.register_cards_in_module(Building, __name__)
 
 
+#  Set back the HQ requirement
+#  Create a temporary building dict
+buildings_dict = {
+    building.__name__: building
+    for building in BUILDINGS
+    }
+# Generate the list of requirements
+HQ.upgrade_requirements = [
+    [HQ(level)]
+    + list(
+        buildings_dict[str_requirement](level)
+        for str_requirement in str_requirements
+        )
+    for level, str_requirements in enumerate(HQ._upgrade_requirements_str, 1)
+    ]
+del buildings_dict

@@ -46,9 +46,38 @@ class HQ(Building):
         (117800000, 546510000),
         (212300000, 983100000),
         ]
-    upgrade_requirements = [
-        # TODO
+
+    # At this point, other buildings classes don't exist yet, so we just store their names in this temporary attribute,
+    # and later, this list will be converted and stored into upgrade_requirements.
+    _upgrade_requirements_str = [
+        (),  # level 1 -> 2
+        ("Camp", "Academy"),
+        ("Tavern", "Garage"),
+        ("WorkShop", "Weaponsmith"),
+        ("Mill", "Camp", "Academy"),
+        ("TransportStation", "Laboratory", "Tavern"),
+        ("Mill", "Camp", "WorkShop"),
+        ("TransportStation", "WorkShop", "Garage"),
+        ("Tavern", "Academy", "Weaponsmith"),
+        ("Mill", "Camp", "Weaponsmith"), # level 10 -> 11
+        ("TransportStation", "Laboratory", "Tavern"),
+        ("Mill", "Camp", "WorkShop"),
+        ("TransportStation", "Weaponsmith", "Garage"),
+        ("Tavern", "Academy", "WorkShop"),
+        ("Mill", "Camp", "Weaponsmith"),
+        ("TransportStation", "Laboratory", "Tavern"),  # level 16 -> 17
+        ("Mill", "Camp", "WorkShop"),
+        ("TransportStation", "Weaponsmith", "Garage"),
+        ("Tavern", "Academy", "WorkShop"),
+        ("Tavern", "Academy", "WorkShop"),  # level 19 -> 20
         ]
+    """List the buildings needed for upgrading the HQ. Here requirements are stored as strings, you will probably
+    be more interested in the attribute <upgrade_requirements> which is the same but with classes instead."""
+    upgrade_requirements = None  # This attribute will be defined later, once other building classes will be initialized
+    """List the buildings needed for upgrading the HQ. 
+    upgrade_requirements[n] store the requirement for upgrading from level n+1 to n+2
+    (Warning: be aware that this attribute is set to None, until 
+    other buildings classes are defined, a.k.a after buildings/buildings.py is imported for the first time)"""
 
     def get_upgrade(self):
         # Special case for the HQ which have multiple changing requirements
