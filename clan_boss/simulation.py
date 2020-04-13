@@ -24,7 +24,7 @@ from common.target_types import TargetType
 from config import my_cards
 from units.bandits import Berserk, Demon, Chaman, Bandit
 from config.my_cards import CardStock
-from units.vehicles import Vehicle
+from units.base_units import MovableUnit
 
 PATH_LENGHT = 85  # Not used yet
 FIRST_BUSH_DISTANCE = 15  # Not used yet
@@ -38,7 +38,7 @@ UNIT_COUNT_LIMIT = 10
 """Accelerate the process by skipping army compositions of a lot a small units"""
 
 
-class ClanBoss(Vehicle):
+class ClanBoss(MovableUnit):
     move_speed = 1  # TODO verify
     shooted_as = TargetType.GROUND
     armor = 0
