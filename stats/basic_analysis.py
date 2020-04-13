@@ -23,6 +23,7 @@ from typing import List
 
 import matplotlib.pyplot as plt
 
+from common.target_types import TargetType
 from units.base_units import MAX_LEVEL, FakeMovableUnit, MovableUnit, BaseUnit
 from common.card_categories import TOWERS, MODULES, BANDITS, GUARDIANS, HEROES, VEHICLES, ALL_CARD_TYPES
 import units.bandits as bandits
@@ -133,9 +134,9 @@ def plot_dps(targets_sample: List[MovableUnit], x_axis=XAxis.ENEMY_NUMBER, y_axi
                     xs.append(x)
             if len(ys) > 0:
                 if x_axis is not XAxis.NONE:
-                    ax.plot(xs, ys, ["+-", "+-.", "+:"][k//10], label=unit_type.__name__)
+                    ax.plot(xs, ys, ["+-", "+-.", "+:"][k//10], label=type(unit).__name__)
                 else:
-                    xs_if_no_x_axis.append(unit_type.__name__)
+                    xs_if_no_x_axis.append(type(unit).__name__)
                     ys_if_no_x_axis.append(y)
                 y_max = max(y_max, max(ys))
         if x_axis is XAxis.NONE:
@@ -150,10 +151,25 @@ def plot_dps(targets_sample: List[MovableUnit], x_axis=XAxis.ENEMY_NUMBER, y_axi
 if __name__ == '__main__':
     # Generate target sample
 
-    #targets_sample = [FakeMovableUnit(TargetType.AIR_GROUND, armor=0, armor_piercing=0, can_miss=True)]
-    targets_sample = [bandits.Mecha(1, stars=4)]
+    # >>>>>>>>>>>>>>>>>>>> You may want to change the following parameters to adjust the plots <<<<<<<<<<<<<<<<<<<<
+
+    # Select the reference unit to shoot to (in practice only counts: its armor and if it flies or not)
+    targets_sample = [FakeMovableUnit(TargetType.AIR_GROUND, armor=0, armor_piercing=0, can_miss=True)]
+    #targets_sample = [bandits.Mecha(1, stars=4)]
 
 
-    #figures = plot_dps(targets_sample, x_axis=XAxis.ENEMY_NUMBER)
-    figures = plot_dps(targets_sample, x_axis=XAxis.ENEMY_NUMBER, y_axis=YAxis.SCORE)
+    figures = plot_dps(
+        targets_sample,
+        x_axis=XAxis.ENEMY_NUMBER,  # Which value change? LEVEL, STAR, ENEMY_NUMBER (in AOE), or NONE
+        y_axis=YAxis.SCORE,         #
+
+        # Optionnal arguments
+        use_stock=False,             # If true, use your own card levels, stars and equipment; if false use constant values
+
+        #constant_level=1,          # The default level value
+        #constant_enemy_number=1,   # The default enemy_number value
+        #constant_star=1,           # The default star value
+
+        #variable_range=7,          # The range on which to plot for x_axis
+        )
     plt.show()
