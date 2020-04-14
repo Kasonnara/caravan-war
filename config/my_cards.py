@@ -13,6 +13,7 @@ from typing import Type
 
 from buildings.buildings import Mill, TransportStation, Bank, Storage, Laboratory, Tavern, Camp, Academy, Weaponsmith, \
     Garage, WorkShop, Forge, HeroTemple, Altar
+from buildings.headquarters import HQ
 from common.card_categories import CardCategories
 from spells.spells import Ice, Storm, Meteor, Poison, Landmine, Arrow
 from spells.convoy_boosts import AttackSpeedBoost, AttackBoost, LifeBoost, SpeedBoost, VehicleArmor, ModuleBoost
@@ -36,6 +37,7 @@ CardStock = namedtuple('CardStock', 'card quantity')
 an be obtained."""
 
 buildings = {
+    HQ(15),
     Mill(15),
     TransportStation(15),
     Bank(15),
