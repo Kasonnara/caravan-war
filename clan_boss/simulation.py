@@ -106,7 +106,7 @@ def evaluate(bandit_stocks: List[CardStock] = my_cards.bandits):
     # Sort
     chase_damage = sorted(chase_damage, key=lambda x: x[2]/x[0].cost, reverse=True)
 
-    print("Damage predicted per unit type:",{card.__class__.__name__: dpm/card.cost for card, quantity, dpm in chase_damage})
+    print("Damage predicted per unit type:", {card.__class__.__name__: dpm/card.cost for card, quantity, dpm in chase_damage})
 
     best_compo, best_damage = rec_choice(chase_damage)
     # TODO plots

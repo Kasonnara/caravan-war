@@ -20,5 +20,8 @@
 from common.cards import Upgradable
 
 
+# TODO, if necessary, caching all buildings (one instance for each [type, level] only) and reuse them may reduce
+#  object creation.
+
 class Building(Upgradable):
     pass

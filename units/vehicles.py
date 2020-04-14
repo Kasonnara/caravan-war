@@ -17,11 +17,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from typing import List
-
 from common.card_categories import VEHICLES
 from common.rarity import Rarity
-from units.base_units import MovableUnit, BaseUnit, reincarnation
+from units.base_units import MovableUnit, reincarnation
 from common.target_types import TargetType
 
 

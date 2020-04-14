@@ -1,11 +1,6 @@
 """
 This can be modified to represent the full inventory of card that you have: buidings, units, number of copies,
 their levels, their stars, theirs equipments, etc.
-
-By defaut the config is set as if all building, units and spells are level 15, equipments level 7 if available
-and no stars. Quantities have been set with some common values at this level. (6 legendary, 10 epic+,
-1 epic (assuming they are automatically reincarnated), 30 rare, 100 common)
-
 """
 
 from collections import namedtuple

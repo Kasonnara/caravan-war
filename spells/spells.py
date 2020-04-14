@@ -24,9 +24,6 @@ from utils.class_property import classproperty
 
 
 class Spell(Card):
-    def __init__(self, level: int):
-        super().__init__(level)
-
     @classproperty
     def gem_cost(cls):
         return cls.rarity.spell_gem_cost

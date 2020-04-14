@@ -281,7 +281,7 @@ class Lich(Bandit):
     summon_number = 3
     summon_hp_base = 455
     summon_attack_base = 38
-    summon_atk_speed = 1/10
+    summon_atk_speed = 1 / 10
     rarity = Rarity.Epic
 
 
@@ -348,7 +348,7 @@ class Djin(Bandit, AOE):
     summon_number = 1
     summon_hp = {8: 2627}
     summon_atk = {8: 450}
-    summon_atk_speed = 1/10
+    summon_atk_speed = 1 / 10
     # TODO Slow down effect
     rarity = Rarity.Legendary
 
