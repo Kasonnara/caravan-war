@@ -20,6 +20,7 @@
 from typing import Union, List, Optional
 
 from common.card_categories import TOWERS
+from common.resources import resourcepackets_gold
 from utils.class_property import classproperty
 from common.target_types import TargetType
 from units.base_units import BaseUnit, AOE, Heal
@@ -99,7 +100,11 @@ class HeavySniper(Tower):
     _cost = 150
     parent_tower = Sniper
     # TODO special effect
-    _upgrade_cost = [570, 3200, 14500, 33000, 71000, 163000, 345000, 485000, 710000, 1030000, 1920000, 3360000]
+    upgrade_costs = resourcepackets_gold(
+        570, 3200, 14500, 33000, 71000,
+        163000, 345000, 485000, 710000, 1030000,
+        1920000, 3360000, None, 10160000,
+        )
     # damage, with 4 stars [240, 276, 318, 366, 421, 483, 555, 638, 734, 844, 972, 1117]
 
 
@@ -139,7 +144,11 @@ class Stormspire(Tower, AOE):
     _cost = 200
     parent_tower = Lightning
     # TODO special effects
-    _upgrade_cost = [240, 1300, 6000, 14000, 30000, 68000, 144000, 202000, 300000, 430000, 800000]
+    upgrade_costs = resourcepackets_gold(
+        240, 1300, 6000, 14000, 30000,
+        68000, 144000, 202000, 300000, 430000,
+        800000, 1400000, 2470000, 4230000,
+        )
 
 
 class Fire(Tower):
@@ -222,15 +231,3 @@ class Garnison(Tambour, Armory):
 
 # Register all defined cards
 TOWERS.register_cards_in_module(Tower, __name__)
-
-
-if __name__ == '__main__':
-    print("Heavy sniper upgrade cost ratio =",
-          [c2 / c1 for c1, c2 in zip(HeavySniper._upgrade_cost[:-1], HeavySniper._upgrade_cost[1:])])
-    print("Heavy Sniper upgrade cost total ratio =",
-          [c / HeavySniper._upgrade_cost[0] for c in HeavySniper._upgrade_cost])
-
-    print("Stormspire upgrade cost ratio =",
-          [c2 / c1 for c1, c2 in zip(Stormspire._upgrade_cost[:-1], Stormspire._upgrade_cost[1:])])
-    print("Stormspire upgrade cost total ratio =", [c / Stormspire._upgrade_cost[0] for c in Stormspire._upgrade_cost])
-

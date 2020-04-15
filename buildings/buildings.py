@@ -21,27 +21,15 @@ from buildings.base_buildings import Building
 from buildings.headquarters import HQ
 
 from common.card_categories import BUILDINGS
+from common.resources import resourcepackets_gold, resourcepackets_goods
 
 
 class Mill(Building):
-    upgrade_cost = [
-        (0, gold) for gold in [
-            510,  # 1 -> 2
-            3400,
-            19400,
-            58000,
-            191000,
-            437000,
-            930000,
-            1300000,
-            1900000,
-            3670000,
-            6860000,  # 11 -> 12
-            12000000,
-            21170000,
-            36260000,
-            ]
-        ]
+    upgrade_costs = resourcepackets_gold(
+        510, 3400, 19400, 58000, 191000,                    # 1 -> 6
+        437000, 930000, 1300000, 1900000, 3670000,          # 6 -> 11
+        6860000, 12000000, 21170000, 36260000, 63000000,    # 11 -> 16
+        )
 
 
 class TransportStation(Building):
@@ -57,28 +45,12 @@ class Storage(Building):
 
 
 class Laboratory(Building):
-    upgrade_cost = [
-        (0, gold) for gold in [
-            210, # lvl 1 -> 2
-            1400,
-            7800,
-            23000,
-            77000,
-            175000,
-            370000,
-            520000,
-            760000,
-            1360000,
-            2540000, # lvl 11 -> 12
-            4450000,
-            7850000,
-            13430000,
-            23340000,
-            41430000,
-            73870000,
-            130130000,
-            ]
-        ]
+    upgrade_costs = resourcepackets_gold(
+        210, 1400, 7800, 23000, 77000,                  # 1 -> 6
+        175000, 370000, 520000, 760000, 1360000,        # 6 -> 11
+        2540000, 4450000, 7850000, 13430000, 23340000,  # 11 -> 16
+        41430000, 73870000, 130130000,
+        )
 
 
 class Tavern(Building):

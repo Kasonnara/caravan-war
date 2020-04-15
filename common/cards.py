@@ -18,22 +18,27 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from collections import namedtuple, defaultdict
-from typing import Union, Optional, List, Tuple, Type
+from typing import List, Type, Dict, Set
 
 from common.rarity import Rarity
+from common.resources import ResourcePacket
 from utils.class_property import classproperty
 
-Upgrade = namedtuple('Upgrade', 'goods_cost gold_cost requirements')
+Upgrade = namedtuple('Upgrade', 'costs requirements')
 
 MAX_LEVEL = 30
 
 
 class Upgradable:
-    upgrade_cost: List[Tuple[int, int]] = None
-    # FIXME: fill <upgrade_cost> for all unit and all level, or find an approximation formula
+    upgrade_costs: List[ResourcePacket] = []
+    # FIXME: fill <get_upgrade> for all unit and all level, or find an approximation formula
     #        to predict it (cf economy/analyse_costs.py)
     base_building: 'Type[Building]' = None
     base_building_level = 1
+    # FIXME; currently cost and requirement doest include the unlock step (frome None to level 1) because it's often
+    #   free. But it's not always the case (hero for example), so it may be a good idea to change this.
+
+    # Following parameter will be later defined for category base classes by the register_card_in_module call
     category: str = None
 
     def __init__(self, level=1):
@@ -46,19 +51,25 @@ class Upgradable:
         :param level: int, to level to upgrade to
         :return: named tuple Upgrade{goods_cost: int, gold_cost: int, requirements: List[Upgradable]}
         """
+        # Note: for the attribute upgrade_costs (and upgrade_requirements in the case of the HQ) as long as I don't find
+        #       a formula to automatically define them at any level, and thus as long as I have to hardcode them, I took
+        #       the option of storing them directly in their final form (ResourcePacket instances or Building instances)
+        #       this may lead to little more memory usage at the benefit of not having to recreate them at each usage.
+        #       Either way I think this is inconsequential, but if in the future we experiment memory problem it can
+        #       still be changed.
+
         assert self.level > 0, "level should be a strictly positive integer"
-        assert self.upgrade_cost is None, "{} upgrade_cost attribute is not implemented".format(type(self).__name__)
-        assert self.level <= len(self.upgrade_cost), "{} upgrade_cost attribute is not implemented for level {}".format(type(self).__name__, self.level)
+        assert self.level <= len(self.upgrade_costs), "{} upgrade_costs attribute is not implemented for level {}".format(type(self).__name__, self.level)
 
         # Note: this function apply to any upgradable item, except the HeadQuarters that re-implement the function.
 
         if self.level == 1:
             return Upgrade(                                                 # for the first level we only need
-                0, 0,                                                           # - it's free
+                ResourcePacket(),                                               # - it's free # FIXME: not always true
                 [self.base_building(self.base_building_level)])                 # - the base building to exist
 
         return Upgrade(                                                     # for next levels, we need:
-            *self.upgrade_cost[self.level - 2],                                 #  - paying gold and goods costs
+            self.upgrade_costs[self.level - 1],                                 #  - paying gold and goods costs
             [type(self)(self.level - 1),                                        #  - previous level
              self.base_building(self.level - 1 + self.base_building_level)])    #  - the base building of the same level
 

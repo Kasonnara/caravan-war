@@ -22,11 +22,13 @@ from typing import Tuple
 from buildings.base_buildings import Building
 from common.cards import Upgrade
 from common.card_categories import BUILDINGS
+from common.resources import ResourcePacket, resourcepackets
 
 
 class HQ(Building):
-    upgrade_cost = [
-        (400, 800),
+    base_building = None
+    upgrade_costs = resourcepackets(
+        (400, 800),  # level 1 -> 2
         (1700, 4800),
         (11000, 27200),
         (33000, 81000),
@@ -35,17 +37,17 @@ class HQ(Building):
         (700000, 1480000),
         (900000, 2200000),
         (1300000, 3190000),
-        (1500000, 5700000),
+        (1500000, 5700000),  # level 10 -> 11
         (2600000, 10670000),
         (4200000, 18660000),
         (7200000, 32940000),
         (11800000, 56400000),
-        (20000000, 98000000),
+        (20000000, 98000000),  # level 15 -> 16
         (37200000, 173990000),
         (66600000, 310220000),
         (117800000, 546510000),
         (212300000, 983100000),
-        ]
+        )
 
     # At this point, other buildings classes don't exist yet, so we just store their names in this temporary attribute,
     # and later, this list will be converted and stored into upgrade_requirements.
@@ -83,18 +85,16 @@ class HQ(Building):
         # Special case for the HQ which have multiple changing requirements
 
         assert self.level > 0, "level should be a strictly positive integer"
-        assert self.level <= len(self.upgrade_cost), "{} upgrade_cost attribute is not implemented for level {}".format(type(self).__name__, self.level)
+        assert self.level <= len(self.upgrade_costs), "{} get_upgrade attribute is not implemented for level {}".format(cls.__name__, level)
         assert self.level <= len(self.upgrade_requirements), "{} upgrade_requirements  is not implemented for level {}".format(type(self).__name__, self.level)
 
         if self.level == 1:
             # Nothing is necessary for level 1
-            return Upgrade(0, 0, [])
+            return Upgrade(ResourcePacket(), [])
         else:
             # It doesn't seem necessary to include previous headquarter level in requirements as other requirements will
             #   already include it when resolving full dependency.
-            return Upgrade(*self.upgrade_cost[self.level - 1],
-                           [building_type(self.level - 1) for building_type in
-                            self.upgrade_requirements[self.level - 1]])
+            return Upgrade(self.upgrade_costs[self.level - 1], self.upgrade_requirements[self.level - 1])
 
     @property
     def wave_number(self) -> Tuple[float, float]:
@@ -114,10 +114,3 @@ class HQ(Building):
 
 # Register all defined cards
 BUILDINGS.register_cards_in_module(Building, __name__)
-
-
-if __name__ == '__main__':
-    print("Headquarter upgrade costs relative to level 0:\n\tgoods: {}\n\tgold: {}".format(
-        *[[c / l[0] for c in l] for l in zip(*HQ.upgrade_cost)]))
-    print("Headquarter upgrade costs relative to level n-1:\n\tgoods: {}\n\tgold: {}".format(
-        *[[c2 / c1 for c1, c2 in zip(l[:-1], l[1:])] for l in zip(*HQ.upgrade_cost)]))

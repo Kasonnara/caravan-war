@@ -144,14 +144,6 @@ class BaseUnit(Card):
             self._repr = self.__class__.__name__.lower() + ('['+','.join(internal_values)+']' if len(internal_values) > 0 else "")
         return self._repr
 
-    _upgrade_cost = None
-
-    @classproperty
-    def upgrade_cost(cls):
-        if cls._upgrade_cost is None:
-            return None
-        return ((0, gold_cost) for gold_cost in cls._upgrade_cost)
-
 
 class MovableUnit(BaseUnit):
     hp_base = None
