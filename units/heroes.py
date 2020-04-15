@@ -18,14 +18,39 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from common.card_categories import HEROES
+from common.resources import Resources, ResourcePacket
 from common.target_types import TargetType
 from units.base_units import MovableUnit
+from utils.class_property import classproperty
 
 
 class Hero(MovableUnit):
     level_grow_factor = 1.018
     ultimate = False
     cost = 1
+    soul_class: Resources = None
+
+    _xp_costs = [5, 6, 7, 8, 9, 10, 12, 13, 15,
+                 17, 19, 20, 22, 25, 27, 30, 33, 36, 40,
+                 44, 49, 54, 60, 67, 74, 82, 91, 101, 113,
+                 126, 141, 158, 177, 199, 222, 249, 279, 312, 350,
+                 385, 423, 466, 512, 563, 620, 682, 750, 825, 907,
+                 953, 1000, 1050, 1103, 1158, 1216, 1277, 1341, 1408, 1478,
+                 1522, 1568, 1615, 1664, 1714, 1765, 1818, 1872, 1929, 1986,
+                 ]
+    # TODO: find a predictive formula for xp costs.  (e.g. experiments/hero_cp_formula.py)
+    #      (This seems difficult: growth seems random at first due to round operation, then stabilize around
+    #      x1.12 per lvl until lvl 40 where it drop to x1.1; then to 1.05 at lvl 50, and finally to 1.03 at lvl 60 ...)
+
+    @classproperty
+    def upgrade_costs(cls):
+        # OPTIMIZE: if needed it is possible to save cpu in exhange of memory: As this function will always return the
+        #  same results for one specific hero class (only hero soul type change), each hero class can cache the results.
+        return [
+            (ResourcePacket(Resources.HeroExperience(xp_cost)) if k % 10
+             else ResourcePacket(Resources.HeroExperience(xp_cost), cls.soul_class(5 * k//10 if k > 0 else 30)))
+            for k, xp_cost in enumerate(cls._xp_costs, 1)
+            ]
 
 
 class HeroSpell:
@@ -45,6 +70,8 @@ class Zora(Hero):
     armor_piercing = 0
     shoot_to = TargetType.AIR_GROUND
     shooted_as = TargetType.GROUND
+
+    soul_class = Resources.ZoraSoul
 
     class IceArrow(HeroSpell):
         effect_radius = 5
@@ -102,6 +129,8 @@ class Dalvir(Hero):
     armor_piercing = 0
     shoot_to = TargetType.GROUND
     shooted_as = TargetType.GROUND
+
+    soul_class = Resources.DalvirSoul
 
     class WarriorRage(HeroSpell):
         aoe_lenght = 10
