@@ -159,7 +159,12 @@ class Sparte(Guardian):
     # TODO armor gain spell
     bossfight_cost = 80
     rarity = Rarity.Epic
-
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, -5600, -14000, -36000,  # 1 -> 6
+        -83000, -177000, -247000, -360000, -650000,  # 6 -> 11
+        None, None, None, -6410000, -11130000,  # 11 -> 16
+        )
 
 @reincarnation
 class SparteLeg(Sparte):

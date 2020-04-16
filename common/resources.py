@@ -63,6 +63,8 @@ class ResourceQuantity:
             return type(self)(self.quantity - other)
 
         assert self.type is other.type, "Cannot add resources of different types"
+        assert False, "By convention, you should not need to subtract resources all gains must be positive " \
+                      "ResourceQuantity while costs must be negative ResourceQuantity from the very beginning"  # Remove this assert if you found cases where the convention cannot apply
         return type(self)(self.type, self.quantity - other.quantity)
 
     def __repr__(self):
@@ -154,6 +156,8 @@ class ResourcePacket(defaultdict):
         return result
 
     def __sub__(self, other):
+        assert False, "By convention, you should not need to subtract resources, all gains must already be positive " \
+                      "value while costs must be negative value from the very beginning"  # Remove this assert if you found cases where the convention cannot apply
         result = self.copy()
 
         if type(other) is type(self):
@@ -177,16 +181,16 @@ class ResourcePacket(defaultdict):
 
 def resourcepackets_gold(*golds: int):
     """Alias function for easily creating list of ResourcePacket (with only gold) when defining units upgrade_costs"""
-    return list(ResourcePacket(0, gold) for gold in golds)
+    return list((ResourcePacket(0, gold) if gold is not None else None) for gold in golds)
 
 
 def resourcepackets_goods(*goodss: int):
     """Alias function for easily creating list of ResourcePacket (with only goods) when defining units upgrade_costs
     """
-    return list(ResourcePacket(goods, 0) for goods in goodss)
+    return list((ResourcePacket(goods, 0) if goods is not None else None) for goods in goodss)
 
 
 def resourcepackets(*goods_golds_tuples: Tuple[int, int]):
     """Alias function for easily creating list of ResourcePacket when defining units upgrade_costs
     """
-    return list(ResourcePacket(goods, gold) for goods, gold in goods_golds_tuples)
+    return list((ResourcePacket(*goods_gold) if goods_gold is not None else None) for goods_gold in goods_golds_tuples)

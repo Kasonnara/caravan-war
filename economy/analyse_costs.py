@@ -17,7 +17,12 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from buildings.buildings import Mill, Laboratory
+from collections import defaultdict
+
+from buildings.buildings import Mill, Laboratory, TransportStation
+from common.cards import Upgradable
+from common.resources import resourcepackets
+from units.guardians import Sparte
 
 """
 The purpose of this script is to plot cost evolution of upgradable object (unit, buildings, etc.) 
@@ -37,33 +42,140 @@ from units.towers import HeavySniper, Stormspire
 
 import matplotlib.pyplot as plt
 
-fig = plt.figure()
 
-goods_ax = plt.subplot(2, 1, 1, title="Relative Goods")
-gold_ax = plt.subplot(2, 1, 2, title="Relative Gold")
-#abs_goods_ax = plt.subplot(2, 2, 2, title="Goods")
-#abs_gold_ax = plt.subplot(2, 2, 4, title="Gold")
+PLOT_SIDE_BY_SIDE = False
+PLOT_ERROR_BARS = True
+PLOT_LIGUE = True
 
-for upgradable in (HQ, Stormspire, HeavySniper, Mill, Laboratory):
-    goods, gold = zip(*upgradable.upgrade_cost)
-    relative_goods, relative_gold = tuple([(c2 / c1 if c1 != 0 else 0)  for c1, c2 in zip(l[:-1], l[1:])] for l in (goods, gold))
-    #abs_goods, abs_gold = tuple( [(c / l[0] if l[0] != 0 else 0) for c in l] for l in (goods, gold))
+PLOT_RAW_VALUES = False
+PLOT_RELATIVE_VALUES = True
+PLOT_FIRST_RELATIVE_VALUE = False
+PLOT_LIGUE_VALUE = False
 
-    goods_ax.plot(range(2, len(relative_goods) + 2), relative_goods, "+-", label=upgradable.__name__)
-    gold_ax.plot(range(2, len(relative_gold) + 2), relative_gold, "+-", label=upgradable.__name__)
-    #abs_goods_ax.plot(range(len(abs_goods)), abs_goods, "+-", label=upgradable.__name__)
-    #abs_gold_ax.plot(range(len(abs_gold)), abs_gold, "+-", label=upgradable.__name__)
 
-# Test correlation with ligues (Results: Doesn't seem to be correlated)
-#ligue_goods = [ligue.ex10km_goods_cost for ligue in Ligue]
-#ligue_gold = [ligue.ex10km_gold_reward for ligue in Ligue]
-#
-#relative_ligue_goods, relative_ligue_gold = tuple([(c2 / c1 if c1 != 0 else 0) for c1, c2 in zip(l[:-1], l[1:])] for l in (ligue_goods, ligue_gold))
-#
-#goods_ax.plot(range(1, len(relative_ligue_goods) + 1), relative_ligue_goods, "+:", label="Ligue rank")
-#gold_ax.plot(range(1, len(relative_ligue_gold) + 1), relative_ligue_gold, "+:", label="Ligue rank")
+def round_error(cost_value: int):
+    str_value = str(cost_value)
+    return 0.5 * 10 ** (len(str_value) - len(str_value.rstrip('0')))
 
-plt.legend()
+costs_dict = defaultdict(lambda: defaultdict(list))
+cost_error_dict = defaultdict(lambda: defaultdict(list))
+index_dict = defaultdict(lambda: defaultdict(list))
+relative_costs_dict = {}
+relative_index_dict = {}
+relative_error_dict = {}
+first_relative_costs_dict = {}
+
+resource_types = set()
+
+
+LIGUE_LEVEL_RATIO = 1
+class FakeUpgradableLigue(Upgradable):
+    upgrade_costs = resourcepackets(
+        *tuple((ligue.ex10km_goods_cost, ligue.ex10km_gold_reward)
+               for k, ligue in enumerate(Ligue)
+               if k % LIGUE_LEVEL_RATIO == 0)
+        )
+
+
+# Process data and store all results in some big nested dicts
+for upgradable in (
+        HQ,
+        Stormspire,
+        HeavySniper,
+        Mill,
+        Laboratory,
+        TransportStation,
+        Sparte,
+        # Uncomment the following line to test correlation with ligues (Results: Doesn't seem to be correlated)
+        #FakeUpgradableLigue,
+        ):
+    # Extract upgrade costs and process some derived measures
+    for level, upgrade_cost_packet in enumerate(upgradable.upgrade_costs):
+        if upgrade_cost_packet is not None:  # check for missing data (possible in development)
+            for resource_type in upgrade_cost_packet:
+                index_dict[upgradable][resource_type].append(level)
+                costs_dict[upgradable][resource_type].append(-upgrade_cost_packet[resource_type])
+                resource_types.add(resource_type)
+                # - process an round error estimation
+                cost_error_dict[upgradable][resource_type].append(round_error(upgrade_cost_packet[resource_type]))
+
+    # - cost of each level relatively to the previous level
+    relative_costs_dict[upgradable] = {
+        resource_type: [(c2 / c1 if c1 != 0 else 0)
+                        for c1, c2, i1, i2 in zip(costs_dict[upgradable][resource_type][:-1],
+                                                  costs_dict[upgradable][resource_type][1:],
+                                                  index_dict[upgradable][resource_type][:-1],
+                                                  index_dict[upgradable][resource_type][1:],
+                                                  )
+                        if i2 - i1 == 1  # Ensure there is not gap
+                        ]
+        for resource_type in resource_types
+        }
+    relative_index_dict[upgradable] = {
+        resource_type: [i2 for i1, i2 in zip(index_dict[upgradable][resource_type][:-1],
+                                             index_dict[upgradable][resource_type][1:],)
+                        if i2 - i1 == 1  # Ensure there is not gap
+                        ]
+        for resource_type in resource_types
+        }
+    relative_error_dict[upgradable] = {
+        resource_type: [max(abs(c2/c1 - (c2 + e2) / (c1 - e1) if c1 != 0 and (c1 - e1) != 0 else 0),
+                            abs(c2/c1 - (c2 - e2) / (c1 + e1) if c1 != 0 and (c1 + e1) != 0 else 0),
+                            )
+                        for c1, c2, e1, e2, i1, i2 in zip(costs_dict[upgradable][resource_type][:-1],
+                                                          costs_dict[upgradable][resource_type][1:],
+                                                          cost_error_dict[upgradable][resource_type][:-1],
+                                                          cost_error_dict[upgradable][resource_type][1:],
+                                                          index_dict[upgradable][resource_type][:-1],
+                                                          index_dict[upgradable][resource_type][1:],
+                                                          )
+                        if i2 - i1 == 1  # Ensure there is not gap
+                        ]
+        for resource_type in resource_types
+        }
+
+    # - cost of each level relatively to the upgrade from level 1 to 2
+    first_relative_costs_dict[upgradable] = {
+        resource_type: [(c / costs_dict[upgradable][resource_type][1]) for c in costs_dict[upgradable][resource_type]]
+        for resource_type in resource_types
+        if any(costs_dict[upgradable][resource_type][1:])  # ignore resources that are always at zero (or at zero for all values except the first like the mill)
+        }
+
+
+# Display results
+resource_number = len(index_dict.keys())
+for data, indexes, enable, title, y_legend in [
+        (costs_dict, index_dict, PLOT_RAW_VALUES, "Raw {} cost", "Raw upgrade costs of {}"),
+        (relative_costs_dict, relative_index_dict, PLOT_RELATIVE_VALUES, "Relative {} cost", "upgrade {} costs of each level relatively to the previous level"),
+        (first_relative_costs_dict,  index_dict, PLOT_FIRST_RELATIVE_VALUE, "first relative {} cost", "upgrade {} costs of each level relatively to the upgrade from level level 1 to 2"),
+        ]:
+    if enable:
+        # Init plot surfaces
+        plot_surfaces = {}
+        if PLOT_SIDE_BY_SIDE:
+            # Create one figure with many subplots, one per resource
+            fig = plt.figure()
+            for resource_type in resource_types:
+                plot_surfaces[resource_type] = fig.add_subplot(
+                    resource_number, 1, resource_number, title=title.format(resource_type.name))
+        else:
+            # Create many figures, one per resource
+            for resource_type in resource_types:
+                fig = plt.figure()
+                plot_surfaces[resource_type] = fig.add_subplot(1, 1, 1, title=title.format(resource_type.name))
+
+        # Make plots
+        for card in data:
+            for resource_type in data[card]:
+                if not PLOT_ERROR_BARS:
+                    plot_surfaces[resource_type].plot(indexes[card][resource_type], data[card][resource_type], "+-", label=card.__name__)
+                else:
+                    plot_surfaces[resource_type].errorbar(indexes[card][resource_type], data[card][resource_type], yerr=relative_error_dict[card][resource_type], label=card.__name__, )
+
+        # Activate legends
+        for resource_type in plot_surfaces:
+            plot_surfaces[resource_type].legend()
+
 plt.show()
 
 

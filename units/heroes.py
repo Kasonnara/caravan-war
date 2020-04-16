@@ -29,14 +29,15 @@ class Hero(MovableUnit):
     ultimate = False
     cost = 1
     soul_class: Resources = None
+    sub_levels_per_level = 10
 
-    _xp_costs = [5, 6, 7, 8, 9, 10, 12, 13, 15,
-                 17, 19, 20, 22, 25, 27, 30, 33, 36, 40,
-                 44, 49, 54, 60, 67, 74, 82, 91, 101, 113,
-                 126, 141, 158, 177, 199, 222, 249, 279, 312, 350,
-                 385, 423, 466, 512, 563, 620, 682, 750, 825, 907,
-                 953, 1000, 1050, 1103, 1158, 1216, 1277, 1341, 1408, 1478,
-                 1522, 1568, 1615, 1664, 1714, 1765, 1818, 1872, 1929, 1986,
+    _xp_costs = [0, -5, -6, -7, -8, -9, -10, -12, -13, -15,  # 0 -> 10
+                 -17, -19, -20, -22, -25, -27, -30, -33, -36, -40,
+                 -44, -49, -54, -60, -67, -74, -82, -91, -101, -113,
+                 -126, -141, -158, -177, -199, -222, -249, -279, -312, -350,
+                 -385, -423, -466, -512, -563, -620, -682, -750, -825, -907,
+                 -953, -1000, -1050, -1103, -1158, -1216, -1277, -1341, -1408, -1478,
+                 -1522, -1568, -1615, -1664, -1714, -1765, -1818, -1872, -1929, -1986,
                  ]
     # TODO: find a predictive formula for xp costs.  (e.g. experiments/hero_cp_formula.py)
     #      (This seems difficult: growth seems random at first due to round operation, then stabilize around
@@ -47,16 +48,20 @@ class Hero(MovableUnit):
         # OPTIMIZE: if needed it is possible to save cpu in exhange of memory: As this function will always return the
         #  same results for one specific hero class (only hero soul type change), each hero class can cache the results.
         return [
-            (ResourcePacket(Resources.HeroExperience(xp_cost)) if k % 10
-             else ResourcePacket(Resources.HeroExperience(xp_cost), cls.soul_class(5 * k//10 if k > 0 else 30)))
-            for k, xp_cost in enumerate(cls._xp_costs, 1)
+            (ResourcePacket(Resources.HeroExperience(xp_cost)) if level % 10
+             else ResourcePacket(Resources.HeroExperience(xp_cost),
+                                 cls.soul_class(-30 if level == 0 else -5 * level//10))
+             )
+            for level, xp_cost in enumerate(cls._xp_costs)
             ]
 
 
 class HeroSpell:
     def __init__(self, level):
-        assert 0 < level <= 5
+        assert 0 <= level <= 5
         self.level = level
+
+    upgrade_costs = [ResourcePacket(Resources.CapacityToken(-c)) for c in range(1, 5)]
 
 
 class Zora(Hero):
@@ -103,19 +108,15 @@ class Zora(Hero):
     class BounceArrow(HeroSpell):
         pass
 
-    def __init__(self, level: int, ice_arrow=1, arrow_flight=None, fast_hand=None, percing_shot=None, bounce_arrow=None):
+    def __init__(self, level: int, ice_arrow=1, arrow_flight=0, fast_hand=0, piercing_shot=0, bounce_arrow=0):
         super().__init__(level, 0, None, None)
         self.spells = [
             self.IceArrow(ice_arrow),
+            self.ArrowFlight(arrow_flight),
+            self.FastHand(fast_hand),
+            self.PiercingShot(piercing_shot),
+            self.BounceArrow(bounce_arrow),
             ]
-        if arrow_flight is not None:
-            self.spells.append(self.ArrowFlight(arrow_flight))
-        if fast_hand is not None:
-            self.spells.append(self.FastHand(fast_hand))
-        if percing_shot is not None:
-            self.spells.append(self.PiercingShot(percing_shot))
-        if bounce_arrow is not None:
-            self.spells.append(self.BounceArrow(bounce_arrow))
 
 
 class Dalvir(Hero):
@@ -136,13 +137,13 @@ class Dalvir(Hero):
         aoe_lenght = 10
         stun_duration = 2
         ultimate = True
-        _damage_factor = {1:80, 2:90, 3:100, 4:125, 5:150}
+        _damage_factor = {1: 80, 2: 90, 3: 100, 4: 125, 5: 150}
 
         @property
         def damage_factor(self):
             return self._damage_factor[self.level]
 
-    class ButalShield(HeroSpell):
+    class BrutalShield(HeroSpell):
         damage_reduction = 0.85
         @property
         def armor_bonus(self):
@@ -168,19 +169,15 @@ class Dalvir(Hero):
         def hp_bonus(self):
             return 0.05 + None * self.level
 
-    def __init__(self, level: int, warrior_rage=1, butal_shield=None, strong_will=None, knight_fury=None, iron_protection=None):
+    def __init__(self, level: int, warrior_rage=1, brutal_shield=0, strong_will=0, knight_fury=0, iron_protection=0):
         super().__init__(level, 0, None, None)
         self.spells = [
             self.WarriorRage(warrior_rage),
+            self.BrutalShield(brutal_shield),
+            self.StrongWill(strong_will),
+            self.KnightFury(knight_fury),
+            self.IronProtection(iron_protection),
             ]
-        if butal_shield is not None:
-            self.spells.append(self.ButalShield(butal_shield))
-        if strong_will is not None:
-            self.spells.append(self.StrongWill(strong_will))
-        if knight_fury is not None:
-            self.spells.append(self.KnightFury(knight_fury))
-        if iron_protection is not None:
-            self.spells.append(self.IronProtection(iron_protection))
 
 
 # Register all defined cards

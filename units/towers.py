@@ -101,9 +101,10 @@ class HeavySniper(Tower):
     parent_tower = Sniper
     # TODO special effect
     upgrade_costs = resourcepackets_gold(
-        570, 3200, 14500, 33000, 71000,
-        163000, 345000, 485000, 710000, 1030000,
-        1920000, 3360000, None, 10160000,
+        0,  # 0 -> 1
+        -570, -3200, -14500, -33000, -71000,
+        -163000, -345000, -485000, -710000, -1030000,
+        -1920000, -3360000, None, -10160000,
         )
     # damage, with 4 stars [240, 276, 318, 366, 421, 483, 555, 638, 734, 844, 972, 1117]
 
@@ -145,9 +146,10 @@ class Stormspire(Tower, AOE):
     parent_tower = Lightning
     # TODO special effects
     upgrade_costs = resourcepackets_gold(
-        240, 1300, 6000, 14000, 30000,
-        68000, 144000, 202000, 300000, 430000,
-        800000, 1400000, 2470000, 4230000,
+        0,  # 0 -> 1
+        -240, -1300, -6000, -14000, -30000,
+        -68000, -144000, -202000, -300000, -430000,
+        -800000, -1400000, -2470000, -4230000,
         )
 
 
@@ -159,6 +161,12 @@ class Fire(Tower):
     armor_piercing = 2
     _cost = 160
     parent_tower = Mage
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,
+        None, None, None, None, None,
+        None, None, None, -9740000,
+        )
 
 
 class Bomber(AOE, Tower):
