@@ -17,15 +17,17 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+from buildings.buildings import Camp
 from common.card_categories import BANDITS
 from common.rarity import Rarity
+from common.resources import resourcepackets_gold
 from units.base_units import MovableUnit, AOE, reincarnation
 from common.target_types import TargetType
 from units.vehicles import Vehicle
 
 
 class Bandit(MovableUnit):
-    pass
+    base_building = Camp
 
 
 class Maraudeur(Bandit):
@@ -40,6 +42,11 @@ class Maraudeur(Bandit):
     cost = 3
     move_speed = 1.7
     rarity = Rarity.Common
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        -56000,
+        )
 
 
 class Archer(Bandit):
@@ -54,6 +61,11 @@ class Archer(Bandit):
     cost = 3
     move_speed = 1.7
     rarity = Rarity.Common
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        -68000,
+        )
 
 
 class Drone(Bandit):
@@ -68,6 +80,10 @@ class Drone(Bandit):
     cost = 3
     move_speed = 2
     rarity = Rarity.Common
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, -32000,  # 1 -> 6
+        )
 
 
 class Brute(Bandit):
@@ -82,6 +98,12 @@ class Brute(Bandit):
     cost = 4
     move_speed = 1.6
     rarity = Rarity.Rare
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,       # 1 -> 6
+        None, None, None, None, None,       # 6 -> 11
+        None, None, None, None, -10240000,  # 11 -> 16
+        )
 
 
 class Lutin(Bandit):
@@ -96,6 +118,12 @@ class Lutin(Bandit):
     cost = 6
     move_speed = 1.9
     rarity = Rarity.Rare
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,       # 1 -> 6
+        None, None, None, None, None,       # 6 -> 11
+        None, None, -3840000, -6590000,
+        )
 
 
 class Berserk(Bandit):
@@ -109,6 +137,12 @@ class Berserk(Bandit):
     armor_piercing = 0
     cost = 4
     move_speed = 1.8
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, None,  # 6 -> 11
+        -1180000, -2060000, -3640000, -6240000
+        )
 
 
 class Hunter(Bandit):
@@ -123,6 +157,12 @@ class Hunter(Bandit):
     cost = 4
     move_speed = 1.5
     rarity = Rarity.Rare
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, None,  # 6 -> 11
+        None, None, None, -6930000,
+        )
 
 
 class Spider(AOE, Bandit):
@@ -137,6 +177,12 @@ class Spider(AOE, Bandit):
     cost = 4
     move_speed = 1.4
     rarity = Rarity.Rare
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,      # 1 -> 6
+        None, None, None, None, None,      # 6 -> 11
+        None, None, None, None, -11440000  # 11 -> 16
+        )
 
 
 class Alchimist(AOE, Bandit):
@@ -151,6 +197,12 @@ class Alchimist(AOE, Bandit):
     cost = 5
     move_speed = 1.6
     rarity = Rarity.Rare
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,       # 1 -> 6
+        None, None, None, None, None,       # 6 -> 11
+        None, None, None, None, -12040000,  # 11 -> 16
+        )
 
 
 class Viking(Bandit):
@@ -167,6 +219,12 @@ class Viking(Bandit):
     consecutive_hit_attack_boost = 0.4
     max_consecutive_boost = 3.
     rarity = Rarity.Epic
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,
+        None, None, None, None, None,  # 6 -> 11
+        None, None, -5670000, -9710000,
+        )
 
 
 @reincarnation
@@ -187,6 +245,12 @@ class Momie(Bandit):
     cost = 7
     move_speed = 1.4
     rarity = Rarity.Epic
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, -950000,  # 6 -> 11
+        -1770000, -3100000, -5460000,
+        )
 
 
 @reincarnation
@@ -206,6 +270,12 @@ class DarkKnight(Bandit):
     cost = 8
     move_speed = 1.9
     rarity = Rarity.Epic
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,        # 1 -> 6
+        None, None, None, None, -1020000,    # 6 -> 11
+        -1900000, -3330000, -5870000,
+        )
 
 
 @reincarnation
@@ -227,6 +297,12 @@ class Condor(Bandit):
     armor_reduction = 5
     spell_duration = 60
     rarity = Rarity.Epic
+    upgrade_costs = resourcepackets_gold(
+        0, # 0 -> 1
+        None, None, None, None, None,        # 1 -> 6
+        None, None, None, None, -1050000,    # 6 -> 11
+        -1970000, -3440000, -6070000,
+        )
 
 
 @reincarnation
@@ -247,6 +323,13 @@ class Stealer(Bandit):
     move_speed = 2
     vehicule_damage_factor = 2  # Fixme: check if it's "200% damages" or "200% additional damages"
     rarity = Rarity.Epic
+
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,           # 1 -> 6
+        None, None, None, None, None,           # 6 -> 11
+        None, None, -6070000, None, -18070000,  # 11 -> 16
+        )
 
     # TODO: invisibility effect
 
@@ -283,6 +366,12 @@ class Lich(Bandit):
     summon_attack_base = 38
     summon_atk_speed = 1 / 10
     rarity = Rarity.Epic
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, -980000,  # 6 -> 11
+        None, -3210000,
+        )
 
 
 @reincarnation
@@ -303,6 +392,12 @@ class Inferno(Bandit):
     cost = 12
     move_speed = 1.7
     rarity = Rarity.Legendary
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, None,  # 6 -> 11
+        None, -5160000,
+        )
 
 
 class Demon(Bandit):
@@ -317,6 +412,12 @@ class Demon(Bandit):
     cost = 10
     move_speed = 1.9
     rarity = Rarity.Legendary
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,            # 1 -> 6
+        None, None, None, None, None,            # 6 -> 11
+        None, None, None, -14560000, -25290000,  # 11 -> 16
+        )
 
 
 class Chaman(Bandit):
@@ -332,6 +433,12 @@ class Chaman(Bandit):
     move_speed = 1.4
     rarity = Rarity.Legendary
     # TODO heal effect
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, None,  # 6 -> 11
+        None, -4590000,
+        )
 
 
 class Djin(Bandit, AOE):
@@ -351,6 +458,12 @@ class Djin(Bandit, AOE):
     summon_atk_speed = 1 / 10
     # TODO Slow down effect
     rarity = Rarity.Legendary
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, None,  # 6 -> 11
+        None, None, -8300000,
+        )
 
 
 class Mecha(Bandit):
@@ -369,6 +482,12 @@ class Mecha(Bandit):
     missile_atk_speed = 0.5
     # TODO missile
     rarity = Rarity.Legendary
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, None,  # 6 -> 11
+        None, None, None, -14900000, -25890000
+        )
 
 
 # Register all defined cards

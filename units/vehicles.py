@@ -17,13 +17,16 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+from buildings.buildings import Garage
 from common.card_categories import VEHICLES
 from common.rarity import Rarity
+from common.resources import resourcepackets_gold
 from units.base_units import MovableUnit, reincarnation
 from common.target_types import TargetType
 
 
 class Vehicle(MovableUnit):
+    base_building = Garage
     move_speed = 1.2
     weapon_slot = 1
 
@@ -34,6 +37,11 @@ class Charrette(Vehicle):
     armor = 3
     cost = 8
     rarity = Rarity.Common
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None, 
+        -56000,
+        )
 
 
 class Chariot(Vehicle):
@@ -43,6 +51,11 @@ class Chariot(Vehicle):
     cost = 8
     move_speed = 1.8
     rarity = Rarity.Rare
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None, 
+        None, None, None, None, -390000,
+        )
 
 
 class Dirigeable(Vehicle):
@@ -52,6 +65,12 @@ class Dirigeable(Vehicle):
     cost = 6
     effect_range = 7
     rarity = Rarity.Legendary
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,
+        None, None, None, None, None,
+        None, None, -5010000, -8570000, -14890000,
+        )
 
 
 class Speeder(Vehicle):
@@ -62,6 +81,12 @@ class Speeder(Vehicle):
     effect_range = 4  # Fixme verify value
     effect_speed_boost = 1.3
     rarity = Rarity.Legendary
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,
+        None, None, None, None, None,
+        None, None, -5260000, -9000000, -15640000
+        )
 
 
 class Train(Vehicle):
@@ -71,6 +96,12 @@ class Train(Vehicle):
     cost = 10
     weapon_slot = 2
     rarity = Rarity.Legendary
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,
+        None, None, None, None, None,
+        None, None, -5630000, -9650000, -16750000,
+        )
 
     def hp_score(self, *args, **kwargs):
         return (
@@ -85,6 +116,12 @@ class Helicopter(Vehicle):
     armor = 0
     cost = 6
     rarity = Rarity.Epic
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,
+        None, None, None, -360000, None,
+        -1220000,
+        )
 
 
 @reincarnation
@@ -98,6 +135,11 @@ class Wagon(Vehicle):
     armor = 5
     cost = 8  # TODO check cost
     rarity = Rarity.Epic
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,
+        None, None, None, None, -760000,
+        )
 
 
 @reincarnation
@@ -112,6 +154,12 @@ class Buggy(Vehicle):
     rarity = Rarity.Epic
     cost = 6
     # TODO spell
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,
+        None, None, None, None, -720000,  # 6 -> 11
+        None, None, -4130000, -7070000, -12290000,
+        )
 
 
 @reincarnation

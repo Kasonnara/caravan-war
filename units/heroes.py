@@ -17,6 +17,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+from typing import Type
+
+from buildings.buildings import HeroTemple
 from common.card_categories import HEROES
 from common.resources import Resources, ResourcePacket
 from common.target_types import TargetType
@@ -25,6 +28,7 @@ from utils.class_property import classproperty
 
 
 class Hero(MovableUnit):
+    base_building = HeroTemple
     level_grow_factor = 1.018
     ultimate = False
     cost = 1

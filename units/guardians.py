@@ -19,14 +19,17 @@
 """
 from typing import Union, List
 
+from buildings.buildings import Academy
 from common.card_categories import GUARDIANS
 from common.rarity import Rarity
+from common.resources import resourcepackets_gold
 from units.base_units import MovableUnit, Heal, AOE, reincarnation, DPS_SCORE_FACTOR, \
     HP_SCORE_FACTOR
 from common.target_types import TargetType
 
 
 class Guardian(MovableUnit):
+    base_building = Academy
     move_speed = 1.2
     bossfight_cost = None
 
@@ -43,6 +46,11 @@ class Scout(Guardian):
     cost = 1
     bossfight_cost = 20
     rarity = Rarity.Common
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        -31000, None, None, None, None,  # 6 -> 11
+        )
 
 
 class Guard(Guardian):
@@ -57,6 +65,11 @@ class Guard(Guardian):
     cost = 1
     bossfight_cost = 18
     rarity = Rarity.Common
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, -240000,  # 6 -> 11
+        )
 
 
 class Healer(AOE, Heal, Guardian):
@@ -71,6 +84,11 @@ class Healer(AOE, Heal, Guardian):
     # TODO: heal spell
     bossfight_cost = 25
     rarity = Rarity.Rare
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, -240000, None,  # 6 -> 11
+        )
 
 
 class Follet(Guardian):
@@ -85,6 +103,11 @@ class Follet(Guardian):
     cost = 2
     bossfight_cost = 25
     rarity = Rarity.Common
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, -160000, None,  # 6 -> 11
+        )
 
 
 class Shield(Guardian):
@@ -99,6 +122,11 @@ class Shield(Guardian):
     cost = 2
     bossfight_cost = 35
     rarity = Rarity.Rare
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, -183000, None, None,  # 6 -> 11
+        )
 
 
 class Jetpack(Guardian):
@@ -114,6 +142,12 @@ class Jetpack(Guardian):
     # TODO: EMP spell
     bossfight_cost = 33
     rarity = Rarity.Rare
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, None,  # 6 -> 11
+        None, -1260000, -2220000, -3800000,
+        )
 
 
 class Knight(Guardian):
@@ -129,6 +163,12 @@ class Knight(Guardian):
     # TODO double armor spell
     bossfight_cost = 35
     rarity = Rarity.Rare
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, None,  # 6 -> 11
+        None, -1570000, -2770000, -4750000,
+        )
 
 
 class Sword(AOE, Guardian):
@@ -144,6 +184,11 @@ class Sword(AOE, Guardian):
     bossfight_cost = 40
     rarity = Rarity.Rare
     gold_cost = 10000
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, -460000,  # 6 -> 11
+        )
 
 
 class Sparte(Guardian):
@@ -164,7 +209,9 @@ class Sparte(Guardian):
         None, None, -5600, -14000, -36000,  # 1 -> 6
         -83000, -177000, -247000, -360000, -650000,  # 6 -> 11
         None, None, None, -6410000, -11130000,  # 11 -> 16
+        -19760000,
         )
+
 
 @reincarnation
 class SparteLeg(Sparte):
@@ -186,6 +233,12 @@ class Paladin(Guardian):
     # TODO: charge spell
     bossfight_cost = None
     rarity = Rarity.Epic
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, -720000,  # 6 -> 11
+        None, -2360000, -4160000, -7120000,
+        )
 
 
 @reincarnation
@@ -206,6 +259,12 @@ class Marchal(Guardian):
     multiple_target_limit = 2
     bossfight_cost = 90
     rarity = Rarity.Epic
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, None,  # 6 -> 11
+        None, -2200000, None, -6640000, -11540000,  # 11 -> 16
+        )
 
 
 @reincarnation
@@ -227,6 +286,12 @@ class Griffon(Guardian):
     move_speed = 1.8
     bossfight_cost = None
     rarity = Rarity.Epic
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, -700000,  # 6 -> 11
+        None, -2280000, -4020000, -6880000,
+        )
 
 
 @reincarnation
@@ -247,6 +312,12 @@ class Hammer(Guardian):
     # TODO: shield spell
     bossfight_cost = None
     rarity = Rarity.Epic
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, -360000, None,  # 6 -> 11
+        None, None, None, -6410000, -11130000,
+        )
 
 
 @reincarnation
@@ -266,6 +337,12 @@ class Canonner(Guardian, AOE):
     cost = 4
     bossfight_cost = 190
     rarity = Rarity.Legendary
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, None,  # 6 -> 11
+        None, None, None, -9730000, -16900000,
+        )
 
 
 class DemonSlayer(Guardian):
@@ -282,6 +359,12 @@ class DemonSlayer(Guardian):
     # TODO: ignore 50% armmor (50% of what : armor value or damage reduction % ?)
     bossfight_cost = 200
     rarity = Rarity.Legendary
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, None,  # 6 -> 11
+        None, -3300000,
+        )
 
 
 class Golem(AOE, Guardian):
@@ -297,6 +380,13 @@ class Golem(AOE, Guardian):
     # TODO: stone wall on death
     bossfight_cost = 190
     rarity = Rarity.Legendary
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, None,  # 6 -> 11
+        None, None, None, -10440000, -18140000,  # 11 -> 16
+        -32200000,
+        )
 
 
 class Seraphin(Guardian, Heal):
@@ -316,6 +406,13 @@ class Seraphin(Guardian, Heal):
     # TODO: heal spell
     bossfight_cost = 200
     rarity = Rarity.Legendary
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, None,  # 6 -> 11
+        None, None, None, -9970000, -17310000,  # 11 -> 16
+        -30740000,
+        )
 
     def score(self, allies_targets: Union['MovableUnit', List['MovableUnit']]):
         # FIXME: heal doesn't apply to ennemy but to allies!
@@ -339,6 +436,13 @@ class Wizard(Guardian):
     # TODO: stun
     bossfight_cost = 190
     rarity = Rarity.Legendary
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, None,  # 6 -> 11
+        None, None, None, -10200000, -17730000,  # 11 -> 16
+        -31470000,
+        )
 
 
 # Register all defined cards

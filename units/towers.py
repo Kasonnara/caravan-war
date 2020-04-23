@@ -19,6 +19,7 @@
 """
 from typing import Union, List, Optional
 
+from buildings.buildings import WorkShop
 from common.card_categories import TOWERS
 from common.resources import resourcepackets_gold
 from utils.class_property import classproperty
@@ -27,6 +28,7 @@ from units.base_units import BaseUnit, AOE, Heal
 
 
 class Tower(BaseUnit):
+    base_building = WorkShop
     parent_tower = None
     _cost = None
 
@@ -58,6 +60,12 @@ class Sentinelle(Tower):
     armor_piercing = 0
     _cost = 150
     parent_tower = None
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,
+        None, None, None, None, None,
+        None, -1400000,
+        )
 
 
 class Arbalete(Tower):
@@ -69,6 +77,13 @@ class Arbalete(Tower):
     _cost = 160
     parent_tower = Sentinelle
     multiple_target_limit = 2
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,
+        None, None, None, None, None,
+        None, None, None, -8470000, -14710000,
+        -26120000,
+        )
 
 
 class Eolance(Tower):
@@ -79,6 +94,13 @@ class Eolance(Tower):
     armor_piercing = 0
     _cost = 150
     parent_tower = Arbalete
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,
+        None, None, None, None, None,
+        None, None, None, -9320000, -16180000,
+        -28730000,
+        )
 
 
 class Sniper(Tower):
@@ -89,6 +111,12 @@ class Sniper(Tower):
     armor_piercing = 0
     _cost = 160
     parent_tower = Sentinelle
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,
+        None, None, None, None, None,
+        None, -3360000,
+        )
 
 
 class HeavySniper(Tower):
@@ -104,7 +132,8 @@ class HeavySniper(Tower):
         0,  # 0 -> 1
         -570, -3200, -14500, -33000, -71000,
         -163000, -345000, -485000, -710000, -1030000,
-        -1920000, -3360000, None, -10160000,
+        -1920000, -3360000, None, -10160000, -17660000,
+        -31350000,
         )
     # damage, with 4 stars [240, 276, 318, 366, 421, 483, 555, 638, 734, 844, 972, 1117]
 
@@ -117,6 +146,7 @@ class Mage(Tower):
     armor_piercing = 6
     _cost = 150
     parent_tower = None
+    upgrade_costs = Sentinelle.upgrade_costs  # basic towers seems to have the same upgrade costs
 
 
 class Lightning(Tower):
@@ -128,6 +158,11 @@ class Lightning(Tower):
     _cost = 175
     parent_tower = Mage
     multiple_target_limit = 8
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,
+        None, -345000,
+        )
 
     def damage_formule(self, target: 'MovableUnit', target_index=0):
         return (
@@ -165,7 +200,8 @@ class Fire(Tower):
         0,  # 0 -> 1
         None, None, None, None, None,
         None, None, None, None, None,
-        None, None, None, -9740000,
+        None, None, None, -9740000, -16920000,
+        -30040000,
         )
 
 
@@ -177,6 +213,12 @@ class Bomber(AOE, Tower):
     armor_piercing = 0
     _cost = 170
     parent_tower = None
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,
+        None, None, None, None, None,
+        -960000, -1680000, -2970000, -5080000,
+        )
 
 
 class Canon(Tower):
@@ -188,6 +230,13 @@ class Canon(Tower):
     _cost = 120
     parent_tower = Bomber
     multiple_target_limit = 3
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,
+        None, None, None, None, None,
+        None, None, None, -9320000, -16180000,
+        -28730000,
+        )
 
 
 class Hydra(Tower):
@@ -198,6 +247,13 @@ class Hydra(Tower):
     armor_piercing = 0
     _cost = 280
     parent_tower = Canon
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,
+        None, None, None, None, None,
+        None, None, None, -11010000, -19130000,
+        -33960000,
+        )
 
 
 class MissileLaucher(AOE, Tower):
@@ -208,6 +264,13 @@ class MissileLaucher(AOE, Tower):
     armor_piercing = 0
     _cost = 80
     parent_tower = Bomber
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,
+        None, None, None, None, None,
+        None, None, None, -8470000, -14710000,
+        -26120000
+        )
 
 
 class Hospital(AOE, Heal, Tower):
@@ -217,24 +280,43 @@ class Hospital(AOE, Heal, Tower):
     shoot_to = TargetType.AIR_GROUND
     _cost = 120
     parent_tower = None
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,
+        None, None, None, None, None,
+        None, -1120000,
+        )
 
-    def dps(self, targets: Union['MovableUnit', List['MovableUnit']]) -> Optional[float]:
+    def dps(self, targets: Union[MovableUnit, List[MovableUnit]]) -> Optional[float]:
         return None
 
 
 class Armory(Hospital):
     _cost = 80
     parent_tower = Hospital
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,
+        None, None, None, None, None,
+        None, None, -3710000, -6350000,
+        )
 
 
 class Tambour(Hospital):
     _cost = 130
     parent_tower = Hospital
+    upgrade_costs = Armory.upgrade_costs
 
 
 class Garnison(Tambour, Armory):
     _cost = 190
     parent_tower = Armory
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,
+        None, None, None, None, None,
+        None, None, None, -8470000,
+        )
 
 
 # Register all defined cards

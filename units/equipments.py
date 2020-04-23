@@ -18,10 +18,13 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from typing import Tuple
+
+from buildings.buildings import Forge
 from common.cards import Card
 
 
 class Equipement(Card):
+    base_building_level = Forge
     def __init__(self, level=1, effects: Tuple[object] = ()):
         self.effects = effects
         self.level = level

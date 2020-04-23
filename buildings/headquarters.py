@@ -112,5 +112,8 @@ class HQ(Building):
         return 6 * self.wave_lenght * sum(self.wave_number) # FIXME verify formulas for level > 15. Does the 2nd convoy follow the same rules?
 
 
+# Now that HQ is initialized, set it as base_building in Building
+Building.base_building = HQ
+
 # Register all defined cards
 BUILDINGS.register_cards_in_module(Building, __name__)

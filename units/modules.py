@@ -19,13 +19,16 @@
 """
 from typing import Union, Type
 
+from buildings.buildings import Weaponsmith
 from common.card_categories import MODULES
 from common.rarity import Rarity
+from common.resources import resourcepackets_gold
 from units.base_units import AOE, COE, BaseUnit, reincarnation
 from common.target_types import TargetType
 
 
 class ModuleWeapon(BaseUnit):
+    base_building = Weaponsmith
     cost = 1
 
     def __init__(self, level: int, stars=0):
@@ -39,6 +42,11 @@ class Balista(ModuleWeapon):
     armor_piercing = 0
     shoot_to = TargetType.AIR_GROUND
     rarity = Rarity.Common
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        -32000,
+        )
 
 
 class Mortar(AOE, ModuleWeapon):
@@ -48,6 +56,11 @@ class Mortar(AOE, ModuleWeapon):
     armor_piercing = 0
     shoot_to = TargetType.GROUND
     rarity = Rarity.Rare
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, -280000,
+        )
 
 
 class Shotgun(COE, ModuleWeapon):
@@ -57,6 +70,11 @@ class Shotgun(COE, ModuleWeapon):
     armor_piercing = 0
     shoot_to = TargetType.AIR
     rarity = Rarity.Rare
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, -122000,
+        )
 
 
 class Chaingun(ModuleWeapon):
@@ -67,6 +85,12 @@ class Chaingun(ModuleWeapon):
     shoot_to = TargetType.AIR_GROUND
     rarity = Rarity.Epic
     anti_air_bonus = 1.5
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, -430000, None,  # 6 -> 11
+        None, None, -4420000, -7570000, -13150000,
+        )
 
     def damage_formule(self, target: 'MovableUnit', target_index=0):
         dmg = super().damage_formule(target, target_index=target_index)
@@ -97,6 +121,11 @@ class Laser(ModuleWeapon):
     consecutive_hit_attack_boost = 0.4
     max_consecutive_boost = 3.
     rarity = Rarity.Epic
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, -740000,  # 6 -> 11
+        )
 
 
 @reincarnation
@@ -112,6 +141,12 @@ class FlameTrower(COE, ModuleWeapon):
     armor_piercing = 0
     shoot_to = TargetType.AIR_GROUND
     rarity = Rarity.Epic
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, -790000,  # 6 -> 11
+        None, None, -4560000, -7810000, -13570000,
+        )
 
 
 @reincarnation
@@ -127,6 +162,11 @@ class Tesla(COE, ModuleWeapon):
     shoot_to = TargetType.AIR_GROUND
     multiple_target_limit = 4
     rarity = Rarity.Legendary
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, -990000,  # 6 -> 11
+        )
 
     def damage_formule(self, target: 'MovableUnit', target_index=0):
         dmg = super().damage_formule(target, target_index=target_index)
@@ -147,6 +187,12 @@ class Barrier(ModuleWeapon):
     shoot_to = TargetType.AIR_GROUND
     # Todo protective effect
     rarity = Rarity.Legendary
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,  # 1 -> 6
+        None, None, None, None, None,  # 6 -> 11
+        None, None, -5280000, -9040000, -15700000,
+        )
 
 
 class Harpon(ModuleWeapon):
@@ -157,6 +203,12 @@ class Harpon(ModuleWeapon):
     shoot_to = TargetType.AIR_GROUND
     # Todo slow effect
     rarity = Rarity.Legendary
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        None, None, None, None, None,               # 1 -> 6
+        None, None, None, None, None,               # 6 -> 11
+        None, None, -5420000, -9280000, -16120000,  # 11 -> 16
+        )
 
 
 # Register all defined cards
