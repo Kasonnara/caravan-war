@@ -37,16 +37,16 @@ class CardCategories(Enum):
     def __init__(self, display_name) -> None:
         self.display_name = display_name
         super().__init__()
-        self.category_base_class = None
+        self.card_base_class = None
         # Register the category into CARD_DICTIONARY (as dict key and also as attribute for cleaner static usage)
         self.cards = set()
         """Set of all card type registered in this category"""
 
     def register_cards_in_module(self, category_base_class: Type[Upgradable], module_name_to_inspect: str):
         # One to one link between the Enum instance and the actual Card base class
-        assert (self.category_base_class is None) or self.category_base_class is category_base_class, \
+        assert (self.card_base_class is None) or self.card_base_class is category_base_class, \
             "Registering units in one category multiple times with different category_base_class"
-        self.category_base_class = category_base_class
+        self.card_base_class = category_base_class
         category_base_class.category = self
 
         # Find and register all units in given module that extends from category_base_class

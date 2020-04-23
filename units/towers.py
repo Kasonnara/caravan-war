@@ -165,7 +165,7 @@ class Lightning(Tower):
         None, -345000,
         )
 
-    def damage_formule(self, target: 'MovableUnit', target_index=0):
+    def damage_formule(self, target: MovableUnit, target_index=0, hit_combo=0):
         return (
             super().damage_formule(target, target_index=target_index)
             * (0.25 * max(0, 4 - target_index))  # Reduction factor

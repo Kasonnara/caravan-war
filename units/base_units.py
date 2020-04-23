@@ -286,15 +286,15 @@ class Heal:
             + (0 if self.weapon is None else self.weapon.bonus_factor * self.base_heal)
             )
 
-    def hps(self, allies: Union['MovableUnit', List['MovableUnit']]) -> float:
+    def hps(self, allies: Union[MovableUnit, List[MovableUnit]]) -> float:
         return self.heal * self.heal_frequency * (len(allies) if hasattr(allies, '__len__') else 1)
 
-    def hps_score(self, allies: Union['MovableUnit', List['MovableUnit']]):
+    def hps_score(self, allies: Union[MovableUnit, List[MovableUnit]]):
         if self.cost is None:
             return None
         return self.hps(allies) / self.cost
 
-    def score(self, allies: Union['MovableUnit', List['MovableUnit']]):
+    def score(self, allies: Union[MovableUnit, List[MovableUnit]]):
         # FIXME: heal doesn't apply to ennemy but to allies!
         return (
                 self.hps_score(allies) / DPS_SCORE_FACTOR

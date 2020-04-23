@@ -144,6 +144,8 @@ modules = {
     CardStock(Balista(15, stars=0), 100),
     }
 
+# TODO card stock for spells
+
 spells = {
     Ice(15),
     Storm(15),

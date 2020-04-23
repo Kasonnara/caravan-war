@@ -333,7 +333,7 @@ class Stealer(Bandit):
 
     # TODO: invisibility effect
 
-    def damage_formule(self, target: 'MovableUnit', target_index=0, hit_combo=0):
+    def damage_formule(self, target: MovableUnit, target_index=0, hit_combo=0):
         dmg = super().damage_formule(target, target_index, hit_combo)
         if dmg is None:
             return None

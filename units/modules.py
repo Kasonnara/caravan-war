@@ -17,13 +17,11 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from typing import Union, Type
-
 from buildings.buildings import Weaponsmith
 from common.card_categories import MODULES
 from common.rarity import Rarity
 from common.resources import resourcepackets_gold
-from units.base_units import AOE, COE, BaseUnit, reincarnation
+from units.base_units import AOE, COE, BaseUnit, reincarnation, MovableUnit
 from common.target_types import TargetType
 
 
@@ -92,7 +90,7 @@ class Chaingun(ModuleWeapon):
         None, None, -4420000, -7570000, -13150000,
         )
 
-    def damage_formule(self, target: 'MovableUnit', target_index=0):
+    def damage_formule(self, target: MovableUnit, target_index=0, hit_combo=0):
         dmg = super().damage_formule(target, target_index=target_index)
         if dmg is None:
             return None
@@ -105,7 +103,7 @@ class ChaingunLeg(Chaingun):
     # FIXME the 2nd target must be at less than 1m
     anti_air_bonus = 1.6
 
-    def damage_formule(self, target: 'MovableUnit', target_index=0):
+    def damage_formule(self, target: MovableUnit, target_index=0, hit_combo=0):
         dmg = super().damage_formule(target, target_index=target_index)
         if dmg is None:
             return None
@@ -168,7 +166,7 @@ class Tesla(COE, ModuleWeapon):
         None, None, None, None, -990000,  # 6 -> 11
         )
 
-    def damage_formule(self, target: 'MovableUnit', target_index=0):
+    def damage_formule(self, target: MovableUnit, target_index=0, hit_combo=0):
         dmg = super().damage_formule(target, target_index=target_index)
         if dmg is None:
             return None
