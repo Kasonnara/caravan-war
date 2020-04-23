@@ -18,19 +18,12 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from common.card_categories import SPELLS
-from common.cards import Card
 from common.rarity import Rarity
-from utils.class_property import classproperty
+from spells.common_spell import AbstractSpell
 
 
-class Spell(Card):
-    @classproperty
-    def gem_cost(cls):
-        return cls.rarity.spell_gem_cost
-
-    @classmethod
-    def gold_cost(cls, ligue: 'Ligue'):
-        return cls.rarity.spell_gold_cost(ligue)
+class Spell(AbstractSpell):
+    pass
 
 
 class Arrow(Spell):

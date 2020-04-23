@@ -19,12 +19,19 @@
 """
 
 from common.card_categories import CONVOY_BOOSTS
-from common.cards import Card
 from common.rarity import Rarity
+from spells.common_spell import AbstractSpell
 
 
-class ConvoyBoost(Card):
-    pass
+class ConvoyBoost(AbstractSpell):
+    def _effect_factor(self) -> float:
+        assert self.level > 0, "Spell at level 0 aren't unlocked yet, you shouldn't need their _effect_factor yet"
+        if self.rarity is Rarity.Common:
+            return 1.038 + 0.002 * self.level
+        elif self.rarity is Rarity.Rare:
+            return 1.077 + 0.003 * self.level  # FIXME: expression is not exact at all levels
+        elif self.rarity is Rarity.Epic:
+            return 1.1 + 0.005 * self.level
 
 
 class AttackSpeedBoost(ConvoyBoost):
