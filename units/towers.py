@@ -22,9 +22,10 @@ from typing import Union, List, Optional
 from buildings.buildings import WorkShop
 from common.card_categories import TOWERS
 from common.resources import resourcepackets_gold
+from units.heroes import Hero
 from utils.class_property import classproperty
 from common.target_types import TargetType
-from units.base_units import BaseUnit, AOE, Heal
+from units.base_units import BaseUnit, AOE, Heal, MovableUnit, FakeMovableUnit
 
 
 class Tower(BaseUnit):
@@ -179,6 +180,7 @@ class Stormspire(Tower, AOE):
     armor_piercing = 6
     _cost = 200
     parent_tower = Lightning
+    _log_once = False
     # TODO special effects
     upgrade_costs = resourcepackets_gold(
         0,  # 0 -> 1
@@ -186,6 +188,17 @@ class Stormspire(Tower, AOE):
         -68000, -144000, -202000, -300000, -430000,
         -800000, -1400000, -2470000, -4230000,
         )
+
+    def damage_formule(self, target: MovableUnit, target_index=0, hit_combo=0):
+        # return super().damage_formule(target, target_index, hit_combo)
+        if isinstance(target, Hero):
+            return target.hp * 0.625  # TODO test if level difference impact damage on hero, and how
+        if isinstance(target, FakeMovableUnit):
+            if not type(self)._log_once:
+                type(self)._log_once = True
+                print("Stormspire can only be evaluated against a real unit")
+            return 0
+        return target.hp * (0.125 - 0.0125 * max(0, target.level - self.level))  # TODO test if it's -1.25% linear or exponential (by default I assumed it linear here )
 
 
 class Fire(Tower):
