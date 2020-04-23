@@ -20,13 +20,15 @@
 from collections import namedtuple
 from typing import Tuple
 
-from cards import Gold, Goods, LifePotion, Gem, ReincarnationToken, AmeLegendaire, BanditShieldProtection, Croissance
-from spells import AttackSpeedBoost, Landmine, AttackBoost, Meteor, LifeBoost, Poison, Arrow, SpeedBoost
+from common.resources import ResourcePacket, Resources
+from spells.convoy_boosts import SpeedBoost, AttackSpeedBoost, LifeBoost, AttackBoost, ModuleBoost, VehicleArmor
+from spells.spells import Landmine, Meteor, Poison, Arrow, Ice
 from units.bandits import Drone, Archer, Brute, Maraudeur, Hunter, Berserk, Spider, Alchimist, Lutin
 from units.guardians import Scout, Guard, Healer, Follet, Shield, Knight, Sword
-from units.vehicules import Charrette, Helicopter, Chariot
-from units.weapons import Balista, Mortar, Shotgun, Chaingun
-from ligues import Ligue as L
+from units.vehicles import Charrette, Helicopter, Chariot
+from units.modules import Balista, Mortar, Shotgun, Chaingun
+from common.ligues import Ligue as L
+
 
 class Chest:
     number_of_card = None  # TODO property based on loot_example
@@ -34,7 +36,7 @@ class Chest:
     available_loot_categories = None  # TODO property based on loot_example
 
 
-Loot = namedtuple('Loot', 'HQ_level ligue vip index cards')
+Loot = namedtuple('Loot', 'HQ_level ligue vip index resource_packet cards')
 """Memorise a chest loot result as well as looting current conditions (HQ looting, vip level and ligue level) 
 for later analise (index is used for campaign, daily and weekly quests chest)"""
 # TODO split card loots, ressources loots and shield loots
@@ -43,9 +45,22 @@ for later analise (index is used for campaign, daily and weekly quests chest)"""
 class RecycleChest(Chest):
     number_of_card = 5
     loot_example = [
-        Loot(8, "Cheval 2", 6, None, (Gold(6816), Goods(10103), AttackSpeedBoost, Landmine, Landmine)),
-        Loot(8, "Cheval 3", 6, None, (Gold(6859), Goods(17576), SpeedBoost, Landmine, LifeBoost)),
-        Loot(8, "Chameau 1", 6, None, (Gold(6339), Goods(22964), SpeedBoost, Arrow, LifeBoost)),
+        Loot(8, L.Horse2, 6, None, ResourcePacket(10103, 6816), (AttackSpeedBoost, Landmine, Landmine)),
+        Loot(8, L.Horse3, 6, None, ResourcePacket(17576, 6859), (SpeedBoost, Landmine, LifeBoost)),
+        Loot(8, L.Camel1, 6, None, ResourcePacket(22964, 6339), (SpeedBoost, Arrow, LifeBoost)),
+        Loot(17, L.RedDragon3, 8, None, ResourcePacket(523000, 275000), (Ice, SpeedBoost, Poison)),
+        Loot(17, L.RedDragon3, 8, None, ResourcePacket(579000, 313000), (Ice, Landmine, SpeedBoost)),
+        Loot(17, L.RedDragon3, 8, None, ResourcePacket(439000, 310000), (Landmine, AttackSpeedBoost, AttackBoost)),
+        Loot(17, L.RedDragon3, 8, None, ResourcePacket(436000, 298000), (Landmine, VehicleArmor, ModuleBoost)),  # entrepot full
+        Loot(17, L.RedDragon3, 8, None, ResourcePacket(320000, 225000), (LifeBoost, Poison, Landmine)),  # entrepot full
+        Loot(17, L.RedDragon3, 8, None, ResourcePacket(512000, 242000), (Landmine, VehicleArmor, AttackBoost)),
+        Loot(17, L.RedDragon3, 8, None, ResourcePacket(457000, 277000), (Meteor, Arrow, LifeBoost)),
+        Loot(17, L.RedDragon3, 8, None, ResourcePacket(410000, 163000), (Landmine, LifeBoost, AttackSpeedBoost)),
+        Loot(17, L.RedDragon3, 8, None, ResourcePacket(378000, 305000), (AttackBoost, Arrow, Poison)),
+        Loot(17, L.RedDragon3, 8, None, ResourcePacket(537000, 186000), (Arrow, Arrow, Landmine)),
+        Loot(17, L.RedDragon3, 8, None, ResourcePacket(600000, 195000), (Meteor, Arrow, Poison)),
+        Loot(17, L.RedDragon3, 8, None, ResourcePacket(589000, 161000), (Meteor, Landmine, Landmine)),  # entrepot full mais ça semble ok
+        #Loot(17, L.RedDragon3, 8, None, ResourcePacket(, ), (, ,)),
         ]
 
 
@@ -53,13 +68,13 @@ class Exchange10km(Chest):
     # Wood Chest
     number_of_card = 5
     loot_example = [
-        Loot(8, L.Horse2, 6, None, (ReincarnationToken(1), Drone, Archer, Archer, Archer, Balista)),
-        Loot(8, L.Horse2, 6, None, (Scout, Scout, Archer, Archer, Balista)),
-        Loot(8, L.Horse3, 6, None, (Maraudeur, Follet, Guard, Guard, Guard)),
-        Loot(8, L.Horse3, 6, None, (Maraudeur, Maraudeur, Balista, Spider, AttackBoost)),
-        Loot(8, L.Horse3, 6, None, (Scout, Scout, Shotgun, Drone, Follet)),
-        Loot(8, L.Horse3, 6, None, (Maraudeur, Scout, Maraudeur, Scout, Guard)),
-        Loot(8, L.Horse3, 6, None, (Meteor, Drone, Drone, Archer, Balista)),
+        Loot(8, L.Horse2, 6, None, ResourcePacket(Resources.ReincarnationToken(1)), (Drone, Archer, Archer, Archer, Balista)),
+        Loot(8, L.Horse2, 6, None, ResourcePacket(), (Scout, Scout, Archer, Archer, Balista)),
+        Loot(8, L.Horse3, 6, None, ResourcePacket(), (Maraudeur, Follet, Guard, Guard, Guard)),
+        Loot(8, L.Horse3, 6, None, ResourcePacket(), (Maraudeur, Maraudeur, Balista, Spider, AttackBoost)),
+        Loot(8, L.Horse3, 6, None, ResourcePacket(), (Scout, Scout, Shotgun, Drone, Follet)),
+        Loot(8, L.Horse3, 6, None, ResourcePacket(), (Maraudeur, Scout, Maraudeur, Scout, Guard)),
+        Loot(8, L.Horse3, 6, None, ResourcePacket(), (Meteor, Drone, Drone, Archer, Balista)),
         ]
 
 
@@ -68,9 +83,9 @@ class Exchange100km(Chest):
     # Iron chest
     number_of_card = 6
     loot_example = [
-        Loot(8, L.Horse3, 6, None, (ReincarnationToken(2), Spider, Charrette, Follet, Maraudeur, Guard, Guard)),
-        Loot(8, L.Horse3, 6, None, (ReincarnationToken(1), Maraudeur, Drone, Drone, Archer, Archer, Archer)),
-        Loot(8, L.Horse3, 6, None, (Scout, Guard, Knight, LifeBoost, Archer, Archer)),
+        Loot(8, L.Horse3, 6, None, ResourcePacket(Resources.ReincarnationToken(2)), (Spider, Charrette, Follet, Maraudeur, Guard, Guard)),
+        Loot(8, L.Horse3, 6, None, ResourcePacket(Resources.ReincarnationToken(1)), (Maraudeur, Drone, Drone, Archer, Archer, Archer)),
+        Loot(8, L.Horse3, 6, None, ResourcePacket(), (Scout, Guard, Knight, LifeBoost, Archer, Archer)),
         ]
 
 
@@ -78,9 +93,9 @@ class Exchange1000km(Chest):
     # Silver chest
     number_of_card = 7
     loot_example = [
-        Loot(8, L.Horse2, 6, None, (Mortar, Berserk, Charrette, Maraudeur, Maraudeur, Archer, Landmine)),
-        Loot(8, L.Horse2, 6, None, (Shield, Knight, Sword, Archer, Scout, Scout, Guard)),
-        Loot(8, L.Horse2, 6, None, (ReincarnationToken(2), Maraudeur, Maraudeur, Archer, Alchimist, Scout, Maraudeur, Alchimist)),
+        Loot(8, L.Horse2, 6, None, ResourcePacket(), (Mortar, Berserk, Charrette, Maraudeur, Maraudeur, Archer, Landmine)),
+        Loot(8, L.Horse2, 6, None, ResourcePacket(), (Shield, Knight, Sword, Archer, Scout, Scout, Guard)),
+        Loot(8, L.Horse2, 6, None, ResourcePacket(Resources.ReincarnationToken(2)), (Maraudeur, Maraudeur, Archer, Alchimist, Scout, Maraudeur, Alchimist)),
         ]
 
 
@@ -91,7 +106,7 @@ class BestExchange(Chest):
     # Legendary 7%
     number_of_card = 8
     loot_example = [
-        Loot(8, "Cheval 2", 6, None, (ReincarnationToken(5), Follet, Healer, Maraudeur, Guard, Guard, Maraudeur, Chariot)),
+        Loot(8, L.Horse2, 6, None, ResourcePacket(Resources.ReincarnationToken(5)), (Follet, Healer, Maraudeur, Guard, Guard, Maraudeur, Chariot)),
         ]
 
 
@@ -101,31 +116,31 @@ class RaidChest(Chest):
     # Epic: 18%
     number_of_card = 7
     loot_example = [
-        Loot(8, L.Horse2, 6, None, (ReincarnationToken(2), Charrette, Helicopter, Brute, Maraudeur, Hunter, Archer, Guard, BanditShieldProtection)),
-        Loot(8, L.Horse3, 6, None, (ReincarnationToken(2), Chaingun, Maraudeur, Scout , Scout, Poison, Lutin, Berserk)),
+        Loot(8, L.Horse2, 6, None, ResourcePacket(Resources.ReincarnationToken(2), Resources.BanditShieldProtection()), (Charrette, Helicopter, Brute, Maraudeur, Hunter, Archer, Guard,)),
+        Loot(8, L.Horse3, 6, None, ResourcePacket(Resources.ReincarnationToken(2)), (Chaingun, Maraudeur, Scout, Scout, Poison, Lutin, Berserk)),
         ]
 
 
 class DailyQuest(Chest):
     # for DailyQuest chest index means the chest index in the list
     loot_example = [
-        Loot(8, L.Horse3, 6, 2, (Gold(10000), Croissance(20))),
-        Loot(8, L.Horse3, 6, 3, (Goods(10000),  Croissance(20), Hunter)),
-        Loot(8, L.Horse3, 6, 4, (Gold(10000), Croissance(20), Healer)),
-        Loot(8, L.Horse3, 6, 5, (Gem(20), LifePotion(1), Croissance(20))),
-        Loot(8, L.Horse3, 6, 1, (Goods(10000), Croissance(20))),
-        Loot(8, L.Horse3, 6, 2, (Gold(10000), Croissance(20))),
-        Loot(8, L.Horse3, 6, 3, (Goods(10000), Croissance(20), Alchimist)),
-        Loot(8, L.Horse3, 6, 4, (Gold(10000), Croissance(20), Shield)),
-        Loot(8, L.Camel1, 6, 5, (Gem(20), LifePotion(1), Croissance(20))),
+        Loot(8, L.Horse3, 6, 2, ResourcePacket(Resources.Gold(10000), Resources.BeginnerGrowth(20)), ()),
+        Loot(8, L.Horse3, 6, 3, ResourcePacket(Resources.Goods(10000),  Resources.BeginnerGrowth(20)), (Hunter,)),
+        Loot(8, L.Horse3, 6, 4, ResourcePacket(Resources.Gold(10000), Resources.BeginnerGrowth(20)), (Healer,)),
+        Loot(8, L.Horse3, 6, 5, ResourcePacket(Resources.Gem(20), Resources.LifePotion(1), Resources.BeginnerGrowth(20)), ()),
+        Loot(8, L.Horse3, 6, 1, ResourcePacket(Resources.Goods(10000), Resources.BeginnerGrowth(20)), ()),
+        Loot(8, L.Horse3, 6, 2, ResourcePacket(Resources.Gold(10000), Resources.BeginnerGrowth(20)), ()),
+        Loot(8, L.Horse3, 6, 3, ResourcePacket(Resources.Goods(10000), Resources.BeginnerGrowth(20)), (Alchimist,)),
+        Loot(8, L.Horse3, 6, 4, ResourcePacket(Resources.Gold(10000), Resources.BeginnerGrowth(20)), (Shield,)),
+        Loot(8, L.Camel1, 6, 5, ResourcePacket(Resources.Gem(20), Resources.LifePotion(1), Resources.BeginnerGrowth(20)), ()),
         ]
 
 
-class WeklyQuest(Chest):
+class WeeklyQuest(Chest):
     # for WeklyQuest chest index means the chest index in the list
     loot_example = [
-        Loot(8, L.Horse3, 6, 4, (Gold(30000), LifePotion(5), Croissance(60))),
-        Loot(8, L.Horse3, 6, 5, (Gold(50000), Gem(100), Croissance(60))),
+        Loot(8, L.Horse3, 6, 4, ResourcePacket(Resources.Gold(30000), Resources.LifePotion(5), Resources.BeginnerGrowth(60)), ()),
+        Loot(8, L.Horse3, 6, 5, ResourcePacket(Resources.Gold(50000), Resources.Gem(100), Resources.BeginnerGrowth(60)), ()),
         ]
 
 
@@ -136,16 +151,16 @@ class Campaign(Chest):
         # 1 rare minimum
         # Epic 42 %
         # Legendary 7%
-        Loot(8, L.Horse3, 6, 5, (Hunter, Maraudeur, Arrow, Shield, Brute, Follet, Archer, Archer))
+        Loot(8, L.Horse3, 6, 5, ResourcePacket(), (Hunter, Maraudeur, Arrow, Shield, Brute, Follet, Archer, Archer))
         ]
 
 
 class Raid(Chest):
     # For raid chest: index means the number of stars won
     loot_example = [
-        Loot(8, L.Horse2, 6, 3, (Gem(24), LifePotion(1))),
-        Loot(8, L.Horse2, 6, 3, (LifePotion(1), ReincarnationToken(3))),
-        Loot(8, L.Horse2, 6, 3, (Gem(25), LifePotion(1), ReincarnationToken(3), AmeLegendaire(3))),
-        Loot(8, L.Horse2, 6, 3, (LifePotion(1), AmeLegendaire(2))),
-        Loot(8, L.Horse3, 6, 3, (ReincarnationToken(3))),
+        Loot(8, L.Horse2, 6, 3, ResourcePacket(Resources.Gem(24), Resources.LifePotion(1))),
+        Loot(8, L.Horse2, 6, 3, ResourcePacket(Resources.LifePotion(1), Resources.ReincarnationToken(3))),
+        Loot(8, L.Horse2, 6, 3, ResourcePacket(Resources.Gem(25), Resources.LifePotion(1), Resources.ReincarnationToken(3), Resources.LegendarySoul(3))),
+        Loot(8, L.Horse2, 6, 3, ResourcePacket(Resources.LifePotion(1), Resources.LegendarySoul(2))),
+        Loot(8, L.Horse3, 6, 3, ResourcePacket(Resources.ReincarnationToken(3))),
         ]
