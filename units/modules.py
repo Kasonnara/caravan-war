@@ -164,6 +164,7 @@ class Tesla(COE, ModuleWeapon):
         0,  # 0 -> 1
         None, None, None, None, None,  # 1 -> 6
         None, None, None, None, -990000,  # 6 -> 11
+        -1850000, -3230000, -5700000, -9770000,
         )
 
     def damage_formule(self, target: MovableUnit, target_index=0, hit_combo=0):

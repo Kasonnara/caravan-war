@@ -122,7 +122,7 @@ class Lutin(Bandit):
         0,  # 0 -> 1
         None, None, None, None, None,       # 1 -> 6
         None, None, None, None, None,       # 6 -> 11
-        None, None, -3840000, -6590000,
+        None, None, -3840000, -6590000, -11440000,
         )
 
 
@@ -161,7 +161,7 @@ class Hunter(Bandit):
         0,  # 0 -> 1
         None, None, None, None, None,  # 1 -> 6
         None, None, None, None, None,  # 6 -> 11
-        None, None, None, -6930000,
+        None, None, None, -6930000, -12040000,
         )
 
 
@@ -223,7 +223,7 @@ class Viking(Bandit):
         0,  # 0 -> 1
         None, None, None, None, None,
         None, None, None, None, None,  # 6 -> 11
-        None, None, -5670000, -9710000,
+        None, None, -5670000, -9710000, -16860000,
         )
 
 
@@ -249,7 +249,7 @@ class Momie(Bandit):
         0,  # 0 -> 1
         None, None, None, None, None,  # 1 -> 6
         None, None, None, None, -950000,  # 6 -> 11
-        -1770000, -3100000, -5460000,
+        -1770000, -3100000, -5460000, -9360000, -16260000,
         )
 
 
@@ -274,7 +274,7 @@ class DarkKnight(Bandit):
         0,  # 0 -> 1
         None, None, None, None, None,        # 1 -> 6
         None, None, None, None, -1020000,    # 6 -> 11
-        -1900000, -3330000, -5870000,
+        -1900000, -3330000, -5870000, -10050000, -17460000,
         )
 
 
@@ -328,7 +328,7 @@ class Stealer(Bandit):
         0,  # 0 -> 1
         None, None, None, None, None,           # 1 -> 6
         None, None, None, None, None,           # 6 -> 11
-        None, None, -6070000, None, -18070000,  # 11 -> 16
+        None, None, -6070000, -10400000, -18070000,  # 11 -> 16
         )
 
     # TODO: invisibility effect
@@ -416,7 +416,7 @@ class Demon(Bandit):
         0,  # 0 -> 1
         None, None, None, None, None,            # 1 -> 6
         None, None, None, None, None,            # 6 -> 11
-        None, None, None, -14560000, -25290000,  # 11 -> 16
+        None, None, -8500000, -14560000, -25290000,  # 11 -> 16
         )
 
 
@@ -437,7 +437,7 @@ class Chaman(Bandit):
         0,  # 0 -> 1
         None, None, None, None, None,  # 1 -> 6
         None, None, None, None, None,  # 6 -> 11
-        None, -4590000,
+        None, -4590000, -8090000, -13860000, -24090000,
         )
 
 
@@ -462,7 +462,7 @@ class Djin(Bandit, AOE):
         0,  # 0 -> 1
         None, None, None, None, None,  # 1 -> 6
         None, None, None, None, None,  # 6 -> 11
-        None, None, -8300000,
+        None, None, -8300000, -14210000, -24690000,
         )
 
 

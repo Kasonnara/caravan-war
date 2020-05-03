@@ -47,7 +47,13 @@ class HQ(Building):
         (-37200000, -173990000),
         (-66600000, -310220000),
         (-117800000, -546510000),
-        (-212300000, -983100000),
+        (-212300000, -983100000),  # level 19 -> 20
+        None,
+        None,
+        None,
+        None,
+        None,
+        (-5074500000, -24957410000),  # level 25 -> 26
         )
 
     # At this point, other buildings classes don't exist yet, so we just store their names in this temporary attribute,

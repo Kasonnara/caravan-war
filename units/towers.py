@@ -83,7 +83,7 @@ class Arbalete(Tower):
         None, None, None, None, None,
         None, None, None, None, None,
         None, None, None, -8470000, -14710000,
-        -26120000,
+        -26120000, -46570000,
         )
 
 
@@ -100,7 +100,7 @@ class Eolance(Tower):
         None, None, None, None, None,
         None, None, None, None, None,
         None, None, None, -9320000, -16180000,
-        -28730000,
+        -28730000, -51230000,
         )
 
 
@@ -186,7 +186,8 @@ class Stormspire(Tower, AOE):
         0,  # 0 -> 1
         -240, -1300, -6000, -14000, -30000,
         -68000, -144000, -202000, -300000, -430000,
-        -800000, -1400000, -2470000, -4230000,
+        -800000, -1400000, -2470000, -4230000, -7360000,
+        -13060000, -23290000,
         )
 
     def damage_formule(self, target: MovableUnit, target_index=0, hit_combo=0):
@@ -214,7 +215,7 @@ class Fire(Tower):
         None, None, None, None, None,
         None, None, None, None, None,
         None, None, None, -9740000, -16920000,
-        -30040000,
+        -30040000, -53560000,
         )
 
 
@@ -248,7 +249,7 @@ class Canon(Tower):
         None, None, None, None, None,
         None, None, None, None, None,
         None, None, None, -9320000, -16180000,
-        -28730000,
+        -28730000, -51230000,
         )
 
 
@@ -265,7 +266,7 @@ class Hydra(Tower):
         None, None, None, None, None,
         None, None, None, None, None,
         None, None, None, -11010000, -19130000,
-        -33960000,
+        -33960000, -30550000,
         )
 
 
@@ -282,7 +283,7 @@ class MissileLaucher(AOE, Tower):
         None, None, None, None, None,
         None, None, None, None, None,
         None, None, None, -8470000, -14710000,
-        -26120000
+        -26120000, -46570000,
         )
 
 
@@ -311,7 +312,8 @@ class Armory(Hospital):
         0,  # 0 -> 1
         None, None, None, None, None,
         None, None, None, None, None,
-        None, None, -3710000, -6350000,
+        None, None, -3710000, -6350000, -11030000,
+        -19590000,
         )
 
 
