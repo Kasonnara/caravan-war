@@ -69,7 +69,7 @@ class Upgradable:
 
         return Upgrade(
             cls.upgrade_costs[level],                                # - paying gold and goods costs
-            [cls(level)] if level > 0 else []                        # - previous level (except for 0 -> 1)
+            ([cls(level)] if level > 0 else [])                      # - previous level (except for 0 -> 1)
             + [cls.base_building(level//cls.sub_levels_per_level + cls.base_building_level)],  # - the base building of the same level
             )
 
