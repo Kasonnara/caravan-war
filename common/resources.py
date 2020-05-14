@@ -29,10 +29,11 @@ for computations inside the system itself. If you need to output/add many arbitr
 class.
 """
 
+
 from collections import defaultdict
 from enum import Enum, auto
 
-from typing import Type, Union, List, Tuple
+from typing import Type, Union, List, Tuple, Iterable
 
 _meta_unit_list = ['', 'K', 'M', 'B']
 """~= No meta unit, thousand, million, billion"""
@@ -46,29 +47,98 @@ class ResourceQuantity:
     It doesn't aim for computation heavy process but for clarity instead. For consequent computation inside a process
     just use integers.
     """
+    VALID_RESOURCE_TYPE = Union['Resources', Type['Card'], Tuple[Type['Card'], 'Rarity'], 'Rarity']
 
-    def __init__(self, type: 'Resources', quantity: int):
-        self.type = type
+    def __init__(self, res_type: VALID_RESOURCE_TYPE, quantity: float):
+        self.type = res_type
         self.quantity = quantity
 
-    def __add__(self, other: Union['ResourceQuantity', int]):
-        if type(other) is int:
-            return type(self)(self.quantity + other)
+    @staticmethod
+    def compatible_types(main_type: VALID_RESOURCE_TYPE,
+                         other_type: VALID_RESOURCE_TYPE):
+        # Simple test for common cases where ResourceQuantity are only of type Resources enum.
+        # Doesn't recognize cards or rarity and combinaison of both as valid types.
+        # return main_type is other_type
 
-        assert self.type is other.type, "Cannot add resources of different types"
+        # --- new implementation ---
+        # More complex test that also works for Card, rarities and (Card, Rarity) types
+        # (This function is surprisingly complex just to handle that)
+        if main_type == other_type:
+            # match identical Resources, identical cards, identical rarities and identical tuple(card+rarirty)
+            return True
+
+        from common.rarity import Rarity
+        from common.cards import Card
+
+        if type(other_type) is Type:
+            assert issubclass(other_type, Card)
+            o_card, o_rarity = other_type, other_type.rarity
+        elif type(other_type) is Tuple:
+            assert issubclass(other_type[0], Card) and isinstance(other_type[1], Rarity)
+            o_card, o_rarity = other_type
+        else:
+            assert isinstance(other_type, Rarity)
+            return False  # Should already have matched
+
+        if type(main_type) is Type:
+            assert issubclass(main_type, Card)
+            return False  # Should already have matched
+        elif type(other_type) is Tuple:
+            assert issubclass(main_type[0], Card) and isinstance(main_type[1], Rarity)
+            m_card, m_rarity = main_type
+        else:
+            assert isinstance(main_type, Rarity)
+            m_card, m_rarity = None, main_type
+
+        return o_rarity is m_rarity and (m_card is not None and issubclass(o_card, m_card))
+
+    def __add__(self, other: Union['ResourceQuantity', int, float]):
+        if isinstance(other, (int, float)):
+            return type(self)(self.quantity + other)
+        assert type(other) is type(self), "Cannot only add ResourceQuantity or numerals to ResourceQuantity not {}".format(self.type.__class__.__name__)
+        assert self.compatible_types(self.type,other.type), "Cannot add resources of different types"
+
         return type(self)(self.type, self.quantity + other.quantity)
 
-    def __sub__(self, other: Union['ResourceQuantity',int]):
+    def __sub__(self, other: Union['ResourceQuantity', int]):
         if type(other) is int:
             return type(self)(self.quantity - other)
 
-        assert self.type is other.type, "Cannot add resources of different types"
+        assert type(other) is type(self), "Cannot only subtract ResourceQuantity or numerals to ResourceQuantity not {}".format(self.type.__class__.__name__)
+        assert self.compatible_types(self.type, other.type), "Cannot subtract resources of different types"
         assert False, "By convention, you should not need to subtract resources all gains must be positive " \
                       "ResourceQuantity while costs must be negative ResourceQuantity from the very beginning"  # Remove this assert if you found cases where the convention cannot apply
         return type(self)(self.type, self.quantity - other.quantity)
 
     def __repr__(self):
-        return "{}[{}]".format(self.type.name, self.quantity)
+        return "{}[{}]".format(self.prettify_type(self.type), self.quantity)
+
+    @staticmethod
+    def prettify_type(res_type: VALID_RESOURCE_TYPE) -> str:
+        # Simple test for common cases where ResourceQuantity are only of type Resources enum.
+        # Doesn't recognize cards or rarity and combinaison of both as valid types.
+        #  return res_type.name
+        # --- new implementation ---
+        # More complex test that also works for Card, rarities and (Card, Rarity) types
+        # (This function is surprisingly complex just to handle that)
+        if isinstance(res_type, Resources):
+            return res_type.name
+
+        from common.rarity import Rarity
+        from common.cards import Card
+        if isinstance(res_type, Rarity):
+            return "Unspecified{}Card".format(res_type.name)
+        elif type(res_type) is Tuple:
+            assert issubclass(res_type[0], Card)
+            assert isinstance(res_type[1], Rarity)
+            assert res_type[0].rarity is None, "When using (CardType, Rarity) type, that card type should be a category base class not a final unit class" # and thus .rarity shouldn't be defined yet
+            return "Unspecified{}{}".format(res_type[1].name, res_type[0].__class__.__name__)
+        else:
+            assert issubclass(res_type, Card)
+            if res_type.rarity is None:
+                return "Unspecified{}".format(res_type.__name__)
+            else:
+                return res_type.__name__
 
     def prettify(self) -> str:
         """
@@ -95,6 +165,7 @@ class Resources(Enum):
     Gold = auto()
     Goods = auto()
     Gem = auto()
+    Dust = auto()
 
     LegendarySoul = auto()
     ReincarnationToken = auto()
@@ -107,12 +178,15 @@ class Resources(Enum):
     MardonDarkflameSoul = auto()
 
     LifePotion = auto()
+    LotteryTicket = auto()
     # BanditShieldSeconds = auto()
 
     BeginnerGrowth = auto()
     VIP = auto()
 
-    def __call__(self, quantity: int):
+    Trophy = auto()
+
+    def __call__(self, quantity: float):
         return ResourceQuantity(self, quantity)
 
 
@@ -131,22 +205,28 @@ class ResourcePacket(defaultdict):
         super().__init__(int)
 
         for k, resource in enumerate(initial_resources):
-            if k == 0 and type(resource) is int:
+            if k == 0 and isinstance(resource, (int, float)):
                 resource = Resources.Goods(resource)
-            if k == 1 and type(resource) is int:
+            if k == 1 and isinstance(resource, (int, float)):
                 resource = Resources.Gold(resource)
 
-            assert type(resource) is ResourceQuantity
+            assert type(resource) is ResourceQuantity, "Must be of type ResourceQuantity not {}".format(type(resource))
             if resource != 0:
                 self[resource.type] += resource.quantity
+
+    def copy(self):
+        new_dict = type(self)()
+        for res_type in self:
+            new_dict[res_type] = self[res_type]
+        return new_dict
 
     def __add__(self, other):
         result = self.copy()
 
         if type(other) is type(self):
             # Addition of two ResourcePack
-            for key in other:
-                result[key] += other[key]
+            for res_type in other:
+                result[res_type] += other[res_type]
         elif isinstance(other, ResourceQuantity):
             # Addition of one resource to a ResourcePack
             result[other.type] += other.quantity
@@ -162,8 +242,8 @@ class ResourcePacket(defaultdict):
 
         if type(other) is type(self):
             # Addition of two ResourcePack
-            for key in other:
-                result[key] -= other[key]
+            for res_type in other:
+                result[res_type] -= other[res_type]
         elif isinstance(other, ResourceQuantity):
             # Addition of one resource to a ResourcePack
             result[other.type] -= other.quantity
@@ -172,11 +252,51 @@ class ResourcePacket(defaultdict):
 
         return result
 
+    def __mul__(self, other: float):
+        # One liner: cleaner but generate many temporary useless ResourceQuantity objects and two iteration instead of one
+        # return ResourcePacket(*(ResourceQuantity(res_type, self[res_type] * other) for res_type in self))
+
+        result = ResourcePacket()
+        if isinstance(other, (int, float)):
+            for res_type in self:
+                result[res_type] = self[res_type] * other
+        else:
+            raise ValueError("ResourcePacket can only be multiplied by scalars (int/float), not {}".format(type(other)))
+        return result
+
     def prettify(self, exact_value=False):
         return '\n'.join(
-            ["- " +
-             ("{} {}".format(self[key], key.name) if exact_value else key(self[key]).prettify())
+            ["- " + ("{} {}".format(self[key], ResourceQuantity.prettify_type(key))
+                     if exact_value
+                     else ResourceQuantity(key, self[key]).prettify())
              for key in self])
+
+    def to_pandas(self) -> 'pandas.Series':
+        import pandas
+        return pandas.Series(
+            data=[self[res_type] for res_type in self],
+            index=[ResourceQuantity.prettify_type(res_type) for res_type in self],
+            )
+
+    @staticmethod
+    def get_all_resource_types(resource_packets: Iterable['ResourcePacket'],
+                               sort=False) -> Union[List[ResourceQuantity.VALID_RESOURCE_TYPE], List[str]]:
+        """
+        Return the list of all the resource types present in the given ResourcePacket Iterable
+
+        :param resource_packets: Iterable['ResourcePacket'], a bunch of ResourcePacket to analyse.
+        :param sort: bool [default False], if set to True, basic resources will be sorted first.
+        """
+        found_types = {res_type
+                       for resource_packet in resource_packets
+                       for res_type in resource_packet}
+        if sort:
+            # Probably not the best way to do all this. Maybe better with a `sort(key=lambda:...)`
+            found_types = (
+                    [basic_res_type for basic_res_type in Resources if basic_res_type in found_types]
+                    + [other_type for other_type in found_types if not isinstance(other_type, Resources)]
+                )
+        return found_types
 
 
 def resourcepackets_gold(*golds: int):
@@ -194,3 +314,7 @@ def resourcepackets(*goods_golds_tuples: Tuple[int, int]):
     """Alias function for easily creating list of ResourcePacket when defining units upgrade_costs
     """
     return list((ResourcePacket(*goods_gold) if goods_gold is not None else None) for goods_gold in goods_golds_tuples)
+
+
+hero_souls = [Resources.ZoraSoul, Resources.DalvirSoul, Resources.GhohralSoul, Resources.AilulSnowsingerSoul, Resources.MardonDarkflameSoul]
+"""Alias that list the different hero souls"""
