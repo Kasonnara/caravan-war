@@ -1,40 +1,41 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
+
+# This is a personal project to understand and improve my knowledge/tactics in the game Caravan War.
+# Copyright (C) 2019  Kasonnara <kasonnara@laposte.net>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 """
-    This is a personal project to understand and improve my knowledge/tactics in the game Caravan War.
-    Copyright (C) 2019  Kasonnara <kasonnara@laposte.net>
+The purpose of this script is to plot cost evolution of upgradable object (unit, buildings, etc.)
+to manually identify patterns andrelations.
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+The main objective is to find a relation that describe cost evolution of everything
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+Assumptions tested:
+- [X] There is a relation between building/unit costs and HQ cost. [results: plots are similar but not identical
+until level 11 where cost grow factor stabilize]
+- [X] There is a relation between building/unit upgrade cost and ligue exchange gains. [results: No]
 """
+
 from collections import defaultdict
 
 from buildings.buildings import Mill, Laboratory, TransportStation
 from common.cards import Upgradable
 from common.resources import resourcepackets
 from units.guardians import Sparte
-
-"""
-The purpose of this script is to plot cost evolution of upgradable object (unit, buildings, etc.) 
-to manually identify paterns and realtions.
-
-The main objective is to find a relation that describe cost evolution of everything
-
-Assumptions tested:
-- [X] There is a relation between building/unit costs and HQ cost. [results: plots are similar but not identical 
-until level 11 where cost grow factor stabilize]
-- [X] There is a relation between building/unit upgrade cost and ligue exchange gains. [results: No]
-"""
+from units.modules import Laser
 
 from buildings.headquarters import HQ
 from common.ligues import Ligue
