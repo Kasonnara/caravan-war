@@ -65,6 +65,7 @@ class HeroSpell:
         assert 0 <= level <= 5
         self.level = level
 
+    ultimate = False
     upgrade_costs = [ResourcePacket(Resources.CapacityToken(-c)) for c in range(1, 5)]
 
 
@@ -87,6 +88,7 @@ class Zora(Hero):
         slow_factor = 0.5
         slow_duration = 3
         ultimate = True
+        hit_chance = None
 
         @property
         def damage_factor(self):
@@ -107,10 +109,15 @@ class Zora(Hero):
             return 15 + None * self.level
 
     class PiercingShot(HeroSpell):
-        pass
+        @property
+        def damage_factor(self):
+            return 1. + 0.25 * self.level
 
     class BounceArrow(HeroSpell):
-        pass
+        bouce_range = 6
+        @property
+        def bouce_hit_chance(self):
+            return 0.1 + 0.05*self.level
 
     def __init__(self, level: int, ice_arrow=1, arrow_flight=0, fast_hand=0, piercing_shot=0, bounce_arrow=0):
         super().__init__(level, 0, None, None)
@@ -164,14 +171,14 @@ class Dalvir(Hero):
 
     class KnightFury(HeroSpell):
         damage_reduction = 0.6
-        attack_speed_factor = 2.5
+        attack_speed_factor = [1.5, 1.75, 2., 2.25, 2.5]  # TODO test if it is x150% or +150%
         effect_duration = 7
         hit_chance = 0.1
 
     class IronProtection(HeroSpell):
         @property
         def hp_bonus(self):
-            return 0.05 + None * self.level
+            return 0.05 * self.level
 
     def __init__(self, level: int, warrior_rage=1, brutal_shield=0, strong_will=0, knight_fury=0, iron_protection=0):
         super().__init__(level, 0, None, None)
@@ -181,6 +188,198 @@ class Dalvir(Hero):
             self.StrongWill(strong_will),
             self.KnightFury(knight_fury),
             self.IronProtection(iron_protection),
+            ]
+
+
+class Ghohral(Hero):
+    hp_base = 15000
+    # level 21 à 30: 21432, 21818, 22211, 22611, 23018, 23432, 23854, 24283, 24720, 25165;
+    attack_base = 2500
+    # level 21 à 30: 3573, 3637, 3702, 3769, 3837, 3906, 3976, 4048, 4121, 4195;
+
+    hit_frequency = 0.5
+    range = 1.5
+    move_speed = 1.3
+    armor = 3
+    armor_piercing = 0
+    shoot_to = TargetType.GROUND
+    shooted_as = TargetType.GROUND
+
+    soul_class = Resources.GhohralSoul
+
+    class Warlord(HeroSpell):
+        ultimate = True
+        summon_number = [3, 3, 4, 4, 5]
+        summon_time = 23
+        #summon_hp_base = hp_base * 0.2
+
+    class Lacerate(HeroSpell):
+        attack_number = 3
+        hit_chance = 0.4
+
+    class Duelist(HeroSpell):
+        max_combo_factor = 3.
+        combo_time = 5
+
+    class Exemplary(HeroSpell):
+        damage_factor = [2 + 0.1 * i for i in range(5)]
+        duration = 10
+        hit_chance = 0.1
+        radius = 6
+
+    class BruteForce(HeroSpell):
+        target_number = 3
+        radius = 4
+        stun_duration = 1
+        hit_chance = 0.3
+
+    def __init__(self, level: int, warlord=1, lacerate=0, duelist=0, exemplary=0, brute_force=0):
+        super().__init__(level, 0, None, None)
+        self.spells = [
+            self.Warlord(warlord),
+            self.Lacerate(lacerate),
+            self.Duelist(duelist),
+            self.Exemplary(exemplary),
+            self.BruteForce(brute_force),
+            ]
+
+class AilulSnowsinger(Hero):
+    hp_base = 15000
+    # level 10 à 40: 17613; 17930, 18253, 18582, 18916, 19256, 19603, 19956, 20315, 20681, 21053; 21432, 21818, 22211, 22611, 23018, 23432, 23854, 24283, 24720, 25165; 25618, 26079, 26548, 27026, 27512, 28007, 28511, 29024, 29546, 30078;
+    # level 41 à 50: 30619, 31170, 31731, 32302, 32883, 33475, 34078, 34691, 35315, 35951;
+    attack_base = 2000
+    # level 10 à 40: 2349; 2391, 2434, 2478, 2523, 2568, 2614, 2661, 2709, 2758, 2808; 2859, 2910, 2962, 3015, 3069, 3124, 3180, 3237, 3295, 3354; 3414, 3475, 3538, 3602, 3667, 3733, 3800, 3868, 3938, 4009;
+    # level 41 à 50: 4081, 4154, 4229, 4305, 4383, 4462, 4542, 4624, 4707, 4792;
+
+    hit_frequency = 0.4
+    range = 8
+    move_speed = 1.3
+    armor = 2
+    armor_piercing = 0
+    shoot_to = TargetType.AIR_GROUND
+    shooted_as = TargetType.GROUND
+
+    soul_class = Resources.AilulSnowsingerSoul
+
+    class Explosion(HeroSpell):
+        ultimate = True
+        radius = 10
+
+        @property
+        def damage_heal_factor(self):
+            return 1.10 + 0.15*self.level
+
+    class FrozenLightning(HeroSpell):
+        # AOE?
+        hit_chance = 0.2
+        slowness_factor = 0.2
+        slowness_duration = 3
+        @property
+        def damage_factor(self):
+            return 1.25 + 0.25 * self.level
+
+    class Rejuvenation(HeroSpell):
+        @property
+        def auto_heal_factor(self):
+            return 0.0025 * (self.level + 1)
+
+    class IceAmore(HeroSpell):
+        target_number = 5  # here targets are ally
+        radius = 10
+        @property
+        def armor_factor(self):
+            return 0.5 * (self.level + 1)
+        armor_duration = 10
+        hit_chance = 0.1
+
+    class Regeneration(HeroSpell):
+        target_number = 3
+        radius = 5
+        @property
+        def heal_factor(self):
+            return 0.03 + 0.005 * self.level
+        duration = 10
+        hit_chance = 0.3
+
+    def __init__(self, level: int, explosion=1, frozen_lightning=0, rejuvenation=0, ice_armor=0, regeneration=0):
+        super().__init__(level, 0, None, None)
+        self.spells = [
+            self.Explosion(explosion),
+            self.FrozenLightning(frozen_lightning),
+            self.Rejuvenation(rejuvenation),
+            self.IceAmore(ice_armor),
+            self.Regeneration(regeneration),
+            ]
+
+
+class MardonDarkflame(Hero):
+    hp_base = 17000
+    # level 1 à 10 : 17000, 17306, 17618, 17935, 18258, 18587, 18922, 19263, 19610, 19963;
+    # level 11 à 20; 20322, 20688, 21060, 21439, 21825, 22218, 22618, 23025, 23439, 23861;
+    # level 21 à 30: 24290, 24727, 25172, 25625, 26086, 26556, 27034, 27521, 28016, 28520;
+    # level 31 à 40: 29033, 29556, 30088, 30630, 31181, 31742, 32313, 32895, 33487, 34090;
+    # level 41 à 50: 34704, 35329, 35965, 36612, 37271, 37942, 38625, 39320, 40028, 40748;
+    # level 51 à 60: 41481, 42228, 42988, 43762, 44550, 45352, 46168, 46999, 47845, 48706;
+    # level 61 à 70: 49583, 50475, 51384, 52309, , , , , , ;
+    attack_base = 2350
+    # level 1 à 10 : 2350, 2392, 2435, 2479, 2524, 2569, 2615, 2662, 2710, 2759;
+    # level 11 à 20; 2809, 2860, 2911, 2963, 3016, 3070, 3125, 3181, 3238, 3296;
+    # level 21 à 30: 3355, 3415, 3477, 3540, 3604, 3669, 3735, 3802, 3870, 3940;
+    # level 31 à 40: 4011, 4083, 4157, 4232, 4308, 4386, 4465, 4545, 4627, 4710;
+    # level 41 à 50: 4795, 4881, 4969, 5058, 5149, 5242, 5336, 5432, 5530, 5630;
+    # level 51 à 60: 5731, 5834, 5939, 6046, 6155, 6266, 6379, 6494, 6611, 6730;
+    # level 61 à 70: 6851, 6974, 7100, 7228, , , , , , ;
+
+    # level 21 à 30: , , , , , , , , , ;
+
+    hit_frequency = 0.6
+    range = 8
+    move_speed = 1.3
+    armor = 0
+    armor_piercing = 0
+    shoot_to = TargetType.AIR_GROUND
+    shooted_as = TargetType.GROUND
+
+    soul_class = Resources.MardonDarkflameSoul
+
+    class Nova(HeroSpell):
+        ultimate = True
+        damage_factor_range = [(1., 2. + 0.5 * level) for level in range(5)]
+        radius_range = (5, 20)
+        load_max_duration = 4
+
+    class SparseFlames(HeroSpell):
+        damage_factor = [1.4 + 0.1 * level for level in range(5)]
+        sub_projectil_num = 2
+        sub_projectil_damage_factor = [0.5 + 0.1 * level for level in range(5)]
+        hit_chance = 0.2
+
+    class FireArmor(HeroSpell):
+        damage_reduction_factor = [0.05 + 0.05 * level for level in range(5)]   # TODO: test if this spell reduce taken damages or inflict backfire damage
+        melee_damage_mirror_factor = 0.25
+
+    class FirePit(HeroSpell):
+        radius = 3
+        inital_damage_factor = [0.4 + 0.1 * level for level in range(5)]
+        duration = 10
+        enter_damage_factor = 0.3
+        hit_chance = 0.1
+
+    class FieryUnction(HeroSpell):
+        duration = 10
+        atk_boost_factor, atk_speed_boost_factor = ([0.25 + 0.05 * level for level in range(5)],) * 2
+        aoe_radius = 3
+        aoe_dmg_factor = 0.2
+        hit_chance = 0.3
+
+    def __init__(self, level: int, nova=1, sparse_flames=0, fire_armor=0, fire_pit=0, fiery_unction=0):
+        super().__init__(level, 0, None, None)
+        self.spells = [
+            self.Nova(nova),
+            self.SparseFlames(sparse_flames),
+            self.FireArmor(fire_armor),
+            self.FirePit(fire_pit),
+            self.FieryUnction(fiery_unction),
             ]
 
 

@@ -165,8 +165,11 @@ convoy_boosts = {
     }
 
 heroes = {
-    Zora(50, 5, 5, 5, 5, 5),
-    Dalvir(50, 5, 5, 5, 5, 5),
+    Zora(50, 5, 1, 1, 1, 1),
+    Dalvir(50, 5, 1, 1, 1, 1),
+    Ghohral(50, 5, 1, 1, 1, 1),
+    AilulSnowsinger(50, 5, 1, 1, 1, 1),
+    MardonDarkflame(50, 5, 1, 1, 1, 1),
     }
 
 ARROW_TOWER_STARS = 0
