@@ -27,38 +27,50 @@ from buildings.base_buildings import Building
 from common.cards import Upgrade, MAX_LEVEL
 from common.card_categories import BUILDINGS
 from common.resources import ResourcePacket, resourcepackets
+from common.resources import Resources as R
 
 
 class HQ(Building):
     base_building = None
-    upgrade_costs = resourcepackets(
-        (0, 0),  # level 0 -> 1
-        (-400, -800),  # level 1 -> 2
-        (-1700, -4800),
-        (-11000, -27200),
-        (-33000, -81000),
-        (-107000, -267000),
-        (-267000, -670000),
-        (-700000, -1480000),
-        (-900000, -2200000),
-        (-1300000, -3190000),
-        (-1500000, -5700000),  # level 10 -> 11
-        (-2600000, -10670000),
-        (-4200000, -18660000),
-        (-7200000, -32940000),
-        (-11800000, -56400000),
-        (-20000000, -98000000),  # level 15 -> 16
-        (-37200000, -173990000),
-        (-66600000, -310220000),
-        (-117800000, -546510000),
-        (-212300000, -983100000),  # level 19 -> 20
-        None,
-        None,
-        None,
-        None,
-        None,
-        (-5074500000, -24957410000),  # level 25 -> 26
-        )
+    upgrade_costs = [
+        ResourcePacket(
+            R.Goods(goods_cost),
+            R.Gold(gold_cost),
+            R.VIP(vip_gain),
+            )
+        for goods_cost, gold_cost, vip_gain in [
+            (-0, -0, 0),  # level 0 -> 1
+            (-400, -800, 20),  # level 1 -> 2
+            (-1700, -4800, 30),
+            (-11000, -27200, 40),
+            (-33000, -81000, 100),
+            (-107000, -267000, 400),
+            (-267000, -670000, 700),
+            (-700000, -1480000, 800),
+            (-900000, -2200000, 900),
+            (-1300000, -3190000, 1000),
+            (-1500000, -5700000, 1100),  # level 10 -> 11
+            (-2600000, -10670000, 1200),
+            (-4200000, -18660000, 1300),
+            (-7200000, -32940000, 1400),
+            (-11800000, -56400000, 1500),
+            (-20000000, -98000000, 1600),  # level 15 -> 16
+            (-37200000, -173990000, 1700),
+            (-66600000, -310220000, 1800),
+            (-117800000, -546510000, 1900),
+            (-212300000, -983100000, 2000),  # level 19 -> 20
+            # (None, None, 2100),
+            # (None, None, 2200),
+            # (None, None, 2300),
+            # (None, None, 2400),
+            # (None, None, 2500),
+            # (-5074500000, -2495741000, 2600),  # level 25 -> 26
+            # (None, None, 2700),
+            # (None, None, 2800),
+            # (None, None, 2900),
+            # (None, None, 3000),  # level 29 -> 30
+            ]
+        ]
 
     # At this point, other buildings classes don't exist yet, so we just store their names in this temporary attribute,
     # and later, this list will be converted and stored into upgrade_requirements.
