@@ -46,7 +46,7 @@ class Rarity(Enum):
         """
         if self._gold_cost_base is None:
             return None
-        return ligue.ex10km_goods_cost * self._gold_cost_base
+        return ligue.traiding_base * self._gold_cost_base
 
     def spell_gold_cost(self, ligue: 'Ligue') -> Optional[int]:
         """
@@ -56,4 +56,4 @@ class Rarity(Enum):
         """
         if self._spell_gold_cost_base is None:
             return None
-        return ligue.ex10km_goods_cost * self._spell_gold_cost_base
+        return ligue.traiding_base * self._spell_gold_cost_base

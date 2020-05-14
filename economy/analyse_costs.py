@@ -38,7 +38,7 @@ from units.guardians import Sparte
 from units.modules import Laser
 
 from buildings.headquarters import HQ
-from common.ligues import Ligue
+from common.leagues import Rank
 from units.towers import HeavySniper, Stormspire
 
 import matplotlib.pyplot as plt
@@ -72,8 +72,8 @@ resource_types = set()
 LIGUE_LEVEL_RATIO = 1
 class FakeUpgradableLigue(Upgradable):
     upgrade_costs = resourcepackets(
-        *tuple((ligue.ex10km_goods_cost, ligue.ex10km_gold_reward)
-               for k, ligue in enumerate(Ligue)
+        *tuple((ligue.traiding_base, ligue.ex10km_gold_reward)
+               for k, ligue in enumerate(Rank)
                if k % LIGUE_LEVEL_RATIO == 0)
         )
 

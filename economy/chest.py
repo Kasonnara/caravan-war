@@ -31,7 +31,7 @@ from units.bandits import Drone, Archer, Brute, Maraudeur, Hunter, Berserk, Spid
 from units.guardians import Scout, Guard, Healer, Follet, Shield, Knight, Sword
 from units.vehicles import Charrette, Helicopter, Chariot
 from units.modules import Balista, Mortar, Shotgun, Chaingun
-from common.ligues import Ligue as L
+from common.ligues import Rank as L
 
 
 class Chest:
