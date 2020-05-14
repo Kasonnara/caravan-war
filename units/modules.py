@@ -23,6 +23,7 @@ from common.rarity import Rarity
 from common.resources import resourcepackets_gold
 from units.base_units import AOE, COE, BaseUnit, reincarnation, MovableUnit
 from common.target_types import TargetType
+from units.towers import Tower
 
 
 class ModuleWeapon(BaseUnit):
@@ -208,6 +209,77 @@ class Harpon(ModuleWeapon):
         None, None, None, None, None,               # 6 -> 11
         None, None, -5420000, -9280000, -16120000,  # 11 -> 16
         )
+
+
+class Cryomancer(ModuleWeapon):
+    attack_base = 310
+    hit_frequency = 0.5
+    range = 8
+    armor_piercing = 3
+    shoot_to = TargetType.AIR_GROUND
+    rarity = Rarity.Legendary
+
+    froze_chance = 0.25
+    froze_duration = 2
+
+    tower_froze_chance = 0.6
+    # TODO: test if it's 60% chance on each hit, or 60% on successful froze hit
+    tower_froze_radius = 6
+    tower_froze_duration = 6
+
+    upgrade_costs = resourcepackets_gold(
+        0,  # 0 -> 1
+        -690, -3400, -13100, -25000, -51000,            # 1 -> 6
+        -118000, -250000, -350000, -510000, -910000,    # 6 -> 11
+        -1710000, -2990000, -5280000, -9040000,
+        )
+
+
+class Archidruid(ModuleWeapon):
+    attack_base = 250
+    hit_frequency = 0.8
+    range = 8
+    armor_piercing = 0
+    shoot_to = TargetType.AIR_GROUND
+    rarity = Rarity.Legendary
+
+    slow_factor = 0.3
+    slow_duration = None  # TODO
+
+    slow_ower_radius = 10
+    slow_tower_factor = 0.3
+
+    upgrade_costs = Cryomancer.upgrade_costs  # new modules seem to have the same costs
+
+
+class ShieldInvoker(ModuleWeapon):
+    attack_base = 150
+    hit_frequency = 0.5
+    range = 8
+    armor_piercing = 0
+    shoot_to = TargetType.AIR_GROUND
+    rarity = Rarity.Legendary
+
+    shield_radius = 5
+    shield_miss_factor = 0.5
+
+    upgrade_costs = Cryomancer.upgrade_costs  # new modules seem to have the same costs
+
+
+class MirrorWizard(ModuleWeapon):
+    attack_base = 175
+    hit_frequency = 0.4
+    range = 8
+    armor_piercing = 0
+    shoot_to = TargetType.AIR_GROUND
+    rarity = Rarity.Legendary
+
+    def damage_reduction_factor(self, attacker: BaseUnit):
+        if isinstance(attacker, Tower):
+            return 0.5 - (0.5 * max(0, attacker.level - self.level))
+            # TODO damage are reflected to a nearby bandits
+        else:
+            return 1.0
 
 
 # Register all defined cards
