@@ -31,8 +31,9 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from common.leagues import Rank
-from common.resources import ResourcePacket
-from economy.budget_simulator.graphs import all_graphs, global_table_graph, gold_goods_bar_plot
+from common.resources import ResourcePacket, Resources
+from economy.budget_simulator.graphs import all_graphs, global_table_graph, gold_bar_plot, goods_bar_plot, \
+    gems_bar_plot, gold_pie_plot, goods_pie_plot, gems_pie_plot
 from economy.budget_simulator.simulation import all_parameters, income_dict, reverse_income_dict
 from economy.gains import BUDGET_SIMULATION_PARAMETERS
 from utils.selectable_parameters import UIParameter
@@ -72,24 +73,31 @@ header = html.Div(
     style=HEADER_STYLE,
     )
 
-LABEL_SETTING_BOOTSTRAP_COL = (4, 8)
+LABEL_SETTING_BOOTSTRAP_COL = {
+    "int": (7, 4),
+    "bool": (10, 1),
+    "default": (4, 8),
+    }
 
 
 def build_parameter_selector(parameter: UIParameter):
     """Generate a bootstrap row containing a label and a selector for the given SimulationParameter"""
     if parameter.is_integer:
+        bootstrap_cols = LABEL_SETTING_BOOTSTRAP_COL['int']
         selector = dcc.Input(
             type="number",
             value=parameter.default_value,
-            className="col-sm-{}".format(LABEL_SETTING_BOOTSTRAP_COL[1]),
+            className="col-sm-{}".format(bootstrap_cols[1]),
             id = parameter.parameter_name + "_selector",
             )
     elif parameter.is_bool:
+        bootstrap_cols = LABEL_SETTING_BOOTSTRAP_COL['bool']
         selector = dbc.Checkbox(
             checked=parameter.default_value,
-            className="col-sm-1",
+            className="col-sm-{}".format(bootstrap_cols[1]),
             id=parameter.parameter_name+"_selector",)
     else:
+        bootstrap_cols = LABEL_SETTING_BOOTSTRAP_COL["default"]
         selector = html.Div([
             dcc.Dropdown(
                 options=[{'label': txt, 'value': str(i)}
@@ -99,12 +107,12 @@ def build_parameter_selector(parameter: UIParameter):
                 clearable=False,
                 id=parameter.parameter_name+"_selector",
                 )],
-            className="col-sm-{}".format(LABEL_SETTING_BOOTSTRAP_COL[1]),
+            className="col-sm-{}".format(bootstrap_cols[1]),
             )
 
     return dbc.Row([
         html.Label(parameter.display_txt + ":",
-                   className="col-sm-{}".format(LABEL_SETTING_BOOTSTRAP_COL[0] if not parameter.is_bool else 10),
+                   className="col-sm-{}".format(bootstrap_cols[0]),
                    ),
         selector,
         ],
@@ -144,7 +152,22 @@ content = html.Div(
     children=[
         dcc.Markdown("## Global weekly incomes"),
         global_table_graph.build_func(),
-        gold_goods_bar_plot.build_func(),
+        dbc.Row([
+            html.Div([
+            gold_bar_plot.build_func(),
+            goods_bar_plot.build_func(),
+            gems_bar_plot.build_func(),
+                ],
+                className="col-lg-8",
+                ),
+            html.Div([
+            gold_pie_plot.build_func(),
+            goods_pie_plot.build_func(),
+            gems_pie_plot.build_func(),
+                ],
+                className="col-lg-4",
+                ),
+            ]),
         ],
     id='mainContent',
     className="col-lg-9",

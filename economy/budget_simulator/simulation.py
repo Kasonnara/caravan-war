@@ -59,7 +59,10 @@ def income_dict(*selected_parameters, weekly=True) -> Dict[str, ResourcePacket]:
     return incomes
 
 
-# TODO maybe directly build a pandas dataframe with income_dict() and use it everywhere
+# TODO I don't really like the mess around the data from here. We have the result from income_dict(), then revert it
+#  with this function into another one, and some graphs use even more weird pre-formatting functions. There is clearly
+#  an unification and cleaning work to be done here.
+#  (maybe with pandas dataframe for example)
 def reverse_income_dict(res_dict: Dict[str, ResourcePacket]) -> Dict[str, Dict[str, float]]:
     """
     Invert the resource dict index levels  dict[str_key][res_type] --> dict[res_type][str_key]

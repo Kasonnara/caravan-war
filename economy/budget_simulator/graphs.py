@@ -21,17 +21,24 @@
 Definition of all the graphs functions present in the application and their callback functions
 """
 from collections import namedtuple
-from typing import Dict, Tuple, Type
+from typing import Dict, Tuple, Type, List, Optional
 
+import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 
-from common.resources import ResourcePacket, ResourceQuantity
-from economy.gains import Gain
+from common.resources import ResourcePacket, ResourceQuantity, Resources
+from economy.gains import Gain, GAINS_DICTIONNARY
 from utils.camelcase import camelcase_2_spaced
 
 Graph = namedtuple('Graph', 'build_func update_func update_id update_attribute')
 
+# Maybe not the best place to put this
+resource_colors = {
+    Resources.Gold: "gold",
+    Resources.Goods: "#FF5000",
+    Resources.Gem: "purple",
+    }
 
 def pretiffy_values(value: float) -> str:
     #  TODO add color
@@ -61,7 +68,7 @@ def resourcepackets_to_table(resource_packets: Dict[str, ResourcePacket]) -> Tup
             for res_types_str in prettified_res_types
             ])),
         html.Tbody([
-            html.Tr([html.Td(line_key)] + [
+            html.Tr([html.Td(line_key, )] + [
                 html.Td(pretiffy_values(resource_packets[line_key].get(res_types, 0)))
                 for res_types in all_res_types
                 ])
@@ -82,30 +89,123 @@ global_table_graph = Graph(
     )
 
 
-def value_dict_2_bar_plot(data: Dict[str, Dict[str, float]]):
-    return {
+def extract_one_resource_and_sort(reverse_resource_dict: Dict[str, Dict[str, float]], target_resource_name: str,
+                                  ) -> Dict[str, Tuple[List[str], List[float]]]:
+    return {target_resource_name: tuple(zip(*sorted(zip(reverse_resource_dict[target_resource_name].keys(),
+                                                        reverse_resource_dict[target_resource_name].values(),
+                                                        ), key=lambda x: x[1], reverse=True)))}
+
+
+def value_dict_2_bar_plot(data: Dict[str, Tuple[List[str], List[float]]], colors: Dict[str, str]= {}) -> Dict:
+    """
+    Generate the dict data to inject into dcc.graph object to generate a bar plot
+    :param data: a dictionay of tuple. Each entry in this dict represent one plot on the graph. The key with be the
+        legend label of this plot, while the tuple contains respectively the x labels and the y values and optionally
+        an HTML color code.
+    """
+    graph_content = {
         'data': [
             {
-                'x': [resource_type
-                      for resource_type in data[plot_label].keys()],
-                'y': tuple(data[plot_label].values()),
+                'x': data[plot_label][0],
+                'y': data[plot_label][1],
                 'type': 'bar',
                 'name': plot_label,
+                'texttemplate': "%{y: .2s}",
+                'textposition': 'outside',
                 }
             for plot_label in data
-            ]}
+            ],
+        'layout': {
+            # FIXME implement default color in case it isn't in the dict
+            'colorway': [colors.get(bar_label) for bar_label in data],
+            }}
+    return graph_content
 
 
-gold_goods_bar_plot = Graph(
-    lambda: dcc.Graph(
+def value_dict_2_pie_plot(data: Tuple[List[str], List[float]], colors: Dict[str, str]= {}) -> Dict:
+    """
+    Generate the dict data to inject into dcc.graph object to generate a bar plot
+    :param data: a dictionay of tuple. Each entry in this dict represent one plot on the graph. The key with be the
+        legend label of this plot, while the tuple contains respectively the x labels and the y values and optionally
+        an HTML color code.
+    """
+    graph_content = {
+        'data': [{
+            'labels': data[0],
+            'values': data[1],
+            'textinfo ': "none",
+            'hole ': .5,
+            'type': 'pie',
+            'textposition': 'outside',
+            }],
+        #'layout': {
+        #    # FIXME implement default color in case it it's in the dict
+        #    'colorway': [colors.get(pie_label) for pie_label in data[0]],
+        #    },
+        }
+    return graph_content
+
+
+def build_plot(id: str, animate=False):
+    return dcc.Graph(
         figure={'data': []},
-        id='gold_goods_bar_plot',
-        style={'height': '100vh'}
-        ),
-    lambda res_dict, reverse_resource_dict: print(tuple(reverse_resource_dict.keys())) or value_dict_2_bar_plot(
-        {'Gold': reverse_resource_dict['Gold'], 'Goods': reverse_resource_dict['Goods']}),
-    'gold_goods_bar_plot',
+        id='{}_plot'.format(id),
+        style={'height': '100vh'},
+        animate=animate,
+        )
+
+
+gold_bar_plot = Graph(
+    lambda: build_plot("gold_bar"),
+    lambda res_dict, reverse_resource_dict: value_dict_2_bar_plot(
+        extract_one_resource_and_sort(reverse_resource_dict, "Gold"), colors=resource_colors),
+    'gold_bar_plot',
     'figure',
     )
 
-all_graphs = [global_table_graph, gold_goods_bar_plot]
+gold_pie_plot = Graph(
+    lambda: build_plot("gold_pie", animate=True),
+    lambda res_dict, reverse_resource_dict: value_dict_2_pie_plot(
+        extract_one_resource_and_sort(reverse_resource_dict, "Gold")["Gold"], colors=resource_colors),
+    'gold_pie_plot',
+    'figure',
+    )
+
+goods_bar_plot = Graph(
+    lambda: build_plot("goods_bar"),
+    lambda res_dict, reverse_resource_dict: value_dict_2_bar_plot(
+        extract_one_resource_and_sort(reverse_resource_dict, "Goods"), colors=resource_colors),
+    'goods_bar_plot',
+    'figure',
+    )
+
+goods_pie_plot = Graph(
+    lambda: build_plot("goods_pie", animate=True),
+    lambda res_dict, reverse_resource_dict: value_dict_2_pie_plot(
+        extract_one_resource_and_sort(reverse_resource_dict, "Goods")["Goods"], colors=resource_colors),
+    'goods_pie_plot',
+    'figure',
+    )
+
+gems_bar_plot = Graph(
+    lambda: build_plot("gems_bar"),
+    lambda res_dict, reverse_resource_dict: value_dict_2_bar_plot(
+        extract_one_resource_and_sort(reverse_resource_dict, "Gem"), colors=resource_colors),
+    'gems_bar_plot',
+    'figure',
+    )
+
+gems_pie_plot = Graph(
+    lambda: build_plot("gems_pie", animate=True),
+    lambda res_dict, reverse_resource_dict: value_dict_2_pie_plot(
+        extract_one_resource_and_sort(reverse_resource_dict, "Gem")["Gem"], colors=resource_colors),
+    'gems_pie_plot',
+    'figure',
+    )
+
+all_graphs = [
+    global_table_graph,
+    gold_bar_plot, gold_pie_plot,
+    goods_bar_plot, goods_pie_plot,
+    gems_bar_plot, gems_pie_plot,
+    ]
