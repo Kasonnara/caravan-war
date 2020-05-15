@@ -23,6 +23,8 @@ Manage the parameters of the simulator
 from collections import defaultdict
 from typing import Type, Dict, Set
 
+import pandas
+
 from common.resources import ResourcePacket, ResourceQuantity
 from economy.gains import BUDGET_SIMULATION_PARAMETERS, GAINS_DICTIONNARY, Gain
 # --- keep the following import to ensure that all gains exists ---
@@ -39,7 +41,7 @@ all_parameters = [ui_param
 all_gains: Set[Type[Gain]] = set.union(*(GAINS_DICTIONNARY[gains_category] for gains_category in GAINS_DICTIONNARY))
 
 
-def income_dict(*selected_parameters, weekly=True) -> Dict[str, ResourcePacket]:
+def update_income(*selected_parameters, weekly=True) -> pandas.DataFrame:
     assert len(selected_parameters) == len(all_parameters)
 
     # Generate the parameter value dict
@@ -52,23 +54,10 @@ def income_dict(*selected_parameters, weekly=True) -> Dict[str, ResourcePacket]:
         }
 
     # Recompute all gains
-    incomes = {
-        camelcase_2_spaced(gain.__name__): gain.weekly_income(**ui_parameter_values) if weekly else gain.daily_income(**ui_parameter_values)
-        for gain in all_gains
-        }
+    incomes = pandas.DataFrame(
+        data=(gain.weekly_income(**ui_parameter_values).to_pandas() if weekly
+                else gain.daily_income(**ui_parameter_values).to_pandas()
+                for gain in all_gains),
+        index=[camelcase_2_spaced(gain.__name__) for gain in all_gains],  # Use a meta class to generate display name once at the gain definition step
+        )
     return incomes
-
-
-# TODO I don't really like the mess around the data from here. We have the result from income_dict(), then revert it
-#  with this function into another one, and some graphs use even more weird pre-formatting functions. There is clearly
-#  an unification and cleaning work to be done here.
-#  (maybe with pandas dataframe for example)
-def reverse_income_dict(res_dict: Dict[str, ResourcePacket]) -> Dict[str, Dict[str, float]]:
-    """
-    Invert the resource dict index levels  dict[str_key][res_type] --> dict[res_type][str_key]
-    """
-    result = defaultdict(dict)
-    for str_key in res_dict:
-        for res_type in res_dict[str_key]:
-            result[camelcase_2_spaced(ResourceQuantity.prettify_type(res_type))][str_key] = res_dict[str_key][res_type]
-    return result

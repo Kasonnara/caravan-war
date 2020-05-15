@@ -271,11 +271,11 @@ class ResourcePacket(defaultdict):
                      else ResourceQuantity(key, self[key]).prettify())
              for key in self])
 
-    def to_pandas(self) -> 'pandas.Series':
+    def to_pandas(self, prettify=True) -> 'pandas.Series':
         import pandas
         return pandas.Series(
             data=[self[res_type] for res_type in self],
-            index=[ResourceQuantity.prettify_type(res_type) for res_type in self],
+            index=[ResourceQuantity.prettify_type(res_type) for res_type in self] if prettify else [res_type for res_type in self],
             )
 
     @staticmethod

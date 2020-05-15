@@ -30,11 +30,9 @@ import dash_html_components as html
 # external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 from dash.dependencies import Input, Output
 
-from common.leagues import Rank
-from common.resources import ResourcePacket, Resources
-from economy.budget_simulator.graphs import all_graphs, global_table_graph, gold_bar_plot, goods_bar_plot, \
-    gems_bar_plot, gold_pie_plot, goods_pie_plot, gems_pie_plot
-from economy.budget_simulator.simulation import all_parameters, income_dict, reverse_income_dict
+from common.resources import Resources
+from economy.budget_simulator.graphs import graphs_to_update, ResourceTable, ResourceBarPie
+from economy.budget_simulator.simulation import update_income, all_parameters
 from economy.gains import BUDGET_SIMULATION_PARAMETERS
 from utils.selectable_parameters import UIParameter
 
@@ -151,24 +149,10 @@ side_bar = html.Div(
 content = html.Div(
     children=[
         dcc.Markdown("## Global weekly incomes"),
-        global_table_graph.build_func(),
-        dbc.Row([
-            html.Div([
-            gold_bar_plot.build_func(),
-            goods_bar_plot.build_func(),
-            gems_bar_plot.build_func(),
-                ],
-                className="col-lg-8",
-                ),
-            html.Div([
-            gold_pie_plot.build_func(),
-            goods_pie_plot.build_func(),
-            gems_pie_plot.build_func(),
-                ],
-                className="col-lg-4",
-                ),
-            ]),
-        ],
+        ResourceTable('global_resource_table'),
+        ] + [elt
+             for resource_type in (Resources.Gold, Resources.Goods, Resources.Gem)
+             for elt in (dcc.Markdown("## {}".format(resource_type.name)), ResourceBarPie(resource_type)) ],
     id='mainContent',
     className="col-lg-9",
     )
@@ -188,7 +172,7 @@ app.layout = html.Div(children=[
 
 @app.callback(
     [Output(graph_id, grph_target_attr)
-     for _, _, graph_id, grph_target_attr in all_graphs],
+     for _, graph_id, grph_target_attr in graphs_to_update],
     [Input(ui_param.parameter_name + "_selector", 'value' if not ui_param.is_bool else 'checked')
      for ui_param in all_parameters],
     )
@@ -200,14 +184,10 @@ def update_simulation(*simulation_parameter, weekly=True):
     :return: the new data for every graphs
     """
     # Get the new resources
-    resourcepacket_dict = income_dict(*simulation_parameter, weekly=weekly)
-    reverse_resourcepacket_dict = reverse_income_dict(resourcepacket_dict)
-
-    resourcepacket_dict['Total'] = sum(resourcepacket_dict.values(), ResourcePacket())
-
-    return tuple(graph_update_func(resourcepacket_dict, reverse_resourcepacket_dict)
-                 for _, graph_update_func, _, _ in all_graphs)
+    gains_df = update_income(*simulation_parameter, weekly=weekly)
+    # TODO compute total?
+    return [graphs_update.update_func(gains_df) for graphs_update in graphs_to_update]
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)

@@ -237,6 +237,23 @@ class ClanMission(ChallengeOfTheDay):
         raise NotImplementedError()
 
 
+personal_boss_kill_per_fight_param = UIParameter(
+    'personal_boss_kill_per_fight',
+    int,
+    display_txt="Clan boss kills per fight",
+    default_value=0,
+    )
+BUDGET_SIMULATION_PARAMETERS['Clan'].append(personal_boss_kill_per_fight_param)
+
+
+clan_boss_kills_param = UIParameter(
+    'clan_boss_kills',
+    int,
+    display_txt="Clan Boss total clan kills",
+    default_value=0,
+    )
+BUDGET_SIMULATION_PARAMETERS['Clan'].append(clan_boss_kills_param)
+
 class ClanBoss(ChallengeOfTheDay):
     start_day = Days.Sunday
     end_day = Days.Saturday
@@ -249,7 +266,7 @@ class ClanBoss(ChallengeOfTheDay):
     def iteration_income(cls, rank: Rank = Rank.NONE, personal_boss_kill_per_fight=0, clan_boss_kills=0, **kwargs) -> ResourcePacket:
         # TODO automatically predict personal_boss_kill_per_fight from MY_CARDS
         # First coutn goods obtained fighting the boss twice
-        total_reward = ResourcePacket(R.Goods(None * 2))
+        total_reward = ResourcePacket(R.Goods(0 * 2))  # TODO
 
         # Then add rewards unlocked
         levels_unlocked = (clan_boss_kills - 125) // 250 + 1
@@ -267,6 +284,6 @@ class ClanBoss(ChallengeOfTheDay):
 
 GAINS_DICTIONNARY['challenges'] = {GateChallenge, BanditChallenge, BossChallenge, ConvoyChallenge}
 
-GAINS_DICTIONNARY['clan'] = {ClanWarReward} # {ClanMission, ClanMission, ClanWarFights, ClanWarReward}
+GAINS_DICTIONNARY['clan'] = {ClanWarReward, ClanBoss} # {ClanMission, ClanMission, ClanWarFights, ClanWarReward}
 
 GAINS_DICTIONNARY['weekly'] = GAINS_DICTIONNARY['challenges'].union(GAINS_DICTIONNARY['clan'])

@@ -21,17 +21,19 @@
 Definition of all the graphs functions present in the application and their callback functions
 """
 from collections import namedtuple
-from typing import Dict, Tuple, Type, List, Optional
+from typing import Tuple, List, Union
 
-import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
+import pandas
+from plotly.subplots import make_subplots
 
-from common.resources import ResourcePacket, ResourceQuantity, Resources
-from economy.gains import Gain, GAINS_DICTIONNARY
+from common.resources import ResourceQuantity, Resources
+import economy.weekly_rewards, economy.daily_purchases, economy.daily_rewards  # Fixme this import exist just to ensure all gains are intialized
 from utils.camelcase import camelcase_2_spaced
 
-Graph = namedtuple('Graph', 'build_func update_func update_id update_attribute')
+
+GraphsUpdates = namedtuple('GraphsUpdates', 'update_func update_ids update_attributes')
 
 # Maybe not the best place to put this
 resource_colors = {
@@ -40,9 +42,20 @@ resource_colors = {
     Resources.Gem: "purple",
     }
 
-def pretiffy_values(value: float) -> str:
+# default_colorway = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]
+# negative_default_colorway = ["#" + "".join(hex(int(int(i, 16)*0.5))[2:] for i in (color[1:3], color[3:5], color[5:7])) for color in default_colorway]
+# _next_color_index = -1
+# def _get_next_color() -> Tuple[str, str]:
+#     global _next_color_index
+#     _next_color_index += 1
+#     return negative_default_colorway[_next_color_index % len(default_colorway)], default_colorway[_next_color_index % len(default_colorway)]
+#
+# gains_colors = {camelcase_2_spaced(gain.__name__): _get_next_color() for gain in list(all_gains)}
+
+
+def pretiffy_values(value: float) -> Union[str, int, float]:
     #  TODO add color
-    if value == 0:
+    if value == 0 or value is pandas.NA:
         return ""
     elif -0.1 < value < 0.1:
         return value
@@ -50,162 +63,100 @@ def pretiffy_values(value: float) -> str:
         return round(value, 1)
 
 
-def resourcepackets_to_table(resource_packets: Dict[str, ResourcePacket]) -> Tuple[html.Table, html.Tbody]:
-    """
-    Represent resource packets in a table by, generate the children attribute of a dash_html_components.Table object
-
-    :param resource_packets: A dictionary of ResourcePacket to display in a table
-    :return: return a tuple to put as `children` attribute of an dash_html_components.Table object
-    """
-    # TODO add color
-    # TODO add human readable units (K, M, B, etc)
-    all_res_types = ResourcePacket.get_all_resource_types(resource_packets.values(), sort=True)
-    prettified_res_types = [camelcase_2_spaced(ResourceQuantity.prettify_type(res_type)) for res_type in all_res_types]
-
-    return (
-        html.Thead(html.Tr([html.Th("")] + [
-            html.Th(res_types_str)
-            for res_types_str in prettified_res_types
-            ])),
-        html.Tbody([
-            html.Tr([html.Td(line_key, )] + [
-                html.Td(pretiffy_values(resource_packets[line_key].get(res_types, 0)))
-                for res_types in all_res_types
-                ])
-            for line_key in resource_packets
-            ]),
-        )
+graphs_to_update: List[GraphsUpdates] = []
 
 
-global_table_graph = Graph(
-    lambda: html.Table(resourcepackets_to_table({"Total": ResourcePacket()}),
-                       id='global_resource_table',
-                       #style={'border-collapse': 'collapse'},
-                       className='table-bordered',
-                       ),
-    lambda res_dict, reverse_resource_dict: resourcepackets_to_table(res_dict),
-    'global_resource_table',
-    'children',
-    )
+class ResourceTable(html.Table):
+
+    EMPTY_TABLE = (html.Thead(html.Tr([])), html.Tbody([]))
+
+    def __init__(self, id: str, className='table-bordered', **kwargs):
+        super().__init__(self.EMPTY_TABLE, id, className=className, **kwargs)
+        # Register the graph
+        graphs_to_update.append(GraphsUpdates(self.figures_updates, id, 'children'))
+
+    @staticmethod
+    def figures_updates(data: pandas.DataFrame) -> Tuple[html.Table, html.Tbody]:
+        # TODO add color
+        # TODO add human readable units (K, M, B, etc)
+        all_res_types = data.columns  # TODO sort columns
+        prettified_res_types = [camelcase_2_spaced(res_type) for res_type in all_res_types]
+
+        return (
+            html.Thead(html.Tr([html.Th("")] + [
+                html.Th(res_types_str)
+                for res_types_str in prettified_res_types
+                ])),
+            html.Tbody([
+                html.Tr([html.Td(line_key)] + [
+                    html.Td(pretiffy_values(data.loc[line_key].get(res_types, 0)))
+                    for res_types in all_res_types
+                    ])
+                for line_key in data.index
+                ]),
+            )
 
 
-def extract_one_resource_and_sort(reverse_resource_dict: Dict[str, Dict[str, float]], target_resource_name: str,
-                                  ) -> Dict[str, Tuple[List[str], List[float]]]:
-    return {target_resource_name: tuple(zip(*sorted(zip(reverse_resource_dict[target_resource_name].keys(),
-                                                        reverse_resource_dict[target_resource_name].values(),
-                                                        ), key=lambda x: x[1], reverse=True)))}
+class ResourceBarPie(dcc.Graph):
+    def __init__(self, target_resource: ResourceQuantity.VALID_RESOURCE_TYPE, id=None, **kwargs):
+        # Generate the pie plot, with directly with plotly, as dash seems to not work with some parameters
+        self.str_target_resource = ResourceQuantity.prettify_type(target_resource)
+        id: str = id or self.str_target_resource + "_plot"
+
+        self.fig = make_subplots(rows=1, cols=2, specs=[[{"type": "bar"}, {"type": "pie"}]])
+        self.fig.add_bar(
+            x=[],
+            y=[],
+            name=self.str_target_resource,
+            texttemplate="%{y: .2s}",
+            textposition='outside',
+            row=1, col=1,
+            marker_color=resource_colors[target_resource]
+            )
+        #self.fig.update_layout(xaxis={'categoryorder': 'total descending'})
 
 
-def value_dict_2_bar_plot(data: Dict[str, Tuple[List[str], List[float]]], colors: Dict[str, str]= {}) -> Dict:
-    """
-    Generate the dict data to inject into dcc.graph object to generate a bar plot
-    :param data: a dictionay of tuple. Each entry in this dict represent one plot on the graph. The key with be the
-        legend label of this plot, while the tuple contains respectively the x labels and the y values and optionally
-        an HTML color code.
-    """
-    graph_content = {
-        'data': [
-            {
-                'x': data[plot_label][0],
-                'y': data[plot_label][1],
-                'type': 'bar',
-                'name': plot_label,
-                'texttemplate': "%{y: .2s}",
-                'textposition': 'outside',
-                }
-            for plot_label in data
-            ],
-        'layout': {
-            # FIXME implement default color in case it isn't in the dict
-            'colorway': [colors.get(bar_label) for bar_label in data],
-            }}
-    return graph_content
+        #'x': data[plot_label][0],
+        #                'y': data[plot_label][1],
+        #                'type': 'bar',
+        #                'name': plot_label,
+        #                'texttemplate': "%{y: .2s}",
+        #                'textposition': 'outside',
 
+        self.fig.add_pie(
+            hole=0.5,
+            #sort=True,
+            values=[],
+            labels=[],
+            textinfo='none',
+            #marker={'colors': ['green', 'red', 'blue'],
+            #        'line': {'color': 'white', 'width': 1}}
+            row=1, col=2,
+            marker_line_width=2,
+            )
 
-def value_dict_2_pie_plot(data: Tuple[List[str], List[float]], colors: Dict[str, str]= {}) -> Dict:
-    """
-    Generate the dict data to inject into dcc.graph object to generate a bar plot
-    :param data: a dictionay of tuple. Each entry in this dict represent one plot on the graph. The key with be the
-        legend label of this plot, while the tuple contains respectively the x labels and the y values and optionally
-        an HTML color code.
-    """
-    graph_content = {
-        'data': [{
-            'labels': data[0],
-            'values': data[1],
-            'textinfo ': "none",
-            'hole ': .5,
-            'type': 'pie',
-            'textposition': 'outside',
-            }],
-        #'layout': {
-        #    # FIXME implement default color in case it it's in the dict
-        #    'colorway': [colors.get(pie_label) for pie_label in data[0]],
-        #    },
-        }
-    return graph_content
+        super().__init__(figure=self.fig, id=id, **kwargs)
+        # Register the graph
+        graphs_to_update.append(GraphsUpdates(self.figures_updates, id, 'figure'))
 
+    def figures_updates(self, data: pandas.DataFrame) -> List:
+        # Drop useless value and manually sort the values
+        target_data=data[self.str_target_resource].dropna().sort_values(ascending=False)
 
-def build_plot(id: str, animate=False):
-    return dcc.Graph(
-        figure={'data': []},
-        id='{}_plot'.format(id),
-        style={'height': '100vh'},
-        animate=animate,
-        )
-
-
-gold_bar_plot = Graph(
-    lambda: build_plot("gold_bar"),
-    lambda res_dict, reverse_resource_dict: value_dict_2_bar_plot(
-        extract_one_resource_and_sort(reverse_resource_dict, "Gold"), colors=resource_colors),
-    'gold_bar_plot',
-    'figure',
-    )
-
-gold_pie_plot = Graph(
-    lambda: build_plot("gold_pie", animate=True),
-    lambda res_dict, reverse_resource_dict: value_dict_2_pie_plot(
-        extract_one_resource_and_sort(reverse_resource_dict, "Gold")["Gold"], colors=resource_colors),
-    'gold_pie_plot',
-    'figure',
-    )
-
-goods_bar_plot = Graph(
-    lambda: build_plot("goods_bar"),
-    lambda res_dict, reverse_resource_dict: value_dict_2_bar_plot(
-        extract_one_resource_and_sort(reverse_resource_dict, "Goods"), colors=resource_colors),
-    'goods_bar_plot',
-    'figure',
-    )
-
-goods_pie_plot = Graph(
-    lambda: build_plot("goods_pie", animate=True),
-    lambda res_dict, reverse_resource_dict: value_dict_2_pie_plot(
-        extract_one_resource_and_sort(reverse_resource_dict, "Goods")["Goods"], colors=resource_colors),
-    'goods_pie_plot',
-    'figure',
-    )
-
-gems_bar_plot = Graph(
-    lambda: build_plot("gems_bar"),
-    lambda res_dict, reverse_resource_dict: value_dict_2_bar_plot(
-        extract_one_resource_and_sort(reverse_resource_dict, "Gem"), colors=resource_colors),
-    'gems_bar_plot',
-    'figure',
-    )
-
-gems_pie_plot = Graph(
-    lambda: build_plot("gems_pie", animate=True),
-    lambda res_dict, reverse_resource_dict: value_dict_2_pie_plot(
-        extract_one_resource_and_sort(reverse_resource_dict, "Gem")["Gem"], colors=resource_colors),
-    'gems_pie_plot',
-    'figure',
-    )
-
-all_graphs = [
-    global_table_graph,
-    gold_bar_plot, gold_pie_plot,
-    goods_bar_plot, goods_pie_plot,
-    gems_bar_plot, gems_pie_plot,
-    ]
+        self.fig.update_traces(
+            y=target_data,
+            x=target_data.index,
+            selector=dict(type='bar'),
+            )
+        self.fig.update_traces(
+            values=target_data.abs(),
+            labels=target_data.index,
+            #pull=[0.07 if x < 0 else 0 for x in target_data],
+            #marker_colors = [gains_colors[res_str][target_data[res_str] > 0]
+            #                                            for res_str in target_data.index],
+            selector=dict(type='pie'),
+            marker_line_color=["#00C000" if x > 0 else "#C00000" for x in target_data],
+            )
+        #self.fig.update_layout(color_discrete_sequence=, selector=dict(type='pie'),)
+        #print(self.pie.to_plotly_json())
+        return self.fig
