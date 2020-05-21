@@ -101,4 +101,5 @@ class Gain:
         # return sum(self.daily_income(rank, hq_lvl, vip, day=day, **kwargs) for day in Days)  # Technichally more accurate, but not realy useful yet
 
 
-GAINS_DICTIONNARY: Dict[str, Set[Type[Gain]]] = defaultdict(set)
+# FIXME make a clean and ordered list of gains, and clean categories or even deleting them
+GAINS_DICTIONARY: Dict[str, Set[Type[Gain]]] = defaultdict(set)

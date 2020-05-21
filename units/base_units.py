@@ -49,7 +49,7 @@ class BaseUnit(Card):
     range: int = None
     shoot_to: TargetType = None
     armor_piercing: int = None
-    cost: int = None
+    cost: int = None  # TODO: Refactor this attribute which is ambiguous (slot_cost? use_cost? army_cost?)
     multiple_target_limit = 1
     """Maximum number of simultaneous target"""
     can_miss = True

@@ -31,7 +31,7 @@ from common.resources import Resources as R
 from common.vip import VIP
 from economy.daily_rewards import Lottery
 
-from economy.gains import Gain, Days, GAINS_DICTIONNARY, BUDGET_SIMULATION_PARAMETERS, rank_param
+from economy.gains import Gain, Days, GAINS_DICTIONARY, BUDGET_SIMULATION_PARAMETERS, rank_param
 from spells.convoy_boosts import ModuleBoost
 from spells.spells import Storm
 from units.equipments import Equipement
@@ -282,8 +282,8 @@ class ClanBoss(ChallengeOfTheDay):
         return total_reward
 
 
-GAINS_DICTIONNARY['challenges'] = {GateChallenge, BanditChallenge, BossChallenge, ConvoyChallenge}
+GAINS_DICTIONARY['challenges'] = {GateChallenge, BanditChallenge, BossChallenge, ConvoyChallenge}
 
-GAINS_DICTIONNARY['clan'] = {ClanWarReward, ClanBoss} # {ClanMission, ClanMission, ClanWarFights, ClanWarReward}
+GAINS_DICTIONARY['clan'] = {ClanWarReward, ClanBoss} # {ClanMission, ClanMission, ClanWarFights, ClanWarReward}
 
-GAINS_DICTIONNARY['weekly'] = GAINS_DICTIONNARY['challenges'].union(GAINS_DICTIONNARY['clan'])
+GAINS_DICTIONARY['weekly'] = GAINS_DICTIONARY['challenges'].union(GAINS_DICTIONARY['clan'])

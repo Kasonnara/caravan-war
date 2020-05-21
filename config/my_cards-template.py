@@ -13,26 +13,18 @@ the majority of your units, then finish by manually setting remaining values.
 from collections import namedtuple
 from typing import Type
 
-from buildings.buildings import Mill, TransportStation, Bank, Storage, Laboratory, Tavern, Camp, Academy, Weaponsmith, \
-    Garage, WorkShop, Forge, HeroTemple, Altar
+from buildings.buildings import *
 from buildings.headquarters import HQ
 from common.card_categories import CardCategories
-from spells.spells import Ice, Storm, Meteor, Poison, Landmine, Arrow
-from spells.convoy_boosts import AttackSpeedBoost, AttackBoost, LifeBoost, SpeedBoost, VehicleArmor, ModuleBoost
-from units.bandits import Demon, Djin, Inferno, VikingLeg, StealerLeg, Chaman, DarkKnightLeg, Mecha, DarkKnight, Lich, \
-    Viking, Stealer, Berserk, Spider, Hunter, Brute, Alchimist, Maraudeur, Lutin, Drone, Archer, Condor, Momie, LichLeg, \
-    MomieLeg, CondorLeg
+from spells.spells import *
+from spells.convoy_boosts import *
+from units.bandits import *
 from units.equipments import Weapon, Armor
-from units.guardians import Seraphin, Golem, DemonSlayer, Canonner, Paladin, Hammer, Sparte, Griffon, Marchal, Sword, \
-    Jetpack, Shield, Knight, Healer, Guard, Scout, Follet, Wizard, SparteLeg, GriffonLeg, HammerLeg, PaladinLeg, \
-    MarchalLeg
-from units.heroes import Zora, Dalvir
-from units.towers import Sentinelle, Arbalete, Eolance, Sniper, HeavySniper, Mage, Lightning, Stormspire, Fire, Bomber, \
-    Canon, Hydra, MissileLaucher, Hospital, Armory, Tambour, Garnison
-from units.vehicles import Train, Dirigeable, Helicopter, Wagon, Chariot, Charrette, Speeder, Buggy, WagonLeg, \
-    HelicopterLeg, BuggyLeg
-from units.modules import Shotgun, Mortar, Chaingun, Laser, Tesla, FlameTrower, Balista, LaserLeg, ChaingunLeg, \
-    FlameTrowerLeg, Barrier, Harpon
+from units.guardians import *
+from units.heroes import *
+from units.towers import *
+from units.vehicles import *
+from units.modules import *
 
 CardStock = namedtuple('CardStock', 'card quantity')
 """A named tuple containing a unit type and the number of copies owned for units of which more than one copy c

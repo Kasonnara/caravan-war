@@ -63,14 +63,12 @@ class SpeedBoost(ConvoyBoost):
 class VehicleArmor(ConvoyBoost):
     boost = 15
     rarity = Rarity.Epic
-    # upgrade cost : 11->12=542000, 12->13=948000, 14=1673000, 15=2.865
     # hp_boost 11=1.2, 12=1.205
 
 
 class ModuleBoost(ConvoyBoost):
     boost = 15
     rarity = Rarity.Epic
-    # upgrade cost : 11->12=542000, 12->13=948000, 14=1673000, 15=2.865
     # damage_boost 11=1.2, 12=1.205
 
 

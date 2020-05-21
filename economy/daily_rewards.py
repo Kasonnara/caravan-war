@@ -26,7 +26,7 @@ from common.leagues import Rank
 from common.resources import ResourcePacket, hero_souls
 from common.resources import Resources as R
 from common.vip import VIP
-from economy.gains import Gain, GAINS_DICTIONNARY, rank_param, vip_param, BUDGET_SIMULATION_PARAMETERS
+from economy.gains import Gain, GAINS_DICTIONARY, rank_param, vip_param, BUDGET_SIMULATION_PARAMETERS, Days
 from utils.selectable_parameters import UIParameter
 
 
@@ -144,6 +144,6 @@ class Lottery(Gain):
 # TODO daily quests
 
 
-GAINS_DICTIONNARY['trading'] = {Trading10Km, Trading100Km, Trading1000Km, BestTrading}
+GAINS_DICTIONARY['trading'] = {Trading10Km, Trading100Km, Trading1000Km, BestTrading}
 
-GAINS_DICTIONNARY['daily'] = GAINS_DICTIONNARY['trading'].union({Lottery})
+GAINS_DICTIONARY['daily'] = GAINS_DICTIONARY['trading'].union({Lottery})

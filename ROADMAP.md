@@ -71,7 +71,7 @@
 > Note: The project doesn't intent to create bot nor play in the place of players. Automation in game must stick to data 
 gathering. Any feature toward bot creation will be rejected.
 
-- andoid or emulator screen collect
+- android or emulator screen collect
     - [ ] screenshot post-analysis
     - [ ] direct screenshot analysis
     - [ ] video post-analysis

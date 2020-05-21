@@ -26,7 +26,7 @@ from typing import Type, Dict, Set
 import pandas
 
 from common.resources import ResourcePacket, ResourceQuantity
-from economy.gains import BUDGET_SIMULATION_PARAMETERS, GAINS_DICTIONNARY, Gain
+from economy.gains import BUDGET_SIMULATION_PARAMETERS, GAINS_DICTIONARY, Gain
 # --- keep the following import to ensure that all gains exists ---
 import economy.daily_rewards
 import economy.weekly_rewards
@@ -38,7 +38,7 @@ all_parameters = [ui_param
                   for category in BUDGET_SIMULATION_PARAMETERS
                   for ui_param in BUDGET_SIMULATION_PARAMETERS[category]]
 
-all_gains: Set[Type[Gain]] = set.union(*(GAINS_DICTIONNARY[gains_category] for gains_category in GAINS_DICTIONNARY))
+all_gains: Set[Type[Gain]] = set.union(*(GAINS_DICTIONARY[gains_category] for gains_category in GAINS_DICTIONARY))
 
 
 def update_income(*selected_parameters, weekly=True) -> pandas.DataFrame:
