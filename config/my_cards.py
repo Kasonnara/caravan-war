@@ -87,6 +87,7 @@ bandits = {
     CardStock(Demon(15, stars=0, weapon_item=Weapon(7), armor_item=Armor(7)), 6),
     CardStock(Djin(15, stars=0, weapon_item=Weapon(7), armor_item=Armor(7)), 6),
     CardStock(Inferno(15, stars=0, weapon_item=Weapon(7), armor_item=Armor(7)), 6),
+    CardStock(Vampire(15, stars=0, weapon_item=Weapon(7), armor_item=Armor(7)), 6),
     CardStock(Chaman(15, stars=0, weapon_item=Weapon(7), armor_item=Armor(7)), 6),
     CardStock(MomieLeg(15, stars=0, weapon_item=Weapon(7), armor_item=Armor(7)), 10),
     CardStock(VikingLeg(15, stars=0, weapon_item=Weapon(7), armor_item=Armor(7)), 10),

@@ -59,16 +59,16 @@ class HQ(Building):
             (-66600000, -310220000, 1800),
             (-117800000, -546510000, 1900),
             (-212300000, -983100000, 2000),  # level 19 -> 20
-            # (None, None, 2100),
-            # (None, None, 2200),
-            # (None, None, 2300),
-            # (None, None, 2400),
-            # (None, None, 2500),
-            # (-5074500000, -2495741000, 2600),  # level 25 -> 26
-            # (None, None, 2700),
-            # (None, None, 2800),
-            # (None, None, 2900),
-            # (None, None, 3000),  # level 29 -> 30
+            (-373100000, -1884440000, 2100),
+            (-628000000, -3142000000, 2200),
+            (-1077300000, -5358770000, 2300),
+            (-1789700000, -8837130000, 2400),
+            (-3001700000, -14765080000, 2500),
+            (-5074500000, -2495741000, 2600),  # level 25 -> 26
+            (-8558100000, -42086880000, 2700),
+            (-13196900000, -64896100000, 2800),
+            (-18485600000, -90900890000, 2900),
+            (-25904700000, -127380690000, 3000),  # level 29 -> 30
             ]
         ]
 
@@ -99,6 +99,16 @@ class HQ(Building):
         ('HQ', "TransportStation", "Weaponsmith", "Garage"),
         ('HQ', "Tavern", "Academy", "WorkShop"),
         ('HQ', "Tavern", "Academy", "WorkShop"),  # level 19 -> 20
+        ('HQ', "Mill", "Weaponsmith", "Camp"),
+        ('HQ', "TransportStation", "Laboratory", "Tavern"),
+        ('HQ', "Camp", "Mill", "WorkShop"),
+        ('HQ', "Weaponsmith", "TransportStation", "Garage"),
+        ('HQ', "Tavern", "Academy", "WorkShop"),
+        ('HQ', "Mill", "Weaponsmith", "Camp"),
+        ('HQ', "TransportStation", "Laboratory", "Tavern"),
+        ('HQ', "WorkShop", "TransportStation", "Garage"),
+        ('HQ', "Camp", "Weaponsmith", "Laboratory"),
+        ('HQ', "Academy", "TransportStation", "Mill"),
         ]
     """List the buildings needed for upgrading the HQ. Here requirements are stored as strings, you will probably
     be more interested in the attribute <upgrade_requirements> which is the same but with classes instead."""

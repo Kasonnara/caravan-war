@@ -95,6 +95,7 @@ bandits = {
     CardStock(Djin(FILL_BANDIT_LEVEL, stars=0, weapon_item=Weapon(FILL_ITEM_LEVEL), armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
     CardStock(Inferno(FILL_BANDIT_LEVEL, stars=0, weapon_item=Weapon(FILL_ITEM_LEVEL), armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
     CardStock(Chaman(FILL_BANDIT_LEVEL, stars=0, weapon_item=Weapon(FILL_ITEM_LEVEL), armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
+    CardStock(Vampire(FILL_BANDIT_LEVEL, stars=0, weapon_item=Weapon(FILL_ITEM_LEVEL), armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
     CardStock(MomieLeg(FILL_BANDIT_LEVEL, stars=0, weapon_item=Weapon(FILL_ITEM_LEVEL), armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
     CardStock(VikingLeg(FILL_BANDIT_LEVEL, stars=0, weapon_item=Weapon(FILL_ITEM_LEVEL), armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),
     CardStock(StealerLeg(FILL_BANDIT_LEVEL, stars=0, weapon_item=Weapon(FILL_ITEM_LEVEL), armor_item=Armor(FILL_ITEM_LEVEL)), FILL_QUANTITY),

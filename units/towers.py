@@ -63,9 +63,12 @@ class Sentinelle(Tower):
     parent_tower = None
     upgrade_costs = resourcepackets_gold(
         0,  # 0 -> 1
-        None, None, None, None, None,
-        None, None, None, None, None,
-        None, -1400000,
+        -240, -1300, -6000, -14000, -30000,  # 1 -> 6
+        -68000, -144000, -202000, -300000, -430000,  # 6 -> 11
+        -800000, -1400000, -2470000, -4230000, -7360000,  # 11 -> 16
+        -13060000, -23290000, -41020000, -73800000, -141450000,  # 16 -> 21
+        -235850000, -402250000, -663350000, -1108330000, -1873420000,  # 21 -> 26
+        -3159230000, -4871390000, -6823430000, -9561770000,
         )
 
 
@@ -80,10 +83,12 @@ class Arbalete(Tower):
     multiple_target_limit = 2
     upgrade_costs = resourcepackets_gold(
         0,  # 0 -> 1
-        None, None, None, None, None,
-        None, None, None, None, None,
-        None, None, None, -8470000, -14710000,
-        -26120000, -46570000,
+        -470, -2700, -12100, -27000, -59000,  # 1 -> 6
+        -136000, -287000, -404000, -590000, -860000,  # 6 -> 11
+        -1600000, -2800000, -4940000, -8470000, -14710000,  # 11 -> 16
+        -26120000, -46570000, -82050000, -147590000, -282910000,  # 16 -> 21
+        -471710000, -804510000, -1326710000, -2216670000, -3746830000,  # 21 -> 26
+        -6318460000, -9742790000, -13646860000, -19123540000,
         )
 
 
@@ -97,10 +102,12 @@ class Eolance(Tower):
     parent_tower = Arbalete
     upgrade_costs = resourcepackets_gold(
         0,  # 0 -> 1
-        None, None, None, None, None,
-        None, None, None, None, None,
-        None, None, None, -9320000, -16180000,
-        -28730000, -51230000,
+        -520, -2900, -13300, -30000, -65000,  # 1 -> 6
+        -150000, -316000, -444000, -650000, -940000,  # 6 -> 11
+        -1760000, -3080000, -5440000, -9320000, -16180000,  # 11 -> 16
+        -28730000, -51230000, -90250000, -162350000, -311200000,  # 16 -> 21
+        -518880000, -884960000, -1459380000, -2438330000, -4121510000,  # 21 -> 26
+        -6950310000, -10717070000, -15011550000, -21035890000,
         )
 
 
@@ -114,9 +121,12 @@ class Sniper(Tower):
     parent_tower = Sentinelle
     upgrade_costs = resourcepackets_gold(
         0,  # 0 -> 1
-        None, None, None, None, None,
-        None, None, None, None, None,
-        None, -3360000,
+        -570, -3200, -14500, -33000, -71000,  # 1 -> 6
+        -163000, -345000, -485000, -710000, -1030000,  # 6 -> 11
+        -1920000, -3360000, -5930000, -10160000, -17660000,  # 11 -> 16
+        -31350000, -55890000, -98460000, -177110000, -339490000,  # 16 -> 21
+        -566050000, -965410000, -1592050000, -2660000000, -4496200000,  # 21 -> 26
+        -7582160000, -11691350000, -16376230000, -22948240000,
         )
 
 
@@ -129,12 +139,9 @@ class HeavySniper(Tower):
     _cost = 150
     parent_tower = Sniper
     # TODO special effect
-    upgrade_costs = resourcepackets_gold(
-        0,  # 0 -> 1
-        -570, -3200, -14500, -33000, -71000,
-        -163000, -345000, -485000, -710000, -1030000,
-        -1920000, -3360000, None, -10160000, -17660000,
-        -31350000,
+    upgrade_costs = Sniper.upgrade_costs[:25] + resourcepackets_gold(
+        -3746830000,  # 25 -> 26
+        -6318460000, -9742790000, -13646860000, -19123540000,
         )
     # damage, with 4 stars [240, 276, 318, 366, 421, 483, 555, 638, 734, 844, 972, 1117]
 
@@ -159,11 +166,7 @@ class Lightning(Tower):
     _cost = 175
     parent_tower = Mage
     multiple_target_limit = 8
-    upgrade_costs = resourcepackets_gold(
-        0,  # 0 -> 1
-        None, None, None, None, None,
-        None, -345000,
-        )
+    upgrade_costs = Sniper.upgrade_costs
 
     def damage_formule(self, target: MovableUnit, target_index=0, hit_combo=0):
         return (
@@ -182,13 +185,7 @@ class Stormspire(Tower, AOE):
     parent_tower = Lightning
     _log_once = False
     # TODO special effects
-    upgrade_costs = resourcepackets_gold(
-        0,  # 0 -> 1
-        -240, -1300, -6000, -14000, -30000,
-        -68000, -144000, -202000, -300000, -430000,
-        -800000, -1400000, -2470000, -4230000, -7360000,
-        -13060000, -23290000,
-        )
+    upgrade_costs = Sentinelle.upgrade_costs
 
     def damage_formule(self, target: MovableUnit, target_index=0, hit_combo=0):
         # return super().damage_formule(target, target_index, hit_combo)
@@ -212,10 +209,12 @@ class Fire(Tower):
     parent_tower = Mage
     upgrade_costs = resourcepackets_gold(
         0,  # 0 -> 1
-        None, None, None, None, None,
-        None, None, None, None, None,
-        None, None, None, -9740000, -16920000,
-        -30040000, -53560000,
+        -610, -3500, -15700, -35000, -77000,  # 1 -> 6
+        -177000, -374000, -525000, -770000, -990000,  # 6 -> 11
+        -1840000, -3220000, -5690000, -9740000, -16920000,  # 11 -> 16
+        -30040000, -53560000, -94350000, -169730000, -325340000,  # 16 -> 21
+        -542460000, -925180000, -1525720000, -2549170000, -4308860000,  # 21 -> 26
+        -7266230000, -11204210000, -15693890000, -21992070000,
         )
 
 
@@ -229,9 +228,12 @@ class Bomber(AOE, Tower):
     parent_tower = None
     upgrade_costs = resourcepackets_gold(
         0,  # 0 -> 1
-        None, None, None, None, None,
-        None, None, None, None, None,
-        -960000, -1680000, -2970000, -5080000,
+        -280, -1600, -7200, -16000, -36000,  # 1 -> 6
+        -82000, -172000, -242000, -350000, -510000,  # 6 -> 11
+        -960000, -1680000, -2970000, -5080000, -8830000,  # 11 -> 16
+        -15670000, -27940000, -49230000, -88560000, -169750000,  # 16 -> 21
+        -283020000, -482700000, -796030000, -1330000000, -2248100000,  # 21 -> 26
+        -3791080000, -5845670000, -8188120000, -11474120000,
         )
 
 
@@ -244,13 +246,7 @@ class Canon(Tower):
     _cost = 120
     parent_tower = Bomber
     multiple_target_limit = 3
-    upgrade_costs = resourcepackets_gold(
-        0,  # 0 -> 1
-        None, None, None, None, None,
-        None, None, None, None, None,
-        None, None, None, -9320000, -16180000,
-        -28730000, -51230000,
-        )
+    upgrade_costs = Eolance.upgrade_costs
 
 
 class Hydra(Tower):
@@ -263,10 +259,12 @@ class Hydra(Tower):
     parent_tower = Canon
     upgrade_costs = resourcepackets_gold(
         0,  # 0 -> 1
-        None, None, None, None, None,
-        None, None, None, None, None,
-        None, None, None, -11010000, -19130000,
-        -33960000, -30550000,
+        -610, -3500, -15700, -35000, -77000,  # 1 -> 6
+        -177000, -374000, -525000, -770000, -1110000,  # 6 -> 11
+        -2080000, -3640000, -6430000, -11010000, -19130000,  # 11 -> 16
+        -33960000, -60550000, -106660000, -191870000, -367780000,  # 16 -> 21
+        -613220000, -1045860000, -1724720000, -2881670000, -4870880000,  # 21 -> 26
+        -8214000000, -12665620000, -17740920000, -24860600000,
         )
 
 
@@ -278,13 +276,7 @@ class MissileLaucher(AOE, Tower):
     armor_piercing = 0
     _cost = 80
     parent_tower = Bomber
-    upgrade_costs = resourcepackets_gold(
-        0,  # 0 -> 1
-        None, None, None, None, None,
-        None, None, None, None, None,
-        None, None, None, -8470000, -14710000,
-        -26120000, -46570000,
-        )
+    upgrade_costs = Arbalete.upgrade_costs
 
 
 class Hospital(AOE, Heal, Tower):
@@ -296,9 +288,12 @@ class Hospital(AOE, Heal, Tower):
     parent_tower = None
     upgrade_costs = resourcepackets_gold(
         0,  # 0 -> 1
-        None, None, None, None, None,
-        None, None, None, None, None,
-        None, -1120000,
+        -190, -1100, -4800, -11000, -24000,  # 1 -> 6
+        -54000, -115000, -162000, -240000, -340000,  # 6 -> 11
+        -640000, -1120000, -1980000, -3390000, -5890000,  # 11 -> 16
+        -10450000, -18630000, -32820000, -59040000, -113160000,  # 16 -> 21
+        -188680000, -321800000, -530680000, -886670000, -1498430000,  # 21 -> 26
+        -2527390000, -3897120000, -5458740000, -7649410000,
         )
 
     def dps(self, targets: Union[MovableUnit, List[MovableUnit]]) -> Optional[float]:
@@ -310,10 +305,12 @@ class Armory(Hospital):
     parent_tower = Hospital
     upgrade_costs = resourcepackets_gold(
         0,  # 0 -> 1
-        None, None, None, None, None,
-        None, None, None, None, None,
-        None, None, -3710000, -6350000, -11030000,
-        -19590000,
+        -350, -2000, -9100, -20000, -44000,  # 1 -> 6
+        -102000, -216000, -303000, -440000, -640000,  # 6 -> 11
+        -1200000, -2100000, -3710000, -6350000, -11030000,  # 11 -> 16
+        -19590000, -34930000, -61540000, -110690000, -212180000,  # 16 -> 21
+        -353780000, -603380000, -995030000, -1662500000, -2810120000,  # 21 -> 26
+        -4738850000, -7307090000, -10235150000, -14342650000,
         )
 
 
@@ -326,12 +323,7 @@ class Tambour(Hospital):
 class Garnison(Tambour, Armory):
     _cost = 190
     parent_tower = Armory
-    upgrade_costs = resourcepackets_gold(
-        0,  # 0 -> 1
-        None, None, None, None, None,
-        None, None, None, None, None,
-        None, None, None, -8470000,
-        )
+    upgrade_costs = Arbalete.upgrade_costs
 
 
 # Register all defined cards
