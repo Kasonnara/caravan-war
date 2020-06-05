@@ -1,0 +1,4 @@
+# Budget simulator
+# needs core-requirements.txt additionally to the following dependencies
+dash
+dash_bootstrap_components

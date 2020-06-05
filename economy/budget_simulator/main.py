@@ -39,6 +39,7 @@ from utils.selectable_parameters import UIParameter
 external_stylesheets = [dbc.themes.BOOTSTRAP]
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+server = app.server
 
 HEADER_STYLE = {
     "background-color": "#f8f9fa",

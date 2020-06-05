@@ -1,4 +1,9 @@
-matplotlib
-numpy
-pandas
-dash
+# Root requirements file used by Heroku, install exhaustively all dependencies.
+# If you just want to use some parts of the project, you may want to use only some of the following requirements files.
+
+# Core
+-r core-requirements.txt
+
+# Budget simulator heroku deploying
+-r economy/budget_simulator/extra-requirements.txt
+gunicorn
