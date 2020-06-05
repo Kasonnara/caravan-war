@@ -8,6 +8,21 @@ My priority in this project is to collect as much data as possible about the gam
 
 > **The purpose of this project is not to develop automatic bots** to play in place of the player. This in my opinion have no interest; generating a brief pleasure experience for the user while potentially severely degrading that of others.
 
+## Setup
+
+> I recommend to make a python virtual env: (`sudo apt install python3-venv` if you doesn't have installed venv yet) `python3 -m venv cvc_env` <br>
+> then activate it with `source cvc_env/bin/activate`
+
+Install required python packages `pip install -r requirements.txt` 
+
+If you want to run the Jupyter notebooks, install it : `sudo apt install jupyter-notebook`
+
+## Run
+
+### Budget simulator
+`python3 economy/budget_simulator/main.py`  
+then go to http://127.0.0.1:8050/ on your favorite web browser 
+
 ## Project architecture
 
 ### Core 
