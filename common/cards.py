@@ -18,7 +18,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from collections import namedtuple, defaultdict
-from typing import List, Type, Dict, Set
+from typing import List, Type, Dict, Set, Union
 
 from common.rarity import Rarity
 from common.resources import ResourcePacket
@@ -125,11 +125,11 @@ class Upgradable:
         return "{}[lvl={}]".format(self.__class__.__name__, self.level)
 
     @classmethod
-    def total_upgrade_cost(cls, required_items: List['Upgradable'], inital_items: Dict[str, Set['Upgradable']]) -> ResourcePacket:
+    def total_upgrade_cost(cls, required_items: List['Upgradable'], inital_items: Union[Dict['CardCategories', Set['Upgradable']], List['Upgradable']], verbose=False) -> ResourcePacket:
         """
         Compute the total resources needed to upgrade from <inital_items> to <required_cards>
         :param required_items: List[Upgradable], the list of unit/building that we want to upgrade
-        :param inital_items: Dict[str, Set[Upgradable]], the dictionnary of already built items (My_CARDS like)
+        :param inital_items: Dict[CardCategories, Set[Upgradable]], the dictionary of already built items (MY_CARDS like)
         :return: ResourcePacket
         """
 
@@ -137,11 +137,17 @@ class Upgradable:
         built_items = defaultdict(lambda: 1)
         """default dictionary of built items: {upgradable class: level}"""
 
-        for categories in inital_items:  # TODO maybe add a filter to exclude categories useless for the given requirements
-            for upgradable_item in inital_items[categories]:
-                assert isinstance(upgradable_item, cls), "<inital_cards> must contain elements of elements that are subclass of Upgradable; but {} was found".format(type(upgradable_item))
-                assert type(upgradable_item) not in built_items.keys(), "<initial_cards> shouldn't contains duplicates"
-                built_items[type(upgradable_item)] = upgradable_item.level
+        if isinstance(inital_items, dict):
+            for categories in inital_items:  # TODO maybe add a filter to exclude categories useless for the given requirements
+                for upgradable_item in inital_items[categories]:
+                    assert isinstance(upgradable_item, cls), "<inital_cards> dict must contain elements of elements that are subclass of Upgradable; but {} was found".format(type(upgradable_item))
+                    assert type(upgradable_item) not in built_items.keys(), "<initial_cards> shouldn't contains duplicates"
+                    built_items[type(upgradable_item)] = upgradable_item.level
+        else:
+            # inital_items is a list
+            for upgradable_item in inital_items:
+                assert isinstance(upgradable_item, cls), "<inital_cards> list must contain elements that are subclass of Upgradable; but {} was found".format(type(upgradable_item))
+                built_items[type(upgradable_item)] = max(upgradable_item.level, built_items[type(upgradable_item)])
 
         total_costs = ResourcePacket()
         required_items = list(required_items)  # TODO: maybe replacing with a set is more efficient?
@@ -151,13 +157,19 @@ class Upgradable:
         while len(required_items):
             # Extract from the process queue a requirement to consider
             requirement = required_items.pop()
-            # Skip if the requirement is already satisfied
-            if built_items[type(requirement)] < requirement.level:
-                requirement_cost, requirement_dependencies = requirement.get_upgrade()
+            # Process all the missing levels for this upgradable
+            for requirement_level in range(built_items[type(requirement)], requirement.level):
+                requirement_cost, requirement_dependencies = requirement._get_upgrade(requirement_level)
+                if verbose:
+                    #print(built_items)
+                    print("need {}: {}".format("{}[{}->{}]".format(type(requirement).__name__, requirement_level, requirement_level+1),
+                                               (requirement_cost, requirement_dependencies)))
+                    #time.sleep(2)
                 # Add-up the upgrade cost
                 total_costs = total_costs + requirement_cost
                 # Put dependencies in the process queue
                 required_items = required_items + requirement_dependencies
+            built_items[type(requirement)] = max(requirement.level, built_items[type(requirement)])
 
         return total_costs
 
