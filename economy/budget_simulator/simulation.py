@@ -55,9 +55,11 @@ def update_income(*selected_parameters, weekly=True) -> pandas.DataFrame:
 
     # Recompute all gains
     incomes = pandas.DataFrame(
-        data=(gain.weekly_income(**ui_parameter_values).to_pandas() if weekly
+        data=[
+            gain.weekly_income(**ui_parameter_values).to_pandas() if weekly
                 else gain.daily_income(**ui_parameter_values).to_pandas()
-                for gain in all_gains),
-        index=[camelcase_2_spaced(gain.__name__) for gain in all_gains],  # Use a meta class to generate display name once at the gain definition step
+            for gain in all_gains
+            ],
+        index=[camelcase_2_spaced(gain.__name__) for gain in all_gains],
         )
     return incomes

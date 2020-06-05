@@ -25,6 +25,7 @@ from typing import Optional
 
 from common.clan_leagues import ClanLeague
 from common.leagues import Rank
+from common.rarity import Rarity
 from common.resources import ResourcePacket, ResourceQuantity
 from common.resources import Resources as R
 
@@ -34,10 +35,12 @@ from economy.daily_rewards import Lottery
 from economy.gains import Gain, Days, GAINS_DICTIONARY, BUDGET_SIMULATION_PARAMETERS, rank_param
 from spells.convoy_boosts import ModuleBoost
 from spells.spells import Storm
+from units.bandits import Bandit
 from units.equipments import Equipement
 
 
 # Declare additional UI parameters
+from units.guardians import Guardian
 from utils.selectable_parameters import UIParameter
 
 convert_lottery_tickets_param = UIParameter('convert_lottery_tickets', value_range=bool, default_value=True)
@@ -254,6 +257,7 @@ clan_boss_kills_param = UIParameter(
     )
 BUDGET_SIMULATION_PARAMETERS['Clan'].append(clan_boss_kills_param)
 
+
 class ClanBoss(ChallengeOfTheDay):
     start_day = Days.Sunday
     end_day = Days.Saturday
@@ -266,7 +270,7 @@ class ClanBoss(ChallengeOfTheDay):
     def iteration_income(cls, rank: Rank = Rank.NONE, personal_boss_kill_per_fight=0, clan_boss_kills=0, **kwargs) -> ResourcePacket:
         # TODO automatically predict personal_boss_kill_per_fight from MY_CARDS
         # First coutn goods obtained fighting the boss twice
-        total_reward = ResourcePacket(R.Goods(0 * 2))  # TODO
+        total_reward = ResourcePacket(R.Goods(20000*(sum(range(1, personal_boss_kill_per_fight+1))) * 2))
 
         # Then add rewards unlocked
         levels_unlocked = (clan_boss_kills - 125) // 250 + 1
@@ -282,8 +286,28 @@ class ClanBoss(ChallengeOfTheDay):
         return total_reward
 
 
+class WeeklyQuest(Gain):
+
+    @classmethod
+    def iteration_income(cls, rank: Rank = Rank.NONE, **kwargs) -> ResourcePacket:
+        # TODO allow partial reward?
+        return ResourcePacket(
+            R.Goods((2 + 3) * rank.traiding_base),
+            R.Gold(((3 + 2 + 3 + 5) * rank.traiding_base)),
+            R.Gem(100),
+            R.BeginnerGrowth(300),
+            R.LifePotion(1 + 5),
+            ResourceQuantity((Bandit, Rarity.Rare), 2),
+            ResourceQuantity((Guardian, Rarity.Rare), 2),
+            )
+
+    @classmethod
+    def daily_income(cls, rank: Rank = Rank.NONE, **kwargs) -> ResourcePacket:
+        return cls.iteration_income(rank=rank) * (1/7)
+
+
 GAINS_DICTIONARY['challenges'] = {GateChallenge, BanditChallenge, BossChallenge, ConvoyChallenge}
 
 GAINS_DICTIONARY['clan'] = {ClanWarReward, ClanBoss} # {ClanMission, ClanMission, ClanWarFights, ClanWarReward}
 
-GAINS_DICTIONARY['weekly'] = GAINS_DICTIONARY['challenges'].union(GAINS_DICTIONARY['clan'])
+GAINS_DICTIONARY['weekly'] = GAINS_DICTIONARY['challenges'].union(GAINS_DICTIONARY['clan']).union({WeeklyQuest})

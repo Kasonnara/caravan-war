@@ -56,6 +56,7 @@ hq_param = UIParameter('hq_lvl', range(MAX_LEVEL), display_range=[str(vip_lvl + 
 
 BUDGET_SIMULATION_PARAMETERS = {
     "General": [rank_param, vip_param, hq_param],
+    "Traiding": [],
     "Challenges": [],
     "Clan": [],
     "Units": [],

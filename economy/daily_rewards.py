@@ -21,12 +21,18 @@
 List gains that obtainable on a daily basis
 """
 import itertools
+from typing import Optional
 
+from buildings.buildings import Mill, TransportStation
 from common.leagues import Rank
-from common.resources import ResourcePacket, hero_souls
+from common.rarity import Rarity
+from common.resources import ResourcePacket, hero_souls, ResourceQuantity
 from common.resources import Resources as R
 from common.vip import VIP
+from economy.adds import Adds
 from economy.gains import Gain, GAINS_DICTIONARY, rank_param, vip_param, BUDGET_SIMULATION_PARAMETERS, Days
+from units.bandits import Bandit
+from units.guardians import Guardian
 from utils.selectable_parameters import UIParameter
 
 
@@ -37,7 +43,7 @@ reset_max_count_param = UIParameter(
     display_txt="Trading limit resets",
     default_value=3,
     )
-BUDGET_SIMULATION_PARAMETERS['General'].append(reset_max_count_param)
+BUDGET_SIMULATION_PARAMETERS['Traiding'].append(reset_max_count_param)
 
 
 class Trading(Gain):
@@ -65,6 +71,7 @@ class Trading(Gain):
 
     @classmethod
     def iteration_income(cls, rank: Rank = Rank.NONE, vip: VIP = 1, **kwargs) -> ResourcePacket:
+        # TODO add card and reincarnation medals loots
         return ResourcePacket(cls.goods_cost(rank), cls.gold_reward(rank, vip))
 
     @classmethod
@@ -78,11 +85,35 @@ class Trading(Gain):
             )
 
 
+daily_10km_trading_count_param = UIParameter(
+    'daily_10km_trading_count',
+    list(range(30)) + [None],
+    display_range=[str(x) for x in range(30)] + ["Max (Auto)"],
+    display_txt="10km trading count",
+    default_value=None,
+    )
+BUDGET_SIMULATION_PARAMETERS['Traiding'].append(daily_10km_trading_count_param)
+
+
 class Trading10Km(Trading):
     duration = 0.5
     traiding_limit = 100
     goods_cost_multiplier = 1
     gold_reward_multiplier = 1
+
+    @classmethod
+    def daily_income(cls, daily_10km_trading_count: float = None, **kwargs):
+        return super().daily_income(daily_trading_count=daily_10km_trading_count, **kwargs)
+
+
+daily_100km_trading_count_param = UIParameter(
+    'daily_100km_trading_count',
+    list(range(4)) + [None],
+    display_range=[str(x) for x in range(4)] + ["Max (Auto)"],
+    display_txt="100km trading count",
+    default_value=None,
+    )
+BUDGET_SIMULATION_PARAMETERS['Traiding'].append(daily_100km_trading_count_param)
 
 
 class Trading100Km(Trading):
@@ -91,6 +122,20 @@ class Trading100Km(Trading):
     goods_cost_multiplier = 2
     gold_reward_multiplier = 2.6
 
+    @classmethod
+    def daily_income(cls, daily_100km_trading_count: float = None, **kwargs):
+        return super().daily_income(daily_trading_count=daily_100km_trading_count, **kwargs)
+
+
+daily_1000km_trading_count_param = UIParameter(
+    'daily_1000km_trading_count',
+    list(range(3)) + [None],
+    display_range=[str(x) for x in range(3)] + ["Max (Auto)"],
+    display_txt="1000km trading count",
+    default_value=None,
+    )
+BUDGET_SIMULATION_PARAMETERS['Traiding'].append(daily_1000km_trading_count_param)
+
 
 class Trading1000Km(Trading):
     duration = 2
@@ -98,12 +143,30 @@ class Trading1000Km(Trading):
     goods_cost_multiplier = 3
     gold_reward_multiplier = 4.8
 
+    @classmethod
+    def daily_income(cls, daily_1000km_trading_count: float = None, **kwargs):
+        return super().daily_income(daily_trading_count=daily_1000km_trading_count, **kwargs)
+
+
+daily_best_trading_count_param = UIParameter(
+    'daily_best_trading_count',
+    list(range(2)) + [None],
+    display_range=[str(x) for x in range(2)] + ["Max (Auto)"],
+    display_txt="Best trading count",
+    default_value=None,
+    )
+BUDGET_SIMULATION_PARAMETERS['Traiding'].append(daily_best_trading_count_param)
+
 
 class BestTrading(Trading):
     duration = 4
     traiding_limit = 1
     goods_cost_multiplier = 4
     gold_reward_multiplier = 8
+
+    @classmethod
+    def daily_income(cls, daily_best_trading_count: float = None, **kwargs):
+        return super().daily_income(daily_trading_count=daily_best_trading_count, **kwargs)
 
 
 _possible_hero_combinaisons = list(itertools.combinations(hero_souls, 2))
@@ -141,9 +204,114 @@ class Lottery(Gain):
     def daily_income(cls, rank: Rank, *args, selected_heroes=(R.DalvirSoul, R.ZoraSoul), **kwargs) -> ResourcePacket:
         return cls.convert_tickets(3, rank, selected_heroes=selected_heroes, **kwargs)
 
-# TODO daily quests
+
+mill_lvl_param = UIParameter(
+    'mill_lvl',
+    list(range(31)) + [None],
+    display_range=[str(lvl) for lvl in range(31)] + ["Auto (= HQ level)"],
+    default_value=None,
+    )
+BUDGET_SIMULATION_PARAMETERS['Units'].append(mill_lvl_param)
+
+
+class MillProduction(Gain):
+    @classmethod
+    def iteration_income(cls, mill_lvl: Optional[int] = None, hq_lvl=1, vip: VIP = 1, **kwargs) -> ResourcePacket:
+        """
+        Production per 2 hour
+        :param mill_lvl:
+        :param hq_lvl:
+        :param vip:
+        :param kwargs:
+        :return:
+        """
+        return Mill.bihourly_incomes[mill_lvl or hq_lvl]
+
+    # TODO daily_collect_count can be miss understood by the user, it would be better to ask it's play hours
+    #  (or various play strategy (once a day, twice a day, sparsly all the day, etc.)
+    @classmethod
+    def daily_income(cls, mill_lvl: Optional[int] = None, hq_lvl=1, vip: VIP = 1, daily_collect_count: int = None,
+                     **kwargs) -> ResourcePacket:
+        income = cls.iteration_income(mill_lvl=mill_lvl, hq_lvl=hq_lvl, vip=vip, **kwargs) * 12
+        if daily_collect_count is not None:
+            income = min(income, Mill.storage_limits[mill_lvl or hq_lvl] * daily_collect_count)
+        return income
+
+
+station_lvl_param = UIParameter(
+    'station_lvl',
+    list(range(31)) + [None],
+    display_range=[str(lvl) for lvl in range(31)] + ["Auto (= HQ level)"],
+    default_value=None,
+    )
+BUDGET_SIMULATION_PARAMETERS['Units'].append(station_lvl_param)
+
+
+class TransportStationProduction(Gain):
+    @classmethod
+    def iteration_income(cls, station_lvl: Optional[int] = None, hq_lvl=1, vip: VIP = 1, **kwargs) -> ResourcePacket:
+        """
+        Production per 2 hour
+        :param station_lvl:
+        :param hq_lvl:
+        :param vip:
+        :param kwargs:
+        :return:
+        """
+        return TransportStation.bihourly_incomes[station_lvl or hq_lvl]
+
+    # TODO daily_collect_count can be miss understood by the user, it would be better to ask it's play hours
+    #  (or various play strategy (once a day, twice a day, sparsly all the day, etc.)
+    @classmethod
+    def daily_income(cls, station_lvl: Optional[int] = None, hq_lvl=1, vip: VIP = 1, daily_collect_count: int = None,
+                     **kwargs) -> ResourcePacket:
+        # TODO add attack frequency parameter
+        income = cls.iteration_income(station_lvl=station_lvl, hq_lvl=hq_lvl, vip=vip, **kwargs) * 12
+        if daily_collect_count is not None:
+            income = min(income, Mill.storage_limits[station_lvl or hq_lvl] * daily_collect_count)
+        return income
+
+
+class DailyQuest(Gain):
+
+    @classmethod
+    def iteration_income(cls, rank: Rank = Rank.NONE, **kwargs) -> ResourcePacket:
+        # TODO allow partial reward?
+        return ResourcePacket(
+            R.Goods(2 * rank.traiding_base),
+            R.Gold((2 * rank.traiding_base)),
+            R.Gem(20),
+            R.BeginnerGrowth(100),
+            R.LifePotion(1),
+            ResourceQuantity((Bandit, Rarity.Rare), 1),
+            ResourceQuantity((Guardian, Rarity.Rare), 1),
+            )
+
+    @classmethod
+    def daily_income(cls, rank: Rank = Rank.NONE, **kwargs) -> ResourcePacket:
+        return cls.iteration_income(rank=rank)
+
+
+class FreeDailyOffer(Gain):
+
+    @classmethod
+    def iteration_income(cls, rank: Rank = Rank.NONE, **kwargs) -> ResourcePacket:
+        return ResourcePacket(R.Goods(rank.traiding_base), R.LifePotion(1))
+
+    @classmethod
+    def daily_income(cls, rank: Rank = Rank.NONE, **kwargs) -> ResourcePacket:
+        return cls.iteration_income(rank=rank, **kwargs)
+
+
+# TODO ambush rewards
+
+
+# TODO daily connection reward
+
+
+# TODO clan donations
 
 
 GAINS_DICTIONARY['trading'] = {Trading10Km, Trading100Km, Trading1000Km, BestTrading}
 
-GAINS_DICTIONARY['daily'] = GAINS_DICTIONARY['trading'].union({Lottery})
+GAINS_DICTIONARY['daily'] = GAINS_DICTIONARY['trading'].union({Lottery, MillProduction, TransportStationProduction, Adds, DailyQuest, FreeDailyOffer})

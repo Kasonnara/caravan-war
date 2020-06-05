@@ -82,6 +82,10 @@ class ResourceTable(html.Table):
         all_res_types = data.columns  # TODO sort columns
         prettified_res_types = [camelcase_2_spaced(res_type) for res_type in all_res_types]
 
+        totals: pandas.Series = data.sum()
+        totals.name = "totals"
+        data_with_total = data.append(totals)
+
         return (
             html.Thead(html.Tr([html.Th("")] + [
                 html.Th(res_types_str)
@@ -89,10 +93,10 @@ class ResourceTable(html.Table):
                 ])),
             html.Tbody([
                 html.Tr([html.Td(line_key)] + [
-                    html.Td(pretiffy_values(data.loc[line_key].get(res_types, 0)))
+                    html.Td(pretiffy_values(data_with_total.loc[line_key].get(res_types, 0)))
                     for res_types in all_res_types
                     ])
-                for line_key in data.index
+                for line_key in data_with_total.index
                 ]),
             )
 
@@ -109,7 +113,7 @@ class ResourceBarPie(dcc.Graph):
             y=[],
             name=self.str_target_resource,
             texttemplate="%{y: .2s}",
-            textposition='outside',
+            #textposition='outside',
             row=1, col=1,
             marker_color=resource_colors[target_resource]
             )
@@ -142,12 +146,6 @@ class ResourceBarPie(dcc.Graph):
     def figures_updates(self, data: pandas.DataFrame) -> List:
         # Drop useless value and manually sort the values
         target_data=data[self.str_target_resource].dropna().sort_values(ascending=False)
-
-        self.fig.update_traces(
-            y=target_data,
-            x=target_data.index,
-            selector=dict(type='bar'),
-            )
         self.fig.update_traces(
             values=target_data.abs(),
             labels=target_data.index,
@@ -157,6 +155,12 @@ class ResourceBarPie(dcc.Graph):
             selector=dict(type='pie'),
             marker_line_color=["#00C000" if x > 0 else "#C00000" for x in target_data],
             )
+        self.fig.update_traces(
+            y=target_data,
+            x=target_data.index,
+            selector=dict(type='bar'),
+            )
+
         #self.fig.update_layout(color_discrete_sequence=, selector=dict(type='pie'),)
         #print(self.pie.to_plotly_json())
         return self.fig
