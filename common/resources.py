@@ -132,7 +132,7 @@ class ResourceQuantity:
             assert issubclass(res_type[0], Card)
             assert isinstance(res_type[1], Rarity)
             assert res_type[0].rarity is None, "When using (CardType, Rarity) type, that card type should be a category base class not a final unit class" # and thus .rarity shouldn't be defined yet
-            return "Unspecified{}{}".format(res_type[1].name, res_type[0].__class__.__name__)
+            return "Unspecified{}{}".format(res_type[1].name, res_type[0].__name__)
         else:
             assert issubclass(res_type, Card)
             if res_type.rarity is None:
