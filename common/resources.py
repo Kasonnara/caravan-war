@@ -110,6 +110,10 @@ class ResourceQuantity:
                       "ResourceQuantity while costs must be negative ResourceQuantity from the very beginning"  # Remove this assert if you found cases where the convention cannot apply
         return type(self)(self.type, self.quantity - other.quantity)
 
+    def __mul__(self, other: Union[int, float]):
+        assert isinstance(other, (int, float))
+        return type(self)(self.type, self.quantity * other)
+
     def __repr__(self):
         return "{}[{}]".format(self.prettify_type(self.type), self.quantity)
 
@@ -128,13 +132,13 @@ class ResourceQuantity:
         from common.cards import Card
         if isinstance(res_type, Rarity):
             return "Unspecified{}Card".format(res_type.name)
-        elif type(res_type) is Tuple:
+        elif isinstance(res_type, tuple):
             assert issubclass(res_type[0], Card)
             assert isinstance(res_type[1], Rarity)
             assert res_type[0].rarity is None, "When using (CardType, Rarity) type, that card type should be a category base class not a final unit class" # and thus .rarity shouldn't be defined yet
             return "Unspecified{}{}".format(res_type[1].name, res_type[0].__name__)
         else:
-            assert issubclass(res_type, Card)
+            assert isinstance(res_type, Type) and issubclass(res_type, Card), "Invalid resource type, expected one of: Ressources enum, Rarity enum, unit Card or a tuple(Card category base class, rarity). But {} was found".format(type(res_type))
             if res_type.rarity is None:
                 return "Unspecified{}".format(res_type.__name__)
             else:
