@@ -217,6 +217,8 @@ class Sparte(Guardian):
     cost = 4
     # TODO armor gain spell
     bossfight_cost = 80
+    #armor_duration = 1
+    #armor_cooldown = 0.8
     rarity = Rarity.Epic
     upgrade_costs = resourcepackets_gold(
         0,  # 0 -> 1
@@ -334,6 +336,8 @@ class Hammer(Guardian):
     armor = 5
     armor_piercing = 0
     cost = 4
+    shield_range = 10
+    shield_duration = 7
     # TODO: shield spell
     bossfight_cost = None
     rarity = Rarity.Epic
@@ -357,6 +361,7 @@ class Canonner(Guardian, AOE):
     cost = 4
     bossfight_cost = 190
     rarity = Rarity.Legendary
+    aoe_radius = 1
     upgrade_costs = resourcepackets_gold(
         0,  # 0 -> 1
         -440, -2000, -8500, -22000, -55000,  # 1 -> 6
@@ -403,6 +408,7 @@ class Golem(AOE, Guardian):
     armor = 0
     armor_piercing = 6
     cost = 6
+    aoe_radius = 1
     # TODO: stone wall on death
     bossfight_cost = 190
     rarity = Rarity.Legendary
@@ -425,7 +431,7 @@ class Seraphin(Guardian, Heal):
     shoot_to = TargetType.AIR_GROUND
     base_heal = 30
     heal_frequency = 1
-    heal_range = 4
+    heal_range = 3  #4
     heal_to = TargetType.AIR_GROUND
     shooted_as = TargetType.GROUND
     armor = 4
@@ -459,6 +465,8 @@ class Wizard(Guardian):
     armor_piercing = 0
     cost = 6
     # TODO: stun
+    stun_duration = 1
+    stun_radius = 4
     bossfight_cost = 190
     rarity = Rarity.Legendary
     upgrade_costs = resourcepackets_gold(

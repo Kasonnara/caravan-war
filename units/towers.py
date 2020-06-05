@@ -138,6 +138,7 @@ class HeavySniper(Tower):
     armor_piercing = 0
     _cost = 150
     parent_tower = Sniper
+    tower_power_reward = (20, 20, 35, 50)
     # TODO special effect
     upgrade_costs = Sniper.upgrade_costs[:25] + resourcepackets_gold(
         -3746830000,  # 25 -> 26
@@ -185,6 +186,9 @@ class Stormspire(Tower, AOE):
     parent_tower = Lightning
     _log_once = False
     # TODO special effects
+    stun_duration = 1
+    stun_radius = 4
+    stun_frequency=0.2
     upgrade_costs = Sentinelle.upgrade_costs
 
     def damage_formule(self, target: MovableUnit, target_index=0, hit_combo=0):
@@ -226,6 +230,7 @@ class Bomber(AOE, Tower):
     armor_piercing = 0
     _cost = 170
     parent_tower = None
+    aoe_radius = 2
     upgrade_costs = resourcepackets_gold(
         0,  # 0 -> 1
         -280, -1600, -7200, -16000, -36000,  # 1 -> 6
@@ -276,6 +281,7 @@ class MissileLaucher(AOE, Tower):
     armor_piercing = 0
     _cost = 80
     parent_tower = Bomber
+    aoe_radius = 2
     upgrade_costs = Arbalete.upgrade_costs
 
 

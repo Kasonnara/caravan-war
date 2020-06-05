@@ -201,6 +201,7 @@ class Spider(AOE, Bandit):
     armor_piercing = 0
     cost = 4
     move_speed = 1.4
+    aoe_radius = 1
     rarity = Rarity.Rare
     upgrade_costs = Lutin.upgrade_costs
 
@@ -216,6 +217,7 @@ class Alchimist(AOE, Bandit):
     armor_piercing = 0
     cost = 5
     move_speed = 1.6
+    aoe_radius = 1
     rarity = Rarity.Rare
     upgrade_costs = Hunter.upgrade_costs
 
@@ -263,6 +265,7 @@ class Momie(Bandit):
     cost = 7
     move_speed = 1.4
     rarity = Rarity.Epic
+    curse_duration=7
     upgrade_costs = resourcepackets_gold(
         0,  # 0 -> 1
         -560, -2900, -10800, -24000, -66000,  # 1 -> 6
@@ -439,6 +442,7 @@ class Demon(Bandit):
     cost = 10
     move_speed = 1.9
     rarity = Rarity.Legendary
+    stun_duration=1.5
     upgrade_costs = resourcepackets_gold(
         0,  # 0 -> 1
         -880, -4500, -16900, -38000, -103000,  # 1 -> 6
@@ -489,6 +493,9 @@ class Djin(Bandit, AOE):
     summon_hp = {8: 2627}
     summon_atk = {8: 450}
     summon_atk_speed = 1 / 10
+    slow_effect_factor = 0.5
+    slow_effect_duration = 2
+    aoe_radius = 1.5
     # TODO Slow down effect
     rarity = Rarity.Legendary
     upgrade_costs = resourcepackets_gold(

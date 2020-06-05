@@ -59,6 +59,7 @@ class Mortar(AOE, ModuleWeapon):
     armor_piercing = 0
     shoot_to = TargetType.GROUND
     rarity = Rarity.Rare
+    aoe_radius = 1
     upgrade_costs = resourcepackets_gold(
         0,  # 0 -> 1
         -370, -1900, -7100, -14000, -28000,  # 1 -> 6
@@ -77,6 +78,7 @@ class Shotgun(COE, ModuleWeapon):
     armor_piercing = 0
     shoot_to = TargetType.AIR
     rarity = Rarity.Rare
+    aoe_radius=0.5
     upgrade_costs = resourcepackets_gold(
         0,  # 0 -> 1
         -330, -1700, -6300, -12000, -25000,  # 1 -> 6
