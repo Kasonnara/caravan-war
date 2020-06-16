@@ -43,7 +43,7 @@ reset_max_count_param = UIParameter(
     display_txt="Trading limit resets",
     default_value=3,
     )
-BUDGET_SIMULATION_PARAMETERS['Traiding'].append(reset_max_count_param)
+BUDGET_SIMULATION_PARAMETERS['Trading'].append(reset_max_count_param)
 
 
 class Trading(Gain):
@@ -92,7 +92,7 @@ daily_10km_trading_count_param = UIParameter(
     display_txt="10km trading count",
     default_value=None,
     )
-BUDGET_SIMULATION_PARAMETERS['Traiding'].append(daily_10km_trading_count_param)
+BUDGET_SIMULATION_PARAMETERS['Trading'].append(daily_10km_trading_count_param)
 
 
 class Trading10Km(Trading):
@@ -113,7 +113,7 @@ daily_100km_trading_count_param = UIParameter(
     display_txt="100km trading count",
     default_value=None,
     )
-BUDGET_SIMULATION_PARAMETERS['Traiding'].append(daily_100km_trading_count_param)
+BUDGET_SIMULATION_PARAMETERS['Trading'].append(daily_100km_trading_count_param)
 
 
 class Trading100Km(Trading):
@@ -134,7 +134,7 @@ daily_1000km_trading_count_param = UIParameter(
     display_txt="1000km trading count",
     default_value=None,
     )
-BUDGET_SIMULATION_PARAMETERS['Traiding'].append(daily_1000km_trading_count_param)
+BUDGET_SIMULATION_PARAMETERS['Trading'].append(daily_1000km_trading_count_param)
 
 
 class Trading1000Km(Trading):
@@ -155,7 +155,7 @@ daily_best_trading_count_param = UIParameter(
     display_txt="Best trading count",
     default_value=None,
     )
-BUDGET_SIMULATION_PARAMETERS['Traiding'].append(daily_best_trading_count_param)
+BUDGET_SIMULATION_PARAMETERS['Trading'].append(daily_best_trading_count_param)
 
 
 class BestTrading(Trading):

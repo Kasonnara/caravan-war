@@ -55,11 +55,11 @@ hq_param = UIParameter('hq_lvl', range(MAX_LEVEL), display_range=[str(vip_lvl + 
 # creates new categories if you want just use str keys.
 
 BUDGET_SIMULATION_PARAMETERS = {
-    "General": [rank_param, vip_param, hq_param],
-    "Traiding": [],
-    "Challenges": [],
-    "Clan": [],
-    "Units": [],
+    'General': [rank_param, vip_param, hq_param],
+    'Trading': [],
+    'Challenges': [],
+    'Clan': [],
+    'Units': [],
     }
 """Store all UIParameter sorted into categories"""
 
