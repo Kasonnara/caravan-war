@@ -23,7 +23,7 @@ from buildings.buildings import Forge
 from common.cards import Card
 
 
-class Equipement(Card):
+class Equipment(Card):
     base_building_level = Forge
     def __init__(self, level=1, effects: Tuple[object] = ()):
         self.effects = effects
@@ -34,10 +34,10 @@ class Equipement(Card):
         return 0.05 * 1.15 ** (self.level-1)
 
 
-class Weapon(Equipement):
+class Weapon(Equipment):
     pass
 
 
-class Armor(Equipement):
+class Armor(Equipment):
     pass
 

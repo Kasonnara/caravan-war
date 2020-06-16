@@ -36,7 +36,7 @@ from economy.gains import Gain, Days, GAINS_DICTIONARY, BUDGET_SIMULATION_PARAME
 from spells.convoy_boosts import ModuleBoost
 from spells.spells import Storm
 from units.bandits import Bandit
-from units.equipments import Equipement
+from units.equipments import Equipment
 
 
 # Declare additional UI parameters
@@ -93,7 +93,7 @@ class GateChallenge(ChallengeOfTheDay):
                 R.Gold(rank.traiding_base * 49),
                 R.LifePotion(8),
                 R.Gem(225),
-                ResourceQuantity(Equipement, 10),
+                ResourceQuantity(Equipment, 10),
                 ) + (R.LotteryTicket(2) if not convert_lottery_tickets else Lottery.convert_tickets(2, rank, **kwargs))
         else:
             # TODO allow partial reward?
