@@ -173,7 +173,7 @@ class ConvoyChallenge(ChallengeOfTheDay):
 opponent_rank_param = UIParameter(
     'opponent_rank',
     Rank,
-    display_range=[rank.name for rank in Rank],
+    display_range=[rank.name if rank is not Rank.NONE else "Auto (= your rank)" for rank in Rank],
     display_txt="Clan War opponent",
     )
 BUDGET_SIMULATION_PARAMETERS['Clan'].append(opponent_rank_param)

@@ -303,15 +303,90 @@ class FreeDailyOffer(Gain):
         return cls.iteration_income(rank=rank, **kwargs)
 
 
-# TODO ambush rewards
+ambush_won_param = UIParameter(
+    'ambush_won', 
+    list(range(20)) + [None], 
+    display_range=[str(x) for x in range(20)] + ["< 20"],
+    display_txt="Ambush won", 
+    default_value=None,
+    )
+BUDGET_SIMULATION_PARAMETERS['Trading'].append(ambush_won_param)
+
+
+class Ambushes(Gain):
+    _ambush_reward = ResourcePacket(
+        R.Gem(8),
+        R.LifePotion(1/3),
+        R.LegendarySoul(1.13),
+        R.ReincarnationToken(1.13),
+        # TODO add TR
+        )
+    """Reward average expectation per attack (doesn't take daily limits into account)"""
+    _max_reward_per_day = ResourcePacket(
+        R.Gem(160),
+        R.LifePotion(5),
+        R.LegendarySoul(26),
+        R.ReincarnationToken(26),
+        # TODO add TR
+        )
+
+    @classmethod
+    def iteration_income(cls, **kwargs) -> ResourcePacket:
+        return cls._ambush_reward
+
+    @classmethod
+    def daily_income(cls, ambush_won: int = None, **kwargs) -> ResourcePacket:
+        if ambush_won is None:
+            return cls._max_reward_per_day
+        else:
+            return ResourcePacket(
+                R.Gem(
+                    min(cls._ambush_reward[R.Gem] * ambush_won,
+                        cls._max_reward_per_day[R.Gem])),
+                R.LifePotion(
+                    min(cls._ambush_reward[R.LifePotion] * ambush_won,
+                        cls._max_reward_per_day[R.LifePotion])),
+                R.LegendarySoul(
+                    min(cls._ambush_reward[R.LegendarySoul] * ambush_won,
+                        cls._max_reward_per_day[R.LegendarySoul])),
+                R.ReincarnationToken(
+                    min(cls._ambush_reward[R.ReincarnationToken] * ambush_won,
+                        cls._max_reward_per_day[R.ReincarnationToken])),
+                # TODO add TR
+                )
+
+
+ask_for_donation_param = UIParameter(
+    'ask_for_donation',
+    bool,
+    display_txt="Clan Donations",
+    default_value=False,
+    )
+BUDGET_SIMULATION_PARAMETERS['Clan'].append(ask_for_donation_param)
+
+
+class ClanDonation(Gain):
+    donation_bases = [50, 150, 150, 750, 750, 1875, 1875, 3750, 3750, 9000, 9000, 17500, 17500,
+                      42500, 42500, 100000, 100000, 255000, 255000, 640000, 640000, 1600000, 1600000,
+                      3680000, 3680000, 8160000, 8160000, 16320000, 16320000, 16320000, 16320000]
+
+    @classmethod
+    def iteration_income(cls, hq_lvl: int = 1, ask_for_donation: bool = False, **kwargs) -> ResourcePacket:
+        if ask_for_donation:
+            return ResourcePacket(cls.donation_bases[hq_lvl], cls.donation_bases[hq_lvl])
+        else:
+            return ResourcePacket()
+
+    @classmethod
+    def daily_income(cls, hq_lvl: int = 1, ask_for_donation: bool = False, **kwargs) -> ResourcePacket:
+        return cls.iteration_income(hq_lvl=hq_lvl, ask_for_donation=ask_for_donation, **kwargs) * 5
 
 
 # TODO daily connection reward
 
 
-# TODO clan donations
 
+GAINS_DICTIONARY['trading'] = {Trading10Km, Trading100Km, Trading1000Km, BestTrading, Ambushes}
 
-GAINS_DICTIONARY['trading'] = {Trading10Km, Trading100Km, Trading1000Km, BestTrading}
-
-GAINS_DICTIONARY['daily'] = GAINS_DICTIONARY['trading'].union({Lottery, MillProduction, TransportStationProduction, Adds, DailyQuest, FreeDailyOffer})
+GAINS_DICTIONARY['daily'] = GAINS_DICTIONARY['trading'].union(
+    {Lottery, MillProduction, TransportStationProduction, Adds, DailyQuest, FreeDailyOffer, ClanDonation})
