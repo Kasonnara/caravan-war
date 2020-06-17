@@ -129,7 +129,7 @@ class ResourceBarPie(dcc.Graph):
 
         self.fig.add_pie(
             hole=0.5,
-            #sort=True,
+            sort=False,
             values=[],
             labels=[],
             textinfo='none',

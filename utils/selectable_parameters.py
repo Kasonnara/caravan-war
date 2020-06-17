@@ -46,12 +46,10 @@ class UIParameter:
         :param dependencies: The list other parameters this parameter depends on, if they change a callback is
             triggered. (Not implemented yet)
         """
-        assert isinstance(default_value, (int, bool)) or isinstance(value_range, collections.Iterable)
+        assert isinstance(default_value, (int, bool)) or isinstance(value_range, collections.abc.Iterable)
 
         self.parameter_name = parameter_name
-        self.is_integer = value_range is int
-        self.is_bool = value_range is bool
-        self.value_range = None if self.is_integer or self.is_bool else tuple(value_range)
+        self.value_range = tuple(value_range) if isinstance(value_range, collections.abc.Iterable) else value_range
         self.display_range = display_range
         self.display_txt = display_txt or parameter_name.replace('_', ' ').title()
         self.dependencies = dependencies

@@ -306,7 +306,7 @@ class FreeDailyOffer(Gain):
 ambush_won_param = UIParameter(
     'ambush_won', 
     list(range(20)) + [None], 
-    display_range=[str(x) for x in range(20)] + ["< 20"],
+    display_range=[str(x) for x in range(20)] + ["20+"],
     display_txt="Ambush won", 
     default_value=None,
     )

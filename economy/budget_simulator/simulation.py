@@ -47,8 +47,8 @@ def update_income(*selected_parameters, weekly=True) -> pandas.DataFrame:
     # Generate the parameter value dict
     # TODO add category filtering
     ui_parameter_values = {
-        ui_parameter.parameter_name: (bool(raw_value) if ui_parameter.is_bool
-                                      else (int(raw_value) if ui_parameter.is_integer
+        ui_parameter.parameter_name: (bool(raw_value) if ui_parameter.value_range is bool
+                                      else (int(raw_value) if ui_parameter.value_range is int
                                       else ui_parameter.value_range[int(raw_value)]))
         for ui_parameter, raw_value in zip(all_parameters, selected_parameters)
         }

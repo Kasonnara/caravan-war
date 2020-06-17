@@ -65,7 +65,8 @@ header = html.Div(
                 html.H1(children='CaravanWar Budget Simulator'),
 
                 dcc.Markdown(children='''
-                A web application for planning your resource earnings and losses in the game CaravanWar *(by [Kasonnara](https://github.com/Kasonnara/caravan-war-center))*
+                A web application for planning your resource earnings and losses in the game CaravanWar *(by [Kasonnara](https://github.com/Kasonnara/caravan-war-center))*  
+                *(This is NOT an official application from Hiker games)*
                 '''),
                 ],
                 )],
@@ -77,20 +78,36 @@ LABEL_SETTING_BOOTSTRAP_COL = {
     "bool": (10, 1),
     "default": (4, 8),
     }
+"""Constants used by the build_parameter_selector function to set bootstrap columns grid widths of the label and 
+the interactive component for each possible UI parameter type"""
 
 
 def build_parameter_selector(parameter: UIParameter):
-    """Generate a bootstrap row containing a label and a selector for the given SimulationParameter"""
-    if parameter.is_integer:
+    """
+    Generate a bootstrap row containing a title label and a selector for the given SimulationParameter
+
+    The function is able to generate 3 types of selectors:
+    - checkbox, for boolean type of UI parameter
+    - number input box for int type of UI parameter
+    - dropdown for list type of UI parameters
+
+    :param parameter: UIParameter the parameter for which a selector will be generated
+    :return: bcc.Row:  a Dash Bootstrap Row
+    """
+
+    # Generate the interactive selector component that best fit the UI parameter type
+    if parameter.value_range is int:
+        # An input textbox for integers parameter
         bootstrap_cols = LABEL_SETTING_BOOTSTRAP_COL['int']
         selector = dcc.Input(
             type="number",
             value=parameter.default_value,
             className="col-sm-{}".format(bootstrap_cols[1]),
-            id = parameter.parameter_name + "_selector",
+            id=parameter.parameter_name + "_selector",
             persistence=True,
             )
-    elif parameter.is_bool:
+    elif parameter.value_range is bool:
+        # A checkbox for boolean parameter
         bootstrap_cols = LABEL_SETTING_BOOTSTRAP_COL['bool']
         selector = dbc.Checkbox(
             checked=parameter.default_value,
@@ -98,7 +115,9 @@ def build_parameter_selector(parameter: UIParameter):
             id=parameter.parameter_name+"_selector",
             persistence=True,
             )
-    else:
+    elif isinstance(parameter.value_range, tuple):
+        # A dropdown for other list like selection
+        assert parameter.display_range is not None
         bootstrap_cols = LABEL_SETTING_BOOTSTRAP_COL["default"]
         selector = html.Div([
             dcc.Dropdown(
@@ -108,17 +127,21 @@ def build_parameter_selector(parameter: UIParameter):
                 value=str(parameter.default_value),
                 clearable=False,
                 id=parameter.parameter_name+"_selector",
+                persistence=True,
                 )],
             className="col-sm-{}".format(bootstrap_cols[1]),
             )
+    else:
+        raise NotImplementedError("Cannot generate a selector for {} UIParameter of type {}".format(parameter.display_txt, type(parameter.value_range)))
 
-    return dbc.Row([
-        html.Label(parameter.display_txt + ":",
-                   className="col-sm-{}".format(bootstrap_cols[0]),
-                   ),
-        selector,
-        ],
+    # Generate a title label
+    label = html.Label(
+        parameter.display_txt + ":",
+        className="col-sm-{}".format(bootstrap_cols[0]),
         )
+
+    # Build a Bootstrap Row container to encapsulate the parameter label with its interactive selector component.
+    return dbc.Row([label, selector])
 
 
 side_bar = html.Div(
@@ -177,7 +200,7 @@ app.layout = html.Div(children=[
 @app.callback(
     [Output(graph_id, grph_target_attr)
      for _, graph_id, grph_target_attr in graphs_to_update],
-    [Input(ui_param.parameter_name + "_selector", 'value' if not ui_param.is_bool else 'checked')
+    [Input(ui_param.parameter_name + "_selector", 'value' if ui_param.value_range is not bool else 'checked')
      for ui_param in all_parameters],
     )
 def update_simulation(*simulation_parameter, weekly=True):
