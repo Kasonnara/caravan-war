@@ -20,3 +20,68 @@
 """
 List purchases possible on a daily basis
 """
+from common.leagues import Rank
+from common.rarity import Rarity
+from common.resources import ResourcePacket, ResourceQuantity
+from common.resources import Resources as R
+from common.vip import VIP
+
+from economy.gains import Gain, Days, BUDGET_SIMULATION_PARAMETERS, GAINS_DICTIONARY
+
+# TODO: daily shop
+from units.bandits import Bandit
+from units.equipments import Equipment
+from utils.selectable_parameters import UIParameter
+
+
+equipment_craft_number_param = UIParameter(
+    'equipment_craft_number',
+    list(range(12))+ [None],
+    display_range=[str(x) for x in range(12)] + ["Auto (Max)"],
+    display_txt="Equipment forging",
+    )
+BUDGET_SIMULATION_PARAMETERS['Purchase'].append(equipment_craft_number_param)
+
+
+class EquipmentCrafting(Gain):
+    common_card_costs = [-3, -3, -4, -5, -6] + [-6]*10
+    common_spell_costs = [-1, -1, -2, -2, -3] + [-3]*10  # Fixme not used
+    rare_card_costs = [-1, -1, -2, -2, -3] + [-3]*10
+    rare_spell_costs = [-1, -1, -1, -2, -2] + [-2]*10  # Fixme not used
+    equipment_gold_costs = [-0.4, -0.8, -1.2, -1.6, -2] + [-2]*10
+    # TODO add crafting limit reset with gems
+
+    @classmethod
+    def iteration_income(cls, rank: Rank = Rank.NONE, vip: VIP = 1, equipment_crafting_index=0, **kwargs) -> ResourcePacket:
+        if equipment_crafting_index >= vip.equipment_building_limit:
+            return ResourcePacket()
+        return ResourcePacket(
+            R.Gold(sum(cls.equipment_gold_costs[equipment_crafting_index] * rank.traiding_base)),
+            ResourceQuantity(Equipment, 1),
+            ResourceQuantity(Rarity.Rare, cls.rare_card_costs[equipment_crafting_index]),
+            ResourceQuantity(Rarity.Common, cls.common_card_costs[equipment_crafting_index]),
+            # Fixme: card costs are different for spells than other cards, and doesn't include vehicles
+            )
+
+    @classmethod
+    def daily_income(cls, rank: Rank = Rank.NONE, vip: VIP = 1, equipment_craft_number: int = None,
+                     **kwargs) -> ResourcePacket:
+        if equipment_craft_number is None:
+            equipment_craft_number = vip.equipment_building_limit
+        else:
+            equipment_craft_number = min(equipment_craft_number, vip.equipment_building_limit)
+
+        return ResourcePacket(
+            R.Gold(sum(cls.equipment_gold_costs[:equipment_craft_number] * rank.traiding_base)),
+            ResourceQuantity(Equipment, equipment_craft_number),
+            ResourceQuantity(Rarity.Rare, -5 * equipment_craft_number),  # Fixme, check average values
+            ResourceQuantity(Rarity.Common, -5 * equipment_craft_number),  # Fixme, check average values
+            )
+
+# TODO: Legendary soul exchange
+
+# TODO: recycle chest
+
+# TODO: premium chest/offers
+
+GAINS_DICTIONARY['purchase'] = {EquipmentCrafting}

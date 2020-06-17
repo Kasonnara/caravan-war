@@ -59,6 +59,7 @@ BUDGET_SIMULATION_PARAMETERS = {
     'Trading': [],
     'Challenges': [],
     'Clan': [],
+    'Purchase': [],
     'Units': [],
     }
 """Store all UIParameter sorted into categories"""
