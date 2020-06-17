@@ -88,13 +88,16 @@ def build_parameter_selector(parameter: UIParameter):
             value=parameter.default_value,
             className="col-sm-{}".format(bootstrap_cols[1]),
             id = parameter.parameter_name + "_selector",
+            persistence=True,
             )
     elif parameter.is_bool:
         bootstrap_cols = LABEL_SETTING_BOOTSTRAP_COL['bool']
         selector = dbc.Checkbox(
             checked=parameter.default_value,
             className="col-sm-{}".format(bootstrap_cols[1]),
-            id=parameter.parameter_name+"_selector",)
+            id=parameter.parameter_name+"_selector",
+            persistence=True,
+            )
     else:
         bootstrap_cols = LABEL_SETTING_BOOTSTRAP_COL["default"]
         selector = html.Div([
