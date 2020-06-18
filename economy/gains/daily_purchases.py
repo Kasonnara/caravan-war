@@ -26,12 +26,12 @@ from common.resources import ResourcePacket, ResourceQuantity
 from common.resources import Resources as R
 from common.vip import VIP
 
-from economy.gains import Gain, Days, BUDGET_SIMULATION_PARAMETERS, GAINS_DICTIONARY
+from economy.gains.abstract_gains import Gain, GAINS_DICTIONARY
 
 # TODO: daily shop
 from units.bandits import Bandit
 from units.equipments import Equipment
-from utils.selectable_parameters import UIParameter
+from utils.ui_parameters import UIParameter
 
 
 equipment_craft_number_param = UIParameter(
@@ -40,7 +40,6 @@ equipment_craft_number_param = UIParameter(
     display_range=[str(x) for x in range(12)] + ["Auto (Max)"],
     display_txt="Equipment forging",
     )
-BUDGET_SIMULATION_PARAMETERS['Purchase'].append(equipment_craft_number_param)
 
 
 class EquipmentCrafting(Gain):

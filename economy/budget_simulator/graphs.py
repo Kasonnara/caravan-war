@@ -29,7 +29,7 @@ import pandas
 from plotly.subplots import make_subplots
 
 from common.resources import ResourceQuantity, Resources
-import economy.weekly_rewards, economy.daily_purchases, economy.daily_rewards  # Fixme this import exist just to ensure all gains are intialized
+import economy.gains.weekly_rewards, economy.gains.daily_purchases, economy.gains.daily_rewards  # Fixme this import exist just to ensure all gains are intialized
 from utils.camelcase import camelcase_2_spaced
 
 
@@ -149,8 +149,8 @@ class ResourceBarPie(dcc.Graph):
         self.fig.update_traces(
             values=target_data.abs(),
             labels=target_data.index,
-            #pull=[0.07 if x < 0 else 0 for x in target_data],
-            #marker_colors = [gains_colors[res_str][target_data[res_str] > 0]
+            # pull=[0.07 if x < 0 else 0 for x in target_data],
+            # marker_colors = [gains_colors[res_str][target_data[res_str] > 0]
             #                                            for res_str in target_data.index],
             selector=dict(type='pie'),
             marker_line_color=["#00C000" if x > 0 else "#C00000" for x in target_data],

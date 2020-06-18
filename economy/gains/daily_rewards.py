@@ -29,11 +29,11 @@ from common.rarity import Rarity
 from common.resources import ResourcePacket, hero_souls, ResourceQuantity
 from common.resources import Resources as R
 from common.vip import VIP
-from economy.adds import Adds
-from economy.gains import Gain, GAINS_DICTIONARY, rank_param, vip_param, BUDGET_SIMULATION_PARAMETERS, Days
+from economy.gains.adds import Adds
+from economy.gains.abstract_gains import Gain, GAINS_DICTIONARY, rank_param, vip_param
 from units.bandits import Bandit
 from units.guardians import Guardian
-from utils.selectable_parameters import UIParameter
+from utils.ui_parameters import UIParameter
 
 
 reset_max_count_param = UIParameter(
@@ -43,7 +43,6 @@ reset_max_count_param = UIParameter(
     display_txt="Trading limit resets",
     default_value=3,
     )
-BUDGET_SIMULATION_PARAMETERS['Trading'].append(reset_max_count_param)
 
 
 class Trading(Gain):
@@ -92,7 +91,6 @@ daily_10km_trading_count_param = UIParameter(
     display_txt="10km trading count",
     default_value=None,
     )
-BUDGET_SIMULATION_PARAMETERS['Trading'].append(daily_10km_trading_count_param)
 
 
 class Trading10Km(Trading):
@@ -113,7 +111,6 @@ daily_100km_trading_count_param = UIParameter(
     display_txt="100km trading count",
     default_value=None,
     )
-BUDGET_SIMULATION_PARAMETERS['Trading'].append(daily_100km_trading_count_param)
 
 
 class Trading100Km(Trading):
@@ -134,7 +131,6 @@ daily_1000km_trading_count_param = UIParameter(
     display_txt="1000km trading count",
     default_value=None,
     )
-BUDGET_SIMULATION_PARAMETERS['Trading'].append(daily_1000km_trading_count_param)
 
 
 class Trading1000Km(Trading):
@@ -155,7 +151,6 @@ daily_best_trading_count_param = UIParameter(
     display_txt="Best trading count",
     default_value=None,
     )
-BUDGET_SIMULATION_PARAMETERS['Trading'].append(daily_best_trading_count_param)
 
 
 class BestTrading(Trading):
@@ -179,7 +174,6 @@ selected_heroes_param = UIParameter(
     display_range=["{}-{}".format(h1.name[:-4], h2.name[:-4]) for h1, h2 in _possible_hero_combinaisons],
     display_txt="Lottery heroes"
     )
-BUDGET_SIMULATION_PARAMETERS["General"].append(selected_heroes_param)
 
 
 class Lottery(Gain):
@@ -211,7 +205,6 @@ mill_lvl_param = UIParameter(
     display_range=[str(lvl) for lvl in range(31)] + ["Auto (= HQ level)"],
     default_value=None,
     )
-BUDGET_SIMULATION_PARAMETERS['Units'].append(mill_lvl_param)
 
 
 class MillProduction(Gain):
@@ -244,7 +237,6 @@ station_lvl_param = UIParameter(
     display_range=[str(lvl) for lvl in range(31)] + ["Auto (= HQ level)"],
     default_value=None,
     )
-BUDGET_SIMULATION_PARAMETERS['Units'].append(station_lvl_param)
 
 
 class TransportStationProduction(Gain):
@@ -310,7 +302,6 @@ ambush_won_param = UIParameter(
     display_txt="Ambush won", 
     default_value=None,
     )
-BUDGET_SIMULATION_PARAMETERS['Trading'].append(ambush_won_param)
 
 
 class Ambushes(Gain):
@@ -362,7 +353,6 @@ ask_for_donation_param = UIParameter(
     display_txt="Clan Donations",
     default_value=False,
     )
-BUDGET_SIMULATION_PARAMETERS['Clan'].append(ask_for_donation_param)
 
 
 class ClanDonation(Gain):
@@ -383,7 +373,6 @@ class ClanDonation(Gain):
 
 
 # TODO daily connection reward
-
 
 
 GAINS_DICTIONARY['trading'] = {Trading10Km, Trading100Km, Trading1000Km, BestTrading, Ambushes}

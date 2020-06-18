@@ -31,10 +31,11 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from common.resources import Resources
+from economy.budget_simulator.bs_ui_parameters import BUDGET_SIMULATION_PARAMETERS
 from economy.budget_simulator.graphs import graphs_to_update, ResourceTable, ResourceBarPie
 from economy.budget_simulator.simulation import update_income, all_parameters
-from economy.gains import BUDGET_SIMULATION_PARAMETERS
-from utils.selectable_parameters import UIParameter
+
+from utils.ui_parameters import UIParameter
 
 external_stylesheets = [dbc.themes.BOOTSTRAP]
 
@@ -101,7 +102,7 @@ def build_parameter_selector(parameter: UIParameter):
         bootstrap_cols = LABEL_SETTING_BOOTSTRAP_COL['int']
         selector = dcc.Input(
             type="number",
-            value=parameter.default_value,
+            value=parameter.default_value_index,
             className="col-sm-{}".format(bootstrap_cols[1]),
             id=parameter.parameter_name + "_selector",
             persistence=True,
@@ -110,7 +111,7 @@ def build_parameter_selector(parameter: UIParameter):
         # A checkbox for boolean parameter
         bootstrap_cols = LABEL_SETTING_BOOTSTRAP_COL['bool']
         selector = dbc.Checkbox(
-            checked=parameter.default_value,
+            checked=parameter.default_value_index,
             className="col-sm-{}".format(bootstrap_cols[1]),
             id=parameter.parameter_name+"_selector",
             persistence=True,
@@ -124,7 +125,7 @@ def build_parameter_selector(parameter: UIParameter):
                 options=[{'label': txt, 'value': str(i)}
                          for i, txt in enumerate(parameter.display_range)
                          ],
-                value=str(parameter.default_value),
+                value=str(parameter.default_value_index),
                 clearable=False,
                 id=parameter.parameter_name+"_selector",
                 persistence=True,

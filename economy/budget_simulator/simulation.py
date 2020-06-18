@@ -26,11 +26,12 @@ from typing import Type, Dict, Set
 import pandas
 
 from common.resources import ResourcePacket, ResourceQuantity
-from economy.gains import BUDGET_SIMULATION_PARAMETERS, GAINS_DICTIONARY, Gain
+from economy.budget_simulator.bs_ui_parameters import BUDGET_SIMULATION_PARAMETERS
+from economy.gains.abstract_gains import GAINS_DICTIONARY, Gain
 # --- keep the following import to ensure that all gains exists ---
-import economy.daily_rewards
-import economy.weekly_rewards
-import economy.daily_purchases
+import economy.gains.daily_rewards
+import economy.gains.weekly_rewards
+import economy.gains.daily_purchases
 # ---
 from utils.camelcase import camelcase_2_spaced
 
@@ -56,7 +57,7 @@ def update_income(*selected_parameters, weekly=True) -> pandas.DataFrame:
     # Recompute all gains
     incomes = pandas.DataFrame(
         data=[
-            gain.weekly_income(**ui_parameter_values).to_pandas() if weekly
+            gain.average_income(**ui_parameter_values).to_pandas() if weekly
                 else gain.daily_income(**ui_parameter_values).to_pandas()
             for gain in all_gains
             ],

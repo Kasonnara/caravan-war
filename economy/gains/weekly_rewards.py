@@ -30,9 +30,9 @@ from common.resources import ResourcePacket, ResourceQuantity
 from common.resources import Resources as R
 
 from common.vip import VIP
-from economy.daily_rewards import Lottery
+from economy.gains.daily_rewards import Lottery
 
-from economy.gains import Gain, Days, GAINS_DICTIONARY, BUDGET_SIMULATION_PARAMETERS, rank_param
+from economy.gains.abstract_gains import Gain, Days, GAINS_DICTIONARY, rank_param
 from spells.convoy_boosts import ModuleBoost
 from spells.spells import Storm
 from units.bandits import Bandit
@@ -41,10 +41,9 @@ from units.equipments import Equipment
 
 # Declare additional UI parameters
 from units.guardians import Guardian
-from utils.selectable_parameters import UIParameter
+from utils.ui_parameters import UIParameter
 
 convert_lottery_tickets_param = UIParameter('convert_lottery_tickets', value_range=bool, default_value=True)
-BUDGET_SIMULATION_PARAMETERS["General"].append(convert_lottery_tickets_param)
 
 
 class ChallengeOfTheDay(Gain, ABC):
@@ -77,7 +76,6 @@ gates_passed_param = UIParameter(
     display_range=[str(x) for x in range(31)],
     default_value=30,
     )
-BUDGET_SIMULATION_PARAMETERS['Challenges'].append(gates_passed_param)
 
 
 class GateChallenge(ChallengeOfTheDay):
@@ -128,7 +126,6 @@ leaderboard_rank_param = UIParameter(
     display_txt="Boss leaderboard",
     default_value=10,
     )
-BUDGET_SIMULATION_PARAMETERS['Challenges'].append(leaderboard_rank_param)
 
 
 class BossChallenge(ChallengeOfTheDay):
@@ -176,7 +173,6 @@ opponent_rank_param = UIParameter(
     display_range=[rank.name if rank is not Rank.NONE else "Auto (= your rank)" for rank in Rank],
     display_txt="Clan War opponent",
     )
-BUDGET_SIMULATION_PARAMETERS['Clan'].append(opponent_rank_param)
 
 
 class ClanWarFights(ChallengeOfTheDay):
@@ -203,7 +199,6 @@ clan_rank_param = UIParameter(
     display_range=[league.name for league in ClanLeague],
     display_txt="League",
     )
-BUDGET_SIMULATION_PARAMETERS['Clan'].append(clan_rank_param)
 
 battle_ranking_param = UIParameter(
     'battle_ranking',
@@ -212,7 +207,6 @@ battle_ranking_param = UIParameter(
     display_txt="Clan War result",
     default_value=2,
     )
-BUDGET_SIMULATION_PARAMETERS['Clan'].append(battle_ranking_param)
 
 
 class ClanWarReward(ChallengeOfTheDay):
@@ -246,7 +240,6 @@ personal_boss_kill_per_fight_param = UIParameter(
     display_txt="Clan boss kills per fight",
     default_value=0,
     )
-BUDGET_SIMULATION_PARAMETERS['Clan'].append(personal_boss_kill_per_fight_param)
 
 
 clan_boss_kills_param = UIParameter(
@@ -255,7 +248,6 @@ clan_boss_kills_param = UIParameter(
     display_txt="Clan Boss total clan kills",
     default_value=0,
     )
-BUDGET_SIMULATION_PARAMETERS['Clan'].append(clan_boss_kills_param)
 
 
 class ClanBoss(ChallengeOfTheDay):

@@ -17,13 +17,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import collections
+from enum import EnumMeta
 from typing import Type, Union, Iterable, Optional, Callable, TypeVar, List
 
 T = TypeVar('T')
 
 
 class UIParameter:
-    """Define the properties of a parameter needed to generate an UI for it"""
+    """A data class storing properties of a user defined parameter. It aims to enable automatically generating an UI
+    for it while being front-end independent"""
     def __init__(self,
                  parameter_name: str,
                  value_range: Union[Type[int], Type[bool], Iterable[T]],
@@ -49,13 +51,25 @@ class UIParameter:
         assert isinstance(default_value, (int, bool)) or isinstance(value_range, collections.abc.Iterable)
 
         self.parameter_name = parameter_name
-        self.value_range = tuple(value_range) if isinstance(value_range, collections.abc.Iterable) else value_range
-        self.display_range = display_range
         self.display_txt = display_txt or parameter_name.replace('_', ' ').title()
-        self.dependencies = dependencies
-        self.default_value = (
+
+        if isinstance(value_range, collections.abc.Iterable):
+            # Discrete list of values parameter type
+            self.value_range = tuple(value_range)
+            self.display_range = display_range if display_range is not None else (
+                tuple(v.name for v in value_range)
+                if isinstance(value_range, EnumMeta)
+                else tuple(str(v) for v in value_range)
+                )
+        else:
+            # Boolean or integer parameter type
+            self.value_range = value_range
+            self.display_range = None
+
+        self.default_value_index = (
             default_value
             if isinstance(default_value, (int, bool))
             else self.value_range.index(default_value)
-            )
+        )
         """The index of the value selected by default"""
+        self.dependencies = dependencies

@@ -22,14 +22,14 @@ Gains common code
 """
 from abc import abstractmethod
 from collections import defaultdict
-from enum import IntEnum
+from enum import Enum, IntEnum
 from typing import List, Dict, Type, Set
 
 from common.cards import MAX_LEVEL
 from common.leagues import Rank
 from common.resources import ResourcePacket
 from common.vip import VIP
-from utils.selectable_parameters import UIParameter
+from utils.ui_parameters import UIParameter
 
 
 class Days(IntEnum):
@@ -42,42 +42,47 @@ class Days(IntEnum):
     Sunday = 6
 
 
+class MeasurementPeriod(Enum):
+    DAY = 1
+    # TODO include measurement of specific days
+    WEEK = 7
+    MONTH = 30
+
+
 # ------------------------ Gains parameters ------------------------
 # Used to generate parameter selection UI
+
+# You can create new parameters were you think it's the more readable/logical. Here or directly near the Gains classes
+# that use them. By convention I define global parameters here, and parameters that are specific to one or a few gains
+# are defined next to them.
+# Just don't forget to add them to the BUDGET_SIMULATION_PARAMETERS for the UI to find them. You can also
+# creates new categories if you want just use str keys.
+
+mesurement_range_param = UIParameter('mesurement_range', MeasurementPeriod, display_txt="Average by")
 rank_param = UIParameter('rank', Rank, display_range=[rank.name for rank in Rank], default_value=Rank.NONE)
 vip_param = UIParameter('vip', VIP, display_range=[vip_lvl.name for vip_lvl in VIP],
                         display_txt="VIP", default_value=7)
 hq_param = UIParameter('hq_lvl', range(MAX_LEVEL), display_range=[str(vip_lvl + 1) for vip_lvl in range(MAX_LEVEL)],
                        display_txt="HQ", default_value=14)
 
-# You can create new parameters were you think it's the more readable. Here or directly near the Gains classes that
-# use them, but just don't forget to add them to the BUDGET_SIMULATION_PARAMETERS for the UI to find them. You can also
-# creates new categories if you want just use str keys.
-
-BUDGET_SIMULATION_PARAMETERS = {
-    'General': [rank_param, vip_param, hq_param],
-    'Trading': [],
-    'Challenges': [],
-    'Clan': [],
-    'Purchase': [],
-    'Units': [],
-    }
-"""Store all UIParameter sorted into categories"""
-
 
 # ------------------------ Gains abstract class ------------------------
+
 class Gain:
     parameter_dependencies: List[UIParameter] = []
 
+    def __init__(self):
+        raise AssertionError("Gains classes are be static singletons and thus must not be instanced")
+
     @classmethod
     @abstractmethod
-    def iteration_income(cls, rank: Rank = Rank.NONE, hq_lvl: int = 1, vip: VIP = 1, **kwargs) -> ResourcePacket:
+    def iteration_income(cls, **kwargs) -> ResourcePacket:
         """Return the resources given for one iteration of the gain"""
         raise NotImplemented()
 
     @classmethod
     @abstractmethod
-    def daily_income(cls, rank: Rank = Rank.NONE, hq_lvl: int = 1, vip: VIP = 1, day: Days = None, **kwargs) -> ResourcePacket:
+    def daily_income(cls, day: Days = None, **kwargs) -> ResourcePacket:
         """
         Return the daily income from this source.
 
@@ -92,15 +97,16 @@ class Gain:
         raise NotImplemented()
 
     @classmethod
-    def weekly_income(cls, rank: Rank = Rank.NONE, hq_lvl: int = 1, vip: VIP = 1, **kwargs) -> ResourcePacket:
+    def average_income(cls, mesurement_range: MeasurementPeriod, **kwargs) -> ResourcePacket:
         """
-        Alias to get daily_income on a whole week
+        Wrapper to get average income over various periods
 
-        For the parameters see daily_income
+        :param mesurement_range: MesurementRange, ther period over which we want to get the average income
+        For other parameters see daily_income
+        :return: ResourcePacket, the average total income for this gain over the given period
         """
         assert 'day' not in kwargs.keys()
-        return cls.daily_income(rank=rank, hq_lvl=hq_lvl, vip=vip, **kwargs) * 7               # More economical
-        # return sum(self.daily_income(rank, hq_lvl, vip, day=day, **kwargs) for day in Days)  # Technichally more accurate, but not realy useful yet
+        return cls.daily_income(**kwargs) * mesurement_range.value               # More economical
 
 
 # FIXME make a clean and ordered list of gains, and clean categories or even deleting them

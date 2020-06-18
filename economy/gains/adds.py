@@ -21,8 +21,8 @@
 Data about adds rewards
 """
 from common.resources import Resources as R, ResourcePacket
-from economy.gains import Gain, BUDGET_SIMULATION_PARAMETERS
-from utils.selectable_parameters import UIParameter
+from economy.gains.abstract_gains import Gain
+from utils.ui_parameters import UIParameter
 
 gold_adds_per_day = 10
 gem_adds_per_day = 1
@@ -53,9 +53,7 @@ pub_viewed_per_day_param = UIParameter(
     range(max_adds_per_day + 1),
     display_range=[str(x) for x in range(max_adds_per_day + 1)],
     display_txt="Daily adds",
-    default_value=0,
     )
-BUDGET_SIMULATION_PARAMETERS['General'].append(pub_viewed_per_day_param)
 
 
 class Adds(Gain):
