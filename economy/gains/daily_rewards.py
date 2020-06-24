@@ -21,8 +21,10 @@
 List gains that obtainable on a daily basis
 """
 import itertools
+import math
 from typing import Optional
 
+from buildings import buildings
 from buildings.buildings import Mill, TransportStation
 from common.leagues import Rank
 from common.rarity import Rarity
@@ -30,23 +32,14 @@ from common.resources import ResourcePacket, hero_souls, ResourceQuantity
 from common.resources import Resources as R
 from common.vip import VIP
 from economy.gains.adds import Adds
-from economy.gains.abstract_gains import Gain, GAINS_DICTIONARY, rank_param, vip_param
+from economy.gains.abstract_gains import Gain, GAINS_DICTIONARY, rank_param, vip_param, Days
 from units.bandits import Bandit
 from units.guardians import Guardian
 from utils.ui_parameters import UIParameter
 
 
-reset_max_count_param = UIParameter(
-    'reset_max_count',
-    range(8),
-    display_range=[str(x) for x in range(8)],
-    display_txt="Trading limit resets",
-    default_value=3,
-    )
-
-
 class Trading(Gain):
-    parameter_dependencies = [rank_param, vip_param, reset_max_count_param]
+    parameter_dependencies = [rank_param, vip_param]
     duration: int = None
     traiding_limit = None
     goods_cost_multiplier: int = None
@@ -75,8 +68,8 @@ class Trading(Gain):
 
     @classmethod
     def daily_income(cls, rank: Rank = Rank.NONE, vip: VIP = 1,
-                     daily_trading_count: float = None, reset_max_count: float = 0, **kwargs) -> ResourcePacket:
-        max_trading = cls.daily_max_count(vip, reset_max_count)
+                     daily_trading_count: float = None, **kwargs) -> ResourcePacket:
+        max_trading = cls.daily_max_count(vip, reset_max_count=3)
         assert daily_trading_count is None or daily_trading_count < max_trading
         return (
             cls.iteration_income(rank=rank, vip=vip, **kwargs)
@@ -106,10 +99,10 @@ class Trading10Km(Trading):
 
 daily_100km_trading_count_param = UIParameter(
     'daily_100km_trading_count',
-    list(range(4)) + [None],
-    display_range=[str(x) for x in range(4)] + ["Max (Auto)"],
+    list(range(3 * 5)),
+    display_range=[(str(x) if x <= 3 else "{} ({} reset)".format(x, (x-1)//3)) for x in range(3 * 5)],
     display_txt="100km trading count",
-    default_value=None,
+    default_value=9,
     )
 
 
@@ -126,10 +119,10 @@ class Trading100Km(Trading):
 
 daily_1000km_trading_count_param = UIParameter(
     'daily_1000km_trading_count',
-    list(range(3)) + [None],
-    display_range=[str(x) for x in range(3)] + ["Max (Auto)"],
+    list(range(2 * 5)),
+    display_range=[(str(x) if x <= 2 else "{} ({} reset)".format(x, (x-1)//2)) for x in range(2 * 5)],
     display_txt="1000km trading count",
-    default_value=None,
+    default_value=6,
     )
 
 
@@ -146,10 +139,10 @@ class Trading1000Km(Trading):
 
 daily_best_trading_count_param = UIParameter(
     'daily_best_trading_count',
-    list(range(2)) + [None],
-    display_range=[str(x) for x in range(2)] + ["Max (Auto)"],
+    list(range(1 * 5)),
+    display_range=[(str(x) if x <= 1 else "{} ({} reset)".format(x, x - 1)) for x in range(1 * 5)],
     display_txt="Best trading count",
-    default_value=None,
+    default_value=3,
     )
 
 
@@ -174,6 +167,34 @@ selected_heroes_param = UIParameter(
     display_range=["{}-{}".format(h1.name[:-4], h2.name[:-4]) for h1, h2 in _possible_hero_combinaisons],
     display_txt="Lottery heroes"
     )
+
+
+class TradingResets(Gain):
+    reset_costs = [ResourcePacket(R.Gem(gem_cost)) for gem_cost in (0, -80, -160, -320)]
+    cumulative_reset_costs = [ResourcePacket(R.Gem(gem_cost)) for gem_cost in (0, -80, -240, -560)]
+    # TODO: factor with other element that implement resets (like the forge)
+    # FIXME: make cumulative_reset_costs sums computed from reset_costs
+
+    @classmethod
+    def iteration_income(cls, reset_count_same_day: int, vip: VIP = 1) -> ResourcePacket:
+        n = max(0, reset_count_same_day - vip.traiding_quota_free_reset)
+        # FIXME do not return ResourcePacket, but ResourceQuantity. It's ok but signature must be changed.
+        return cls.reset_costs[n]
+
+    @classmethod
+    def daily_income(cls,
+                     daily_100km_trading_count: float = None,
+                     daily_1000km_trading_count: float = None,
+                     daily_best_trading_count: float = None,
+                     vip: VIP = 1, **kwargs,
+                     ) -> ResourcePacket:
+        reset_count_same_day = math.ceil(max(
+            daily_100km_trading_count / Trading100Km.traiding_limit,
+            daily_1000km_trading_count / Trading1000Km.traiding_limit,
+            daily_best_trading_count / BestTrading.traiding_limit,
+            ))
+        n = max(0, reset_count_same_day - vip.traiding_quota_free_reset)
+        return cls.cumulative_reset_costs[n]
 
 
 class Lottery(Gain):
@@ -201,8 +222,8 @@ class Lottery(Gain):
 
 mill_lvl_param = UIParameter(
     'mill_lvl',
-    list(range(31)) + [None],
-    display_range=[str(lvl) for lvl in range(31)] + ["Auto (= HQ level)"],
+    list(range(1, 31)) + [None],
+    display_range=[str(lvl) for lvl in range(1, 31)] + ["Auto (= HQ level)"],
     default_value=None,
     )
 
@@ -233,8 +254,8 @@ class MillProduction(Gain):
 
 station_lvl_param = UIParameter(
     'station_lvl',
-    list(range(31)) + [None],
-    display_range=[str(lvl) for lvl in range(31)] + ["Auto (= HQ level)"],
+    list(range(1, 31)) + [None],
+    display_range=[str(lvl) for lvl in range(1, 31)] + ["Auto (= HQ level)"],
     default_value=None,
     )
 
@@ -295,12 +316,31 @@ class FreeDailyOffer(Gain):
         return cls.iteration_income(rank=rank, **kwargs)
 
 
+ambush_lost_param = UIParameter(
+    'ambush_received',
+    int,
+    display_txt="Defense lost (daily)",
+    )
+
 ambush_won_param = UIParameter(
     'ambush_won', 
-    list(range(20)) + [None], 
-    display_range=[str(x) for x in range(20)] + ["20+"],
-    display_txt="Ambush won", 
+    int,
+    display_txt="Ambush won",
+    default_value=20,
+    )
+
+temple_lvl_param = UIParameter(
+    'temple_lvl',
+    list(range(1, 24)) + [None],
+    display_range=["{} (HQ {})".format(lvl, lvl + 6) for lvl in range(1, 24)] + ["Auto (= HQ level)"],
     default_value=None,
+    )
+
+average_trophy_param = UIParameter(
+    'average_trophy',
+    [5, 10, 15, 20, 25, 30, 35, 40, 45],
+    display_txt="Average trophy",
+    default_value=2,
     )
 
 
@@ -310,7 +350,6 @@ class Ambushes(Gain):
         R.LifePotion(1/3),
         R.LegendarySoul(1.13),
         R.ReincarnationToken(1.13),
-        # TODO add TR
         )
     """Reward average expectation per attack (doesn't take daily limits into account)"""
     _max_reward_per_day = ResourcePacket(
@@ -318,33 +357,40 @@ class Ambushes(Gain):
         R.LifePotion(5),
         R.LegendarySoul(26),
         R.ReincarnationToken(26),
-        # TODO add TR
         )
 
     @classmethod
-    def iteration_income(cls, **kwargs) -> ResourcePacket:
-        return cls._ambush_reward
+    def iteration_income(cls, rank: Rank = Rank.NONE, temple_lvl=None, hq_lvl=1, average_trophy=15, **kwargs) -> ResourcePacket:
+        temple_lvl = temple_lvl or hq_lvl
+        return (
+            cls._ambush_reward
+            + buildings.HeroTemple.ambush_xp_incomes[temple_lvl - 1]  # Assume all ambush are made with a hero in the army
+            + R.Goods(rank.traiding_base * 2,5)  # Assume that on average you fight against enemies of the same rank as you, and attack 10km, 100km, 100km and best exchangez indiferently
+            + R.Trophy(average_trophy)
+        )
 
     @classmethod
-    def daily_income(cls, ambush_won: int = None, **kwargs) -> ResourcePacket:
+    def daily_income(cls, ambush_won: int = None, rank: Rank = Rank.NONE, temple_lvl=None, hq_lvl=1, average_trophy=15, **kwargs) -> ResourcePacket:
+        temple_lvl = temple_lvl or (hq_lvl - 6)
         if ambush_won is None:
-            return cls._max_reward_per_day
-        else:
-            return ResourcePacket(
-                R.Gem(
-                    min(cls._ambush_reward[R.Gem] * ambush_won,
-                        cls._max_reward_per_day[R.Gem])),
-                R.LifePotion(
-                    min(cls._ambush_reward[R.LifePotion] * ambush_won,
-                        cls._max_reward_per_day[R.LifePotion])),
-                R.LegendarySoul(
-                    min(cls._ambush_reward[R.LegendarySoul] * ambush_won,
-                        cls._max_reward_per_day[R.LegendarySoul])),
-                R.ReincarnationToken(
-                    min(cls._ambush_reward[R.ReincarnationToken] * ambush_won,
-                        cls._max_reward_per_day[R.ReincarnationToken])),
-                # TODO add TR
-                )
+            ambush_won = 20
+        return ResourcePacket(
+            R.Gem(
+                min(cls._ambush_reward[R.Gem] * ambush_won,
+                    cls._max_reward_per_day[R.Gem])),
+            R.LifePotion(
+                min(cls._ambush_reward[R.LifePotion] * ambush_won,
+                    cls._max_reward_per_day[R.LifePotion])),
+            R.LegendarySoul(
+                min(cls._ambush_reward[R.LegendarySoul] * ambush_won,
+                    cls._max_reward_per_day[R.LegendarySoul])),
+            R.ReincarnationToken(
+                min(cls._ambush_reward[R.ReincarnationToken] * ambush_won,
+                    cls._max_reward_per_day[R.ReincarnationToken])),
+            buildings.HeroTemple.ambush_xp_incomes[temple_lvl - 1] * ambush_won,   # Assume all ambush are made with a hero in the army
+            R.Goods(rank.traiding_base * 2.5 * ambush_won),  # Assume that on average you fight against enemies of the same rank as you, and attack 10km, 100km, 100km and best exchangez indiferently
+            R.Trophy(average_trophy * ambush_won),
+            )
 
 
 ask_for_donation_param = UIParameter(
@@ -375,7 +421,7 @@ class ClanDonation(Gain):
 # TODO daily connection reward
 
 
-GAINS_DICTIONARY['trading'] = {Trading10Km, Trading100Km, Trading1000Km, BestTrading, Ambushes}
+GAINS_DICTIONARY['trading'] = {Trading10Km, Trading100Km, Trading1000Km, BestTrading, TradingResets, Ambushes}
 
 GAINS_DICTIONARY['daily'] = GAINS_DICTIONARY['trading'].union(
     {Lottery, MillProduction, TransportStationProduction, Adds, DailyQuest, FreeDailyOffer, ClanDonation})

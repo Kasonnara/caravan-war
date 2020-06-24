@@ -25,9 +25,10 @@ from typing import List, Dict
 from economy.gains.abstract_gains import rank_param, vip_param, hq_param, mesurement_range_param
 from economy.gains.adds import pub_viewed_per_day_param
 from economy.gains.daily_purchases import equipment_craft_number_param
-from economy.gains.daily_rewards import reset_max_count_param, daily_10km_trading_count_param, \
+from economy.gains.daily_rewards import daily_10km_trading_count_param, \
     daily_100km_trading_count_param, daily_1000km_trading_count_param, daily_best_trading_count_param, \
-    selected_heroes_param, mill_lvl_param, station_lvl_param, ambush_won_param, ask_for_donation_param
+    selected_heroes_param, mill_lvl_param, station_lvl_param, ambush_won_param, ask_for_donation_param, \
+    average_trophy_param, temple_lvl_param, ambush_lost_param
 from economy.gains.weekly_rewards import convert_lottery_tickets_param, gates_passed_param, leaderboard_rank_param, \
     opponent_rank_param, clan_rank_param, battle_ranking_param, personal_boss_kill_per_fight_param, \
     clan_boss_kills_param
@@ -46,12 +47,15 @@ BUDGET_SIMULATION_PARAMETERS: Dict[str, List[UIParameter]] = {
         selected_heroes_param,
         ],
     'Trading': [
-        reset_max_count_param,
         daily_10km_trading_count_param,
         daily_100km_trading_count_param,
         daily_1000km_trading_count_param,
         daily_best_trading_count_param,
+        ambush_lost_param,
+        ],
+    'Ambushes': [
         ambush_won_param,
+        average_trophy_param,
         ],
     'Challenges': [
         gates_passed_param,
@@ -71,6 +75,7 @@ BUDGET_SIMULATION_PARAMETERS: Dict[str, List[UIParameter]] = {
     'Units': [
         mill_lvl_param,
         station_lvl_param,
+        temple_lvl_param,
         ],
     }
 """Store all budget simulation UIParameters (sorted into categories)"""
