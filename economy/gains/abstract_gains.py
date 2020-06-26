@@ -62,8 +62,8 @@ mesurement_range_param = UIParameter('mesurement_range', MeasurementPeriod, disp
 rank_param = UIParameter('rank', Rank, display_range=[rank.name for rank in Rank], default_value=Rank.NONE)
 vip_param = UIParameter('vip', VIP, display_range=[vip_lvl.name for vip_lvl in VIP],
                         display_txt="VIP", default_value=7)
-hq_param = UIParameter('hq_lvl', range(MAX_LEVEL), display_range=[str(vip_lvl + 1) for vip_lvl in range(MAX_LEVEL)],
-                       display_txt="HQ", default_value=14)
+hq_param = UIParameter('hq_lvl', range(1, MAX_LEVEL+1), display_range=[str(vip_lvl) for vip_lvl in range(1, MAX_LEVEL+1)],
+                       display_txt="HQ", default_value=15)
 
 
 # ------------------------ Gains abstract class ------------------------
