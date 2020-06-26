@@ -22,6 +22,8 @@ from buildings.headquarters import HQ
 
 from common.card_categories import BUILDINGS
 from common.resources import resourcepackets_gold, resourcepackets_goods, ResourcePacket, Resources, resourcepackets
+from common.resources import Resources as R
+from utils.utils import get_index_greather_than
 
 _MILL_TRANSPORTSTATION_HOURLY_INCOMES = (
     0,  # level 0
@@ -305,6 +307,7 @@ class HeroTemple(Building):
             50, 60, 70, 80, 150,
             201, 231, 266, 306, 352,
             405, 465, 535, 615, 708,
+            814, 920, 1026,
             )
         ]
 
@@ -334,9 +337,12 @@ buildings_dict = {
 # Generate the list of requirements
 HQ.upgrade_requirements = [
     list(
-        buildings_dict[str_requirement](level)
+        buildings_dict[str_requirement](upgrade_from_level)
         for str_requirement in str_requirements
-        )
-    for level, str_requirements in enumerate(HQ._upgrade_requirements_str)
+        ) + [
+        Bank(get_index_greather_than(abs(HQ.upgrade_costs[upgrade_from_level][R.Gold]), Bank.storage_limits)),
+        Storage(get_index_greather_than(abs(HQ.upgrade_costs[upgrade_from_level][R.Goods]), Storage.storage_limits)),
+        ]
+    for upgrade_from_level, str_requirements in enumerate(HQ._upgrade_requirements_str)
     ]
 del buildings_dict

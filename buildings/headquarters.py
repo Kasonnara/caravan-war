@@ -64,7 +64,7 @@ class HQ(Building):
             (-1077300000, -5358770000, 2300),
             (-1789700000, -8837130000, 2400),
             (-3001700000, -14765080000, 2500),
-            (-5074500000, -2495741000, 2600),  # level 25 -> 26
+            (-5074500000, -24957410000, 2600),  # level 25 -> 26
             (-8558100000, -42086880000, 2700),
             (-13196900000, -64896100000, 2800),
             (-18485600000, -90900890000, 2900),
@@ -97,7 +97,6 @@ class HQ(Building):
         ('HQ', "TransportStation", "Laboratory", "Tavern"),  # level 16 -> 17
         ('HQ', "Mill", "Camp", "WorkShop"),
         ('HQ', "TransportStation", "Weaponsmith", "Garage"),
-        ('HQ', "Tavern", "Academy", "WorkShop"),
         ('HQ', "Tavern", "Academy", "WorkShop"),  # level 19 -> 20
         ('HQ', "Mill", "Weaponsmith", "Camp"),
         ('HQ', "TransportStation", "Laboratory", "Tavern"),
