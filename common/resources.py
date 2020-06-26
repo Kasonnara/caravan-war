@@ -30,6 +30,7 @@ class.
 """
 
 
+import itertools
 from collections import defaultdict
 from enum import Enum, auto
 
@@ -144,18 +145,29 @@ class ResourceQuantity:
             else:
                 return res_type.__name__
 
+    @staticmethod
+    def prettify_value(value: int) -> str:
+        # memorize the sign and pass to abstract value for the next step
+        if value < 0:
+            sign = '-'
+            value = -value
+        else:
+            sign = ''
+        # Find the closest meta unit
+        for k, meta_unit in enumerate(_meta_unit_list):
+            meta_unit_base = 1000 ** k
+            if value < 1000 * meta_unit_base:
+                return "{}{}{}".format(sign, round(value / meta_unit_base, 2), meta_unit)
+        else:
+            return "{}{}{}".format(sign, round(value / meta_unit_base, 2), _meta_unit_list[-1])
+
     def prettify(self) -> str:
         """
         Format the resource like these examples: "156.2K Gold", "3 CapacityToken", "3.59B Goods"
         :return: str
         """
-        # Find the closest meta unit
-        for k, meta_unit in enumerate(_meta_unit_list):
-            meta_unit_base = 1000 ** k
-            if self.quantity < 1000 * meta_unit_base:
-                return "{}{} {}".format(round(self.quantity / meta_unit_base), meta_unit, self.type.name)
-        else:
-            return "{}{} {}".format(round(self.quantity / meta_unit_base, 2), _meta_unit_list[-1], self.type.name)
+
+        return "{value} {type}".format(value=self.prettify_value(self.quantity), type=self.type.name)
 
 
 class Resources(Enum):
@@ -178,8 +190,8 @@ class Resources(Enum):
     DalvirSoul = auto()
     ZoraSoul = auto()
     GhohralSoul = auto()
-    AilulSnowsingerSoul = auto()
-    MardonDarkflameSoul = auto()
+    AilulSoul = auto()
+    MardonSoul = auto()
 
     LifePotion = auto()
     LotteryTicket = auto()
@@ -320,5 +332,8 @@ def resourcepackets(*goods_golds_tuples: Tuple[int, int]):
     return list((ResourcePacket(*goods_gold) if goods_gold is not None else None) for goods_gold in goods_golds_tuples)
 
 
-hero_souls = [Resources.ZoraSoul, Resources.DalvirSoul, Resources.GhohralSoul, Resources.AilulSnowsingerSoul, Resources.MardonDarkflameSoul]
+hero_souls = [Resources.ZoraSoul, Resources.DalvirSoul, Resources.GhohralSoul, Resources.AilulSoul, Resources.MardonSoul]
 """Alias that list the different hero souls"""
+
+hero_pair_combinaisons = list(itertools.combinations(hero_souls, 2))
+"""List all the possible unordered combinations of 2 hero souls"""

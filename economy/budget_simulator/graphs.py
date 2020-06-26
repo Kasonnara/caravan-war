@@ -20,6 +20,7 @@
 """
 Definition of all the graphs functions present in the application and their callback functions
 """
+import math
 from collections import namedtuple
 from typing import Tuple, List, Union
 
@@ -55,12 +56,10 @@ resource_colors = {
 
 def pretiffy_values(value: float) -> Union[str, int, float]:
     #  TODO add color
-    if value == 0 or value is pandas.NA:
+    if (value is pandas.NA) or (math.isnan(value)) or (-10**-2 <= value <= 10**-2):
         return ""
-    elif -0.1 < value < 0.1:
-        return value
     else:
-        return round(value, 1)
+        return ResourceQuantity.prettify_value(value)
 
 
 graphs_to_update: List[GraphsUpdates] = []
@@ -153,6 +152,7 @@ class ResourceBarPie(dcc.Graph):
             # marker_colors = [gains_colors[res_str][target_data[res_str] > 0]
             #                                            for res_str in target_data.index],
             selector=dict(type='pie'),
+            marker_line_width=[0 if x > 0 else 4 for x in target_data],
             marker_line_color=["#00C000" if x > 0 else "#C00000" for x in target_data],
             )
         self.fig.update_traces(

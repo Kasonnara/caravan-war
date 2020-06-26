@@ -28,7 +28,7 @@ from buildings import buildings
 from buildings.buildings import Mill, TransportStation
 from common.leagues import Rank
 from common.rarity import Rarity
-from common.resources import ResourcePacket, hero_souls, ResourceQuantity
+from common.resources import ResourcePacket, ResourceQuantity, hero_pair_combinaisons
 from common.resources import Resources as R
 from common.vip import VIP
 from economy.gains.adds import Adds
@@ -68,7 +68,7 @@ class Trading(Gain):
 
     @classmethod
     def daily_income(cls, rank: Rank = Rank.NONE, vip: VIP = 1,
-                     daily_trading_count: float = None, **kwargs) -> ResourcePacket:
+                     daily_trading_count: float = 0, **kwargs) -> ResourcePacket:
         max_trading = cls.daily_max_count(vip, reset_max_count=3)
         assert daily_trading_count is None or daily_trading_count < max_trading
         return (
@@ -113,7 +113,7 @@ class Trading100Km(Trading):
     gold_reward_multiplier = 2.6
 
     @classmethod
-    def daily_income(cls, daily_100km_trading_count: float = None, **kwargs):
+    def daily_income(cls, daily_100km_trading_count: float = 0, **kwargs):
         return super().daily_income(daily_trading_count=daily_100km_trading_count, **kwargs)
 
 
@@ -133,7 +133,7 @@ class Trading1000Km(Trading):
     gold_reward_multiplier = 4.8
 
     @classmethod
-    def daily_income(cls, daily_1000km_trading_count: float = None, **kwargs):
+    def daily_income(cls, daily_1000km_trading_count: float = 0, **kwargs):
         return super().daily_income(daily_trading_count=daily_1000km_trading_count, **kwargs)
 
 
@@ -157,14 +157,11 @@ class BestTrading(Trading):
         return super().daily_income(daily_trading_count=daily_best_trading_count, **kwargs)
 
 
-_possible_hero_combinaisons = list(itertools.combinations(hero_souls, 2))
-"""List all the possible unordered combinations of 2 hero souls"""
-
 # Declare an additional UI parameter for the lottery gains
 selected_heroes_param = UIParameter(
     'selected_heroes',
-    _possible_hero_combinaisons,
-    display_range=["{}-{}".format(h1.name[:-4], h2.name[:-4]) for h1, h2 in _possible_hero_combinaisons],
+    hero_pair_combinaisons,
+    display_range=["{}-{}".format(h1.name[:-4], h2.name[:-4]) for h1, h2 in hero_pair_combinaisons],
     display_txt="Lottery heroes"
     )
 

@@ -271,7 +271,7 @@ class ClanBoss(ChallengeOfTheDay):
             total_reward = total_reward + (R.Gold(rank.traiding_base * 5)
                                            if level_reward is R.Gold
                                            else ResourcePacket(R.ZoraSoul(1/5), R.DalvirSoul(1/5), R.GhohralSoul(1/5),
-                                                               R.AilulSnowsingerSoul(1/5), R.MardonDarkflameSoul(1/5))
+                                                               R.AilulSoul(1 / 5), R.MardonSoul(1 / 5))
                                            if level_reward is R.ZoraSoul
                                            else level_reward)
 

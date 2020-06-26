@@ -69,6 +69,13 @@ hq_param = UIParameter('hq_lvl', range(1, MAX_LEVEL+1), display_range=[str(vip_l
 # ------------------------ Gains abstract class ------------------------
 
 class Gain:
+    """
+    Abstract class for modeling regular incomes in the game
+
+    Gains are implemented as static singletons, and thus must never be instantiated nor have instance methods, only
+    static or class methods. Each new class defining a different gain.
+    """
+
     parameter_dependencies: List[UIParameter] = []
 
     def __init__(self):
@@ -77,7 +84,8 @@ class Gain:
     @classmethod
     @abstractmethod
     def iteration_income(cls, **kwargs) -> ResourcePacket:
-        """Return the resources given for one iteration of the gain"""
+        """Return the resources given for one iteration of the gain.
+        (This function is mostly there for its semantic meaning as of now it's always daily_income that is used)"""
         raise NotImplemented()
 
     @classmethod

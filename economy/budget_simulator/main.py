@@ -77,7 +77,7 @@ header = html.Div(
 LABEL_SETTING_BOOTSTRAP_COL = {
     "int": (7, 4),
     "bool": (10, 1),
-    "default": (4, 8),
+    "default": (6, 6),
     }
 """Constants used by the build_parameter_selector function to set bootstrap columns grid widths of the label and 
 the interactive component for each possible UI parameter type"""
@@ -204,7 +204,7 @@ app.layout = html.Div(children=[
     [Input(ui_param.parameter_name + "_selector", 'value' if ui_param.value_range is not bool else 'checked')
      for ui_param in all_parameters],
     )
-def update_simulation(*simulation_parameter, weekly=True):
+def update_simulation(*simulation_parameter):
     """
     Main call back that update every graph as soon as any parameter changes
     :param simulation_parameter:
@@ -212,7 +212,7 @@ def update_simulation(*simulation_parameter, weekly=True):
     :return: the new data for every graphs
     """
     # Get the new resources
-    gains_df = update_income(*simulation_parameter, weekly=weekly)
+    gains_df = update_income(simulation_parameter)
     # TODO compute total?
     return [graphs_update.update_func(gains_df) for graphs_update in graphs_to_update]
 

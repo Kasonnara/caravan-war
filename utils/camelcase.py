@@ -23,5 +23,5 @@
 import re
 
 
-def camelcase_2_spaced(camelcase_text: str) -> str:
-    return re.sub('(?!^)([A-Z][a-z]+)', r' \1', camelcase_text)
+def camelcase_2_spaced(camelcase_text: str, unbreakable_spaces=False) -> str:
+    return re.sub('(?!^)([A-Z][a-z]+)', r' \1' if unbreakable_spaces else r' \1', camelcase_text)

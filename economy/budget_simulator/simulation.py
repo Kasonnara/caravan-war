@@ -42,7 +42,7 @@ all_parameters = [ui_param
 all_gains: Set[Type[Gain]] = set.union(*(GAINS_DICTIONARY[gains_category] for gains_category in GAINS_DICTIONARY))
 
 
-def update_income(*selected_parameters, weekly=True) -> pandas.DataFrame:
+def update_income(selected_parameters) -> pandas.DataFrame:
     assert len(selected_parameters) == len(all_parameters)
 
     # Generate the parameter value dict

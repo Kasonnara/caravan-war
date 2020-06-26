@@ -256,7 +256,7 @@ class Ghohral(Hero):
             self.BruteForce(brute_force),
             ]
 
-class AilulSnowsinger(Hero):
+class Ailul(Hero):
     hp_base = 15000
     # level 10 à 40: 17613; 17930, 18253, 18582, 18916, 19256, 19603, 19956, 20315, 20681, 21053; 21432, 21818, 22211, 22611, 23018, 23432, 23854, 24283, 24720, 25165; 25618, 26079, 26548, 27026, 27512, 28007, 28511, 29024, 29546, 30078;
     # level 41 à 50: 30619, 31170, 31731, 32302, 32883, 33475, 34078, 34691, 35315, 35951;
@@ -272,7 +272,7 @@ class AilulSnowsinger(Hero):
     shoot_to = TargetType.AIR_GROUND
     shooted_as = TargetType.GROUND
 
-    soul_class = Resources.AilulSnowsingerSoul
+    soul_class = Resources.AilulSoul
 
     class Explosion(HeroSpell):
         ultimate = True
@@ -325,7 +325,7 @@ class AilulSnowsinger(Hero):
             ]
 
 
-class MardonDarkflame(Hero):
+class Mardon(Hero):
     hp_base = 17000
     # level 1 à 10 : 17000, 17306, 17618, 17935, 18258, 18587, 18922, 19263, 19610, 19963;
     # level 11 à 20; 20322, 20688, 21060, 21439, 21825, 22218, 22618, 23025, 23439, 23861;
@@ -353,7 +353,7 @@ class MardonDarkflame(Hero):
     shoot_to = TargetType.AIR_GROUND
     shooted_as = TargetType.GROUND
 
-    soul_class = Resources.MardonDarkflameSoul
+    soul_class = Resources.MardonSoul
 
     class Nova(HeroSpell):
         ultimate = True
