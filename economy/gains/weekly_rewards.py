@@ -43,8 +43,6 @@ from units.equipments import Equipment
 from units.guardians import Guardian
 from utils.ui_parameters import UIParameter
 
-convert_lottery_tickets_param = UIParameter('convert_lottery_tickets', value_range=bool, default_value=True)
-
 
 class ChallengeOfTheDay(Gain, ABC):
     start_day: Days = None
@@ -79,12 +77,11 @@ gates_passed_param = UIParameter(
 
 
 class GateChallenge(ChallengeOfTheDay):
-    parameter_dependencies = [rank_param, convert_lottery_tickets_param, ] #gates_passed_param]
+    parameter_dependencies = [rank_param, gates_passed_param]
     start_day = Days.Monday
 
     @classmethod
-    def iteration_income(cls, rank: Rank = Rank.NONE, gates_passed: int = None,
-                         convert_lottery_tickets=True, **kwargs) -> ResourcePacket:
+    def iteration_income(cls, rank: Rank = Rank.NONE, gates_passed: int = None, **kwargs) -> ResourcePacket:
         if gates_passed is None or True: # TODO FIXME remove the 'or True' once implemented
             return ResourcePacket(
                 R.Goods(rank.traiding_base * 45),
@@ -92,7 +89,8 @@ class GateChallenge(ChallengeOfTheDay):
                 R.LifePotion(8),
                 R.Gem(225),
                 ResourceQuantity(Equipment, 10),
-                ) + (R.LotteryTicket(2) if not convert_lottery_tickets else Lottery.convert_tickets(2, rank, **kwargs))
+                R.LotteryTicket(2),
+                )
         else:
             # TODO allow partial reward?
             assert 0 <= gates_passed <= 30
@@ -100,14 +98,13 @@ class GateChallenge(ChallengeOfTheDay):
 
 
 class BanditChallenge(ChallengeOfTheDay):
-    parameter_dependencies = [rank_param, convert_lottery_tickets_param]
+    parameter_dependencies = [rank_param]
     start_day = Days.Tuesday
 
     @classmethod
-    def iteration_income(cls, rank: Rank = Rank.NONE, convert_lottery_tickets=True, **kwargs) -> ResourcePacket:
+    def iteration_income(cls, rank: Rank = Rank.NONE, **kwargs) -> ResourcePacket:
         """
         :param rank: ranks.Rank, the rank of the player (or Rank.NONE to get gold and goods values in "number of 10km trades"
-        :param convert_lottery_tickets: bool, if set to True, received lottery ticket will be converted into other resources
         :return: ResourcePacket
         """
         # TODO allow partial reward?
@@ -116,7 +113,8 @@ class BanditChallenge(ChallengeOfTheDay):
             R.Gold(rank.traiding_base * 12),
             R.LifePotion(1),
             R.Gem(100),
-            ) + (R.LotteryTicket(3) if not convert_lottery_tickets else Lottery.convert_tickets(3, rank, **kwargs))
+            R.LotteryTicket(3),
+            )
 
 
 leaderboard_rank_param = UIParameter(
@@ -129,16 +127,15 @@ leaderboard_rank_param = UIParameter(
 
 
 class BossChallenge(ChallengeOfTheDay):
-    parameter_dependencies = [rank_param, convert_lottery_tickets_param, leaderboard_rank_param]
+    parameter_dependencies = [rank_param, leaderboard_rank_param]
     start_day = Days.Wednesday
 
     leaderboard_reward = (200, 180, 140, 120, 120, 100, 100, 100, 100, 100)
 
     @classmethod
-    def iteration_income(cls, rank: Rank = Rank.NONE, convert_lottery_tickets=True, leaderboard_rank=10, **kwargs) -> ResourcePacket:
+    def iteration_income(cls, rank: Rank = Rank.NONE, leaderboard_rank=10, **kwargs) -> ResourcePacket:
         """
         :param rank: ranks.Rank, the rank of the player (or Rank.NONE to get gold and goods values in "number of 10km trades"
-        :param convert_lottery_tickets: bool, if set to True, received lottery ticket will be converted into other resources
         :param leaderboard_rank: int, the rank of the player in the world leaderboard (0 for teh first, 9 for the last and any other value for players out of the leaderboard)
         :return: ResourcePacket
         """
@@ -149,22 +146,24 @@ class BossChallenge(ChallengeOfTheDay):
             R.Gem(30 + (cls.leaderboard_reward[leaderboard_rank] if 0 <= leaderboard_rank < 10 else 0)),
             ResourceQuantity(Storm,2),
             ResourceQuantity(ModuleBoost, 2),
-            ) + (R.LotteryTicket(3) if not convert_lottery_tickets else Lottery.convert_tickets(3, rank, **kwargs))
+            R.LotteryTicket(3),
+            )
 
 
 class ConvoyChallenge(ChallengeOfTheDay):
-    parameter_dependencies = [rank_param, convert_lottery_tickets_param]
+    parameter_dependencies = [rank_param]
     start_day = Days.Thursday
 
     @classmethod
-    def iteration_income(cls, rank: Rank = Rank.NONE, convert_lottery_tickets=True, **kwargs) -> ResourcePacket:
+    def iteration_income(cls, rank: Rank = Rank.NONE, **kwargs) -> ResourcePacket:
         # TODO allow partial reward?
         return ResourcePacket(
             R.Goods(rank.traiding_base * 4.5),
             R.Gold(rank.traiding_base * 9),
             R.LifePotion(1),
             R.Gem(100),
-            ) + (R.LotteryTicket(2) if not convert_lottery_tickets else Lottery.convert_tickets(3, rank, **kwargs))
+            R.LotteryTicket(2),
+            )
 
 
 opponent_rank_param = UIParameter(

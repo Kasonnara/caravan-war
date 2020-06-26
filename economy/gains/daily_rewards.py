@@ -195,26 +195,16 @@ class TradingResets(Gain):
 
 
 class Lottery(Gain):
-    parameter_dependencies = [rank_param, selected_heroes_param]
+    """Gain for the three daily free lottery runs, see economy.converters.converters.Lottery for run reward details"""
 
     @classmethod
-    def iteration_income(cls, rank: Rank = Rank.NONE, selected_heroes=_possible_hero_combinaisons[0], **kwargs) -> ResourcePacket:
-        return ResourcePacket(
-            selected_heroes[0]((30 * 1 + 5 * 4 + 1 * 7) / 100),
-            selected_heroes[1]((30 * 1 + 5 * 4 + 1 * 7) / 100),
-            R.CapacityToken((3 * 3 + 2 * 4 + 1 * 5) / 100),
-            R.Gem((500 * 7 + 250 * 10) / 100),
-            R.Goods((rank.traiding_base * 3 * 7 + rank.traiding_base * 1 * 10) / 100),
-            R.Gold((rank.traiding_base * 3 * 7 + rank.traiding_base * 1 * 10) / 100),
-            )
+    def iteration_income(cls, **kwargs) -> ResourcePacket:
+        """Not used"""
+        raise NotImplemented()
 
     @classmethod
-    def convert_tickets(cls, ticket_number: int, rank: Rank, selected_heroes=(R.DalvirSoul, R.ZoraSoul), **kwargs) -> ResourcePacket:
-        return cls.iteration_income(rank, selected_heroes=selected_heroes, **kwargs) * ticket_number
-
-    @classmethod
-    def daily_income(cls, rank: Rank, *args, selected_heroes=(R.DalvirSoul, R.ZoraSoul), **kwargs) -> ResourcePacket:
-        return cls.convert_tickets(3, rank, selected_heroes=selected_heroes, **kwargs)
+    def daily_income(cls, **kwargs) -> ResourcePacket:
+        return ResourcePacket(R.LotteryTicket(3))
 
 
 mill_lvl_param = UIParameter(
@@ -270,12 +260,14 @@ class TransportStationProduction(Gain):
         """
         return TransportStation.bihourly_incomes[station_lvl or hq_lvl] * vip.gold_production
 
-    # TODO daily_collect_count can be miss understood by the user, it would be better to ask it's play hours
-    #  (or various play strategy (once a day, twice a day, sparsly all the day, etc.)
+
+    # TODO The income will probably be partially lost if the player don't play during extended period, thus it may
+    #   be more precise to ask for it. Like a daily_collect_count, but it can be miss understood by the user, it
+    #   would be better to ask its play hours (or various play strategy (once a day, twice a day, sparsly
+    #   all the day, etc.) but all this soon become fairly complex while not adding real value... to meditate on...
     @classmethod
     def daily_income(cls, station_lvl: Optional[int] = None, hq_lvl=1, vip: VIP = 1, daily_collect_count: int = None,
                      **kwargs) -> ResourcePacket:
-        # TODO add attack frequency parameter
         income = cls.iteration_income(station_lvl=station_lvl, hq_lvl=hq_lvl, vip=vip, **kwargs) * 12
         if daily_collect_count is not None:
             income = min(income, Mill.storage_limits[station_lvl or hq_lvl] * daily_collect_count)
@@ -313,8 +305,8 @@ class FreeDailyOffer(Gain):
         return cls.iteration_income(rank=rank, **kwargs)
 
 
-ambush_lost_param = UIParameter(
-    'ambush_received',
+defense_lost_param = UIParameter(
+    'defense_lost',
     int,
     display_txt="Defense lost (daily)",
     )

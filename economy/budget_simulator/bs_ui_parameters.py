@@ -22,14 +22,16 @@ This module list budget simulator user defined parameters (in order to automatic
 """
 from typing import List, Dict
 
+from economy.converters.converters import lottery_convert_mode_param, defense_lost_convert_mode_param, \
+    legendary_soul_convert_mode_param
 from economy.gains.abstract_gains import rank_param, vip_param, hq_param, mesurement_range_param
 from economy.gains.adds import pub_viewed_per_day_param
 from economy.gains.daily_purchases import equipment_craft_number_param
 from economy.gains.daily_rewards import daily_10km_trading_count_param, \
     daily_100km_trading_count_param, daily_1000km_trading_count_param, daily_best_trading_count_param, \
     selected_heroes_param, mill_lvl_param, station_lvl_param, ambush_won_param, ask_for_donation_param, \
-    average_trophy_param, temple_lvl_param, ambush_lost_param
-from economy.gains.weekly_rewards import convert_lottery_tickets_param, gates_passed_param, leaderboard_rank_param, \
+    average_trophy_param, temple_lvl_param, defense_lost_param
+from economy.gains.weekly_rewards import gates_passed_param, leaderboard_rank_param, \
     opponent_rank_param, clan_rank_param, battle_ranking_param, personal_boss_kill_per_fight_param, \
     clan_boss_kills_param
 from utils.ui_parameters import UIParameter
@@ -43,15 +45,17 @@ BUDGET_SIMULATION_PARAMETERS: Dict[str, List[UIParameter]] = {
         pub_viewed_per_day_param,
         ],
     'Conversions': [
-        convert_lottery_tickets_param,
+        lottery_convert_mode_param,
         selected_heroes_param,
+        legendary_soul_convert_mode_param,
         ],
     'Trading': [
         daily_10km_trading_count_param,
         daily_100km_trading_count_param,
         daily_1000km_trading_count_param,
         daily_best_trading_count_param,
-        ambush_lost_param,
+        defense_lost_param,
+        defense_lost_convert_mode_param,
         ],
     'Ambushes': [
         ambush_won_param,

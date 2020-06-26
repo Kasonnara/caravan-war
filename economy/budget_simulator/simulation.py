@@ -27,6 +27,7 @@ import pandas
 
 from common.resources import ResourcePacket, ResourceQuantity
 from economy.budget_simulator.bs_ui_parameters import BUDGET_SIMULATION_PARAMETERS
+from economy.converters.abstract_converter import GainConverter
 from economy.gains.abstract_gains import GAINS_DICTIONARY, Gain
 # --- keep the following import to ensure that all gains exists ---
 import economy.gains.daily_rewards
@@ -53,14 +54,14 @@ def update_income(selected_parameters) -> pandas.DataFrame:
                                       else ui_parameter.value_range[int(raw_value)]))
         for ui_parameter, raw_value in zip(all_parameters, selected_parameters)
         }
-
     # Recompute all gains
-    incomes = pandas.DataFrame(
-        data=[
-            gain.average_income(**ui_parameter_values).to_pandas() if weekly
-                else gain.daily_income(**ui_parameter_values).to_pandas()
-            for gain in all_gains
-            ],
-        index=[camelcase_2_spaced(gain.__name__) for gain in all_gains],
-        )
-    return incomes
+    incomes = {
+        gain.__name__: gain.average_income(**ui_parameter_values)
+        for gain in all_gains
+        }
+    # Apply converters
+    incomes = GainConverter.apply_all(incomes, ui_parameter_values)
+
+    # Prettify and convert to pandas dataframe
+    return pandas.DataFrame(data=[resource_packet.to_pandas() for resource_packet in incomes.values()],
+                            index=[camelcase_2_spaced(key, unbreakable_spaces=True) for key in incomes.keys()])
