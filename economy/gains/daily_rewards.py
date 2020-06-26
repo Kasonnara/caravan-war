@@ -239,7 +239,7 @@ class MillProduction(Gain):
         :param kwargs:
         :return:
         """
-        return Mill.bihourly_incomes[mill_lvl or hq_lvl]
+        return Mill.bihourly_incomes[mill_lvl or hq_lvl] * vip.goods_production
 
     # TODO daily_collect_count can be miss understood by the user, it would be better to ask it's play hours
     #  (or various play strategy (once a day, twice a day, sparsly all the day, etc.)
@@ -271,7 +271,7 @@ class TransportStationProduction(Gain):
         :param kwargs:
         :return:
         """
-        return TransportStation.bihourly_incomes[station_lvl or hq_lvl]
+        return TransportStation.bihourly_incomes[station_lvl or hq_lvl] * vip.gold_production
 
     # TODO daily_collect_count can be miss understood by the user, it would be better to ask it's play hours
     #  (or various play strategy (once a day, twice a day, sparsly all the day, etc.)
