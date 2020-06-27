@@ -20,6 +20,7 @@
 """
 Main scrit of the dash application to simulate regular earnings and losses.
 """
+from typing import List
 
 import dash
 # TODO see if bootstrap is really helpfull (currently use for sidebar and eventually its design)
@@ -31,34 +32,30 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from common.resources import Resources
+from economy.budget_simulator import heroku_footer
 from economy.budget_simulator.bs_ui_parameters import BUDGET_SIMULATION_PARAMETERS
 from economy.budget_simulator.graphs import graphs_to_update, ResourceTable, ResourceBarPie
 from economy.budget_simulator.simulation import update_income, all_parameters
+from economy.budget_simulator.style import external_stylesheets, HEADER_STYLE, SIDEBAR_STYLE, \
+    LABEL_SETTING_BOOTSTRAP_COL
 
 from utils.ui_parameters import UIParameter
 
-external_stylesheets = [dbc.themes.BOOTSTRAP]
+# Detect if we run in standalone mode or on heroku (because heroku import this file not run it)
+production_mode_on_heroku: bool = not (__name__ == '__main__')
+# FIXME: it's simple but this isn't probably the most clever way to do. It may be safer and more controlable to
+#   package everything in a main(args) function that takes configuration argument and an heroku_main() function or an
+#   heroku_main script for heroku specific configuration changes. (and an argparse command line if we are motivated)
 
+# Init the main application object (initialized early in order to allow creating callbacks)
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-server = app.server
+"""The main dash application object"""
 
-HEADER_STYLE = {
-    "background-color": "#f8f9fa",
-    "padding": "1rem",
-    }
+# Register all persistent elements in order to build a callback that can disable all of them if the user disagree
+persistent_components_ids: List[str] = []
+"""Store all persistent elements ids"""
 
-SIDEBAR_STYLE = {
-    #"width": "16rem",
-    "padding": "2rem 1rem",
-    "background-color": "#f8f9fa",
-    }
-
-CONTENT_STYLE = {
-    "margin-left": "18rem",
-    "margin-right": "2rem",
-    "padding": "2rem 1rem",
-    }
-
+# Build the application TODO: move to another file
 header = html.Div(
     children=[
         dbc.Container(
@@ -73,14 +70,6 @@ header = html.Div(
                 )],
     style=HEADER_STYLE,
     )
-
-LABEL_SETTING_BOOTSTRAP_COL = {
-    "int": (7, 4),
-    "bool": (10, 1),
-    "default": (6, 6),
-    }
-"""Constants used by the build_parameter_selector function to set bootstrap columns grid widths of the label and 
-the interactive component for each possible UI parameter type"""
 
 
 def build_parameter_selector(parameter: UIParameter):
@@ -135,6 +124,9 @@ def build_parameter_selector(parameter: UIParameter):
     else:
         raise NotImplementedError("Cannot generate a selector for {} UIParameter of type {}".format(parameter.display_txt, type(parameter.value_range)))
 
+    # Register the persistent element
+    persistent_components_ids.append(parameter.parameter_name + "_selector")
+
     # Generate a title label
     label = html.Label(
         parameter.display_txt + ":",
@@ -185,6 +177,14 @@ content = html.Div(
     className="col-lg-9",
     )
 
+if production_mode_on_heroku:
+    legal_footer = heroku_footer.build(app, persistent_components_ids)
+else:
+    # No need to put legal notice on standalone mode
+    legal_footer = html.Div()
+
+
+# Assemble the main components into the app
 app.layout = html.Div(children=[
     header,
     html.Div(
@@ -193,8 +193,8 @@ app.layout = html.Div(children=[
             content,
             ],
         className='d-flex',
-        id='wrapper')
-
+        id='wrapper'),
+    legal_footer,
     ], )
 
 
@@ -217,5 +217,8 @@ def update_simulation(*simulation_parameter):
     return [graphs_update.update_func(gains_df) for graphs_update in graphs_to_update]
 
 
-if __name__ == '__main__':
+if production_mode_on_heroku:
+    # Define the variable collected by Heroku to know what to use as web application
+    server = app.server
+else:
     app.run_server(debug=False)
