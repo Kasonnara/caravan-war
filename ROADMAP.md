@@ -22,7 +22,7 @@
     - [X] Raw stats
     - [ ] Special effects
 - [X] Implement user unit inventory
-- [ ] VIP
+- [X] VIP
 - [ ] Maps
 
 ## UI
@@ -30,7 +30,7 @@
 - [ ] Move from .py config files to .yaml files
 - [ ] Move finished tools from pyplot to dash
 - [ ] Create proper argparse inputs instead of direclty modifying scripts
-- [ ] Move finished dash dashboard to a public server
+- [X] Move finished dash dashboard to a public server
 - [ ] Move experiment scripts to jupyter notebooks
 - [ ] Generate a wiki out of all the accumulated data 
 
@@ -56,15 +56,52 @@
 - [X] Implement costs
 - [X] Ligues
 - find predictive formulas for:
-    - [ ] upgrade costs
-    - [ ] each weekly gain / cost
+    - [X] upgrade costs
+    - [X] each weekly gain / cost
 - [ ] Enumerate and estimate all possible daily costs / revenues
-    - [ ] Exchanges
+    - [X] Exchanges
     - [ ] chests
-    - [ ] wish temple
-- [ ] Plots
-- [ ] Implement a grow simulator
-- [ ] Test multiple growth strategies
+    - [X] wish temple
+
+### Budget Simulator
+- Features
+  - [X] Running basic dash app
+  - [X] Table display
+  - [X] UIParameter selector generation
+  - [X] Piechart and Barplot graphs
+  - [X] Converters
+    - [ ] unspecified unit packing/unpacking converter
+  - [ ] Parameters dependencies callbacks
+  - [ ] Extend with a growth simulator
+  - [ ] Add custom growth strategies
+  - [ ] Add contact and github source links
+  - [ ] Allow disabling each gain individually
+- [X] Hosting (Heroku)
+  - [X] Automatically deploy from github
+  - [ ] ~~Change to kasonnara.fr domain name~~ `Passing to kasonnara.fr is possible but if we want to keep https we need an SSL certificates. It can be generated automatically by heroku but only on paid dynos, and supplying it manually each time it expires is a lot of work without real benefit`
+- Ergonomics
+  - [X] Configuration persistence
+  - [ ] tooltips bubble on every component
+  - [ ] FR translation
+  - [ ] Highlight what elements currently focused parameter will modify
+  - [ ] Add a loading widget when processing
+  - [ ] Improve/equalize overall design
+  - [ ] Add a favicon and some images
+  - [ ] Make beginner/casual/advanced modes. From simpler most important parameters to more precise and exhaustive configuration. 
+- Make proper tests
+  - [ ] Enable a clean way to run in development or production modes
+  - [ ] Tests
+  - [ ] CI/CD pipeline
+- Legal compliance 
+  - [X] Host contact
+  - [X] Data storage and processing disclaimer
+  - [X] Allow disabling persistence
+  - [ ] 13 month cookie storage limitation
+  - [ ] Allow re-accessing this disclaimer
+  - [ ] Check everything is ok
+- Bugs
+  - [ ] Gains and resources order is messed up
+  - [ ] Including positive and negative value in a pie chart mess the total sum (instead implement a double pie chart component)
 
 ## Automatic data gathering
 
@@ -113,3 +150,8 @@ Not critical
 - [X] Implement a unit composition optimizer
 - [ ] Create standard tests to analyse clan boss behaviour (speed, hp, goods, which effects apply on it)
 - [ ] Screenshot and modelize boss maps
+
+## Documentation
+- [ ] Make CONTRIBUTING.md
+- [ ] Make getting started and welcoming docs
+- [ ] Define a proper TODO-List/ROADMAP process to handle, solve and archive feature tasks and issue. (This file is messy!)
