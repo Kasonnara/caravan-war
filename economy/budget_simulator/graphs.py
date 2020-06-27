@@ -24,15 +24,14 @@ import math
 from collections import namedtuple
 from typing import Tuple, List, Union
 
+import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 import pandas
 from plotly.subplots import make_subplots
 
 from common.resources import ResourceQuantity, Resources
-import economy.gains.weekly_rewards, economy.gains.daily_purchases, economy.gains.daily_rewards  # Fixme this import exist just to ensure all gains are intialized
-from utils.camelcase import camelcase_2_spaced
-
+from utils.prettifying import camelcase_2_spaced, human_readable
 
 GraphsUpdates = namedtuple('GraphsUpdates', 'update_func update_ids update_attributes')
 
@@ -54,23 +53,15 @@ resource_colors = {
 # gains_colors = {camelcase_2_spaced(gain.__name__): _get_next_color() for gain in list(all_gains)}
 
 
-def pretiffy_values(value: float) -> Union[str, int, float]:
-    #  TODO add color
-    if (value is pandas.NA) or (math.isnan(value)) or (-10**-2 <= value <= 10**-2):
-        return ""
-    else:
-        return ResourceQuantity.prettify_value(value)
-
-
 graphs_to_update: List[GraphsUpdates] = []
 
 
-class ResourceTable(html.Table):
+class ResourceTable(dbc.Table):
 
     EMPTY_TABLE = (html.Thead(html.Tr([])), html.Tbody([]))
 
-    def __init__(self, id: str, className='table-bordered', **kwargs):
-        super().__init__(self.EMPTY_TABLE, id, className=className, **kwargs)
+    def __init__(self, id: str, bordered=True, striped=True, hover=True, **kwargs):
+        super().__init__(self.EMPTY_TABLE, id, bordered=bordered, striped=striped, hover=hover, **kwargs)
         # Register the graph
         graphs_to_update.append(GraphsUpdates(self.figures_updates, id, 'children'))
 
@@ -85,6 +76,14 @@ class ResourceTable(html.Table):
         totals.name = "totals"
         data_with_total = data.append(totals)
 
+        def pretty_Td(value):
+            """Generate a dash html Td while prettifying its content"""
+            pretty_value = human_readable(value, erase_under=10**-2)
+            return html.Td(
+                pretty_value,
+                className='text-danger' if len(pretty_value) > 0 and pretty_value[0] == '-' else 'text-success',
+                )
+
         return (
             html.Thead(html.Tr([html.Th("")] + [
                 html.Th(res_types_str)
@@ -92,7 +91,7 @@ class ResourceTable(html.Table):
                 ])),
             html.Tbody([
                 html.Tr([html.Td(line_key)] + [
-                    html.Td(pretiffy_values(data_with_total.loc[line_key].get(res_types, 0)))
+                    pretty_Td(data_with_total.loc[line_key].get(res_types, 0))
                     for res_types in all_res_types
                     ])
                 for line_key in data_with_total.index

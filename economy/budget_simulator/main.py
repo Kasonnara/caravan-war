@@ -63,7 +63,7 @@ header = html.Div(
 
                 dcc.Markdown(children='''
                 A web application for planning your resource earnings and losses in the game CaravanWar *(by [Kasonnara](https://github.com/Kasonnara/caravan-war-center))*  
-                *(This is NOT an official application from Hiker games)*
+                *(This is NOT an official application from Hiker Games)*
                 '''),
                 ],
                 )],

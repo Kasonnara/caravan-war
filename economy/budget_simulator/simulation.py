@@ -29,7 +29,7 @@ from common.resources import ResourcePacket, ResourceQuantity
 from economy.budget_simulator.bs_ui_parameters import BUDGET_SIMULATION_PARAMETERS
 from economy.converters.abstract_converter import GainConverter
 from economy.gains.abstract_gains import GAINS_DICTIONARY, Gain
-from utils.camelcase import camelcase_2_spaced
+from utils.prettifying import camelcase_2_spaced
 
 all_parameters = [ui_param
                   for category in BUDGET_SIMULATION_PARAMETERS

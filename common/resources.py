@@ -36,8 +36,7 @@ from enum import Enum, auto
 
 from typing import Type, Union, List, Tuple, Iterable
 
-_meta_unit_list = ['', 'K', 'M', 'B']
-"""~= No meta unit, thousand, million, billion"""
+from utils.prettifying import human_readable
 
 
 class ResourceQuantity:
@@ -147,29 +146,13 @@ class ResourceQuantity:
             else:
                 return res_type.__name__
 
-    @staticmethod
-    def prettify_value(value: int) -> str:
-        # memorize the sign and pass to abstract value for the next step
-        if value < 0:
-            sign = '-'
-            value = -value
-        else:
-            sign = ''
-        # Find the closest meta unit
-        for k, meta_unit in enumerate(_meta_unit_list):
-            meta_unit_base = 1000 ** k
-            if value < 1000 * meta_unit_base:
-                return "{}{}{}".format(sign, round(value / meta_unit_base, 2), meta_unit)
-        else:
-            return "{}{}{}".format(sign, round(value / meta_unit_base, 2), _meta_unit_list[-1])
-
     def prettify(self) -> str:
         """
         Format the resource like these examples: "156.2K Gold", "3 CapacityToken", "3.59B Goods"
         :return: str
         """
 
-        return "{value} {type}".format(value=self.prettify_value(self.quantity), type=self.type.name)
+        return "{value} {type}".format(value=human_readable(self.quantity), type=self.type.name)
 
 
 class Resources(Enum):
@@ -180,20 +163,20 @@ class Resources(Enum):
     It doesn't aim for computation heavy process or memory savings, but for clarity instead. For consequent computation
     inside a process just use integers.
     """
-    Gold = auto()
     Goods = auto()
+    Gold = auto()
     Gem = auto()
     Dust = auto()
 
     LegendarySoul = auto()
     ReincarnationToken = auto()
-    HeroExperience = auto()
     CapacityToken = auto()
     DalvirSoul = auto()
     ZoraSoul = auto()
     GhohralSoul = auto()
     AilulSoul = auto()
     MardonSoul = auto()
+    HeroExperience = auto()
 
     LifePotion = auto()
     LotteryTicket = auto()
