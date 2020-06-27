@@ -54,11 +54,13 @@ class Trading(Gain):
         return rank.traiding_base * cls.gold_reward_multiplier * vip.traiding_profit
 
     @classmethod
-    def daily_max_count(cls, vip: VIP, reset_max_count: float = 0) -> float:
-        assert reset_max_count >= 0
+    def daily_max_count(cls, vip: VIP, reset_max_count: float = None) -> float:
+        assert reset_max_count is None or reset_max_count >= 0
         return min(
-            24 / (cls.duration * vip.traiding_time),       # Max number of traiding in 24 hours with infinite resets
-            cls.traiding_limit * (1 + reset_max_count),    # Max number of traiding according to resets
+            # Max number of traiding in 24 hours with infinite resets
+            24 / (cls.duration * vip.traiding_time),
+            # Max number of trading with the given number of resets
+            cls.traiding_limit * (1 + reset_max_count) if reset_max_count is not None else 100,
             )
 
     @classmethod
@@ -69,8 +71,8 @@ class Trading(Gain):
     @classmethod
     def daily_income(cls, rank: Rank = Rank.NONE, vip: VIP = 1,
                      daily_trading_count: float = 0, **kwargs) -> ResourcePacket:
-        max_trading = cls.daily_max_count(vip, reset_max_count=3)
-        assert daily_trading_count is None or daily_trading_count < max_trading
+        max_trading = cls.daily_max_count(vip)
+        assert daily_trading_count is None or daily_trading_count <= max_trading
         return (
             cls.iteration_income(rank=rank, vip=vip, **kwargs)
             * (max_trading if daily_trading_count is None else daily_trading_count)
@@ -153,7 +155,7 @@ class BestTrading(Trading):
     gold_reward_multiplier = 8
 
     @classmethod
-    def daily_income(cls, daily_best_trading_count: float = None, **kwargs):
+    def daily_income(cls, daily_best_trading_count: float = 0, **kwargs):
         return super().daily_income(daily_trading_count=daily_best_trading_count, **kwargs)
 
 
