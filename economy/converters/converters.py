@@ -29,7 +29,7 @@ from common.resources import Resources as R
 from common.vip import VIP
 
 from economy.converters.abstract_converter import GainConverter, ConverterModeUIParameter
-from economy.gains.abstract_gains import rank_param, Gain
+from economy.gains.abstract_gains import rank_param, Gain, MeasurementPeriod
 from economy.gains.daily_rewards import selected_heroes_param, BestTrading, Trading10Km, Trading100Km, Trading1000Km, \
     TransportStationProduction
 from utils.utils import get_index_greather_than
@@ -93,6 +93,7 @@ class DefenseLost(GainConverter):
                  daily_best_trading_count: float = 0,
                  defense_lost: float = 0,
                  vip: VIP = 1,
+                 mesurement_range=MeasurementPeriod.DAY,
                  **kwargs) -> ResourcePacket:
         # Stop for gains that are not convoys
         if gain_name not in [gain.__name__ for gain in [BestTrading, Trading1000Km, Trading100Km, Trading10Km, TransportStationProduction]]:
@@ -118,10 +119,10 @@ class DefenseLost(GainConverter):
                 # We found the current trading gain
                 convoy_lost = min(count, defense_lost)
                 return ResourcePacket(
-                    R.Gold(convoy.iteration_income(vip=vip, **kwargs)[R.Gold] * -0.5 * convoy_lost),
+                    R.Gold(convoy.iteration_income(vip=vip, **kwargs)[R.Gold] * -0.5),
                     # TODO include gold reward for defeating bandits
-                    R.Trophy(-8 * convoy_lost),
-                    )
+                    R.Trophy(-8),
+                    ) * (convoy_lost * mesurement_range.value)
             defense_lost = max(0, defense_lost - count)
         assert False
 
