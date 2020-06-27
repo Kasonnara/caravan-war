@@ -17,11 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from abc import abstractmethod
-from collections import defaultdict
-from enum import Enum, auto
-from typing import List, Union, Type, Iterable, Optional, Dict, Any
 
-import pandas
+from enum import Enum
+from typing import List, Union, Type, Iterable, Optional, Dict, Any
 
 from common.resources import ResourcePacket
 from utils.class_property import classproperty
@@ -58,7 +56,7 @@ class GainConverter:
 
     ALL_CONVERTERS: List[Type['GainConverter']] = []
     """
-    List all gain converters created
+    List all gain converters created (doesn't guaranty the order) 
     """
     # TODO auto registering via Metaclass
 

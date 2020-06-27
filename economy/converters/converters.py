@@ -32,7 +32,6 @@ from economy.converters.abstract_converter import GainConverter, ConverterModeUI
 from economy.gains.abstract_gains import rank_param, Gain, MeasurementPeriod
 from economy.gains.daily_rewards import selected_heroes_param, BestTrading, Trading10Km, Trading100Km, Trading1000Km, \
     TransportStationProduction
-from utils.utils import get_index_greather_than
 
 
 class Lottery(GainConverter):
@@ -133,3 +132,7 @@ defense_lost_convert_mode_param = ConverterModeUIParameter(
     display_txt="Resource stolen display",
     )
 GainConverter.ALL_CONVERTERS.append(DefenseLost)
+
+
+# TODO converter that expand unspecified cards loots into all possible cards or on the contrary that compact any card
+#   looted into a reduced set of unspecified cards count

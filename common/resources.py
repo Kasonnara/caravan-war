@@ -71,6 +71,8 @@ class ResourceQuantity:
         from common.rarity import Rarity
         from common.cards import Card
 
+        # FIXME it may be better organized to only allow final unit class as types and instead use CardCategories
+        #  for unspecified cards. (But currently is work fine with a simpler code)
         if type(other_type) is Type:
             assert issubclass(other_type, Card)
             o_card, o_rarity = other_type, other_type.rarity
@@ -199,7 +201,6 @@ class Resources(Enum):
 
     BeginnerGrowth = auto()
     VIP = auto()
-
     Trophy = auto()
 
     def __call__(self, quantity: float):

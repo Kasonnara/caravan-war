@@ -105,7 +105,7 @@ class Gain:
         raise NotImplemented()
 
     @classmethod
-    def average_income(cls, mesurement_range: MeasurementPeriod, **kwargs) -> ResourcePacket:
+    def average_income(cls, mesurement_range=MeasurementPeriod.DAY, **kwargs) -> ResourcePacket:
         """
         Wrapper to get average income over various periods
 

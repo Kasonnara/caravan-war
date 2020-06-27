@@ -77,7 +77,6 @@ class FakeUpgradableLigue(Upgradable):
                if k % LIGUE_LEVEL_RATIO == 0)
         )
 
-
 # Process data and store all results in some big nested dicts
 for upgradable in (
         HQ,

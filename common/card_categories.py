@@ -33,6 +33,7 @@ class CardCategories(Enum):
     HEROES = 'Hero'
     BUILDINGS = 'Building'
     TOWERS = 'Tower'
+    # TODO Add aliases categories like UNIT MOVABLE_UNIT ATTACKERS DEFENDERS that count as CardCategories but do not apeard when iterating
 
     def __init__(self, display_name) -> None:
         self.display_name = display_name
