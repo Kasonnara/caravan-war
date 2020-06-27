@@ -29,11 +29,6 @@ from common.resources import ResourcePacket, ResourceQuantity
 from economy.budget_simulator.bs_ui_parameters import BUDGET_SIMULATION_PARAMETERS
 from economy.converters.abstract_converter import GainConverter
 from economy.gains.abstract_gains import GAINS_DICTIONARY, Gain
-# --- keep the following import to ensure that all gains exists ---
-import economy.gains.daily_rewards
-import economy.gains.weekly_rewards
-import economy.gains.daily_purchases
-# ---
 from utils.camelcase import camelcase_2_spaced
 
 all_parameters = [ui_param
