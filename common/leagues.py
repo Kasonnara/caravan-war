@@ -18,6 +18,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from enum import Enum
+from typing import Optional
 
 from common.resources import ResourcePacket
 from common.resources import Resources as R
@@ -26,59 +27,63 @@ from common.resources import Resources as R
 class Rank(Enum):
     # TODO make it inherit from Upgradeable?
     # name = (index, required trophy, 10km trading cost, goods bonus in raid (can be omitted if not irregular))
-    NONE =         (-1, -1,       1,)
+    NONE =         (-1,     -1,         1,  None,  None, None)
     """Special value used when computing rewards without a specific rank in mind. If this rank is used the returned 
     value of gold and goods represent the corresponding number of 10km convoy"""
-    Dunkey1 =      ( 0, 0,       2000,   500)
-    Dunkey2 =      ( 1, 80,      2600,   700)
-    Dunkey3 =      ( 2, 110,      3200,   800)
-    Wolf1 =        ( 3, 150,      4000,  1000)
-    Wolf2 =        ( 4, 240,      4900,  1200)
-    Wolf3 =        ( 5, 330,      5800,  1500)
-    Horse1 =       ( 6, 450,      7000,  1800)
-    Horse2 =       ( 7, 615,      8500,  2100)
-    Horse3 =       ( 8, 780,     10000,  2500)
-    Camel1 =       ( 9, 1000,     12000,  3000)
-    Camel2 =       (10, 1270,     14400,  3600)
-    Camel3 =       (11, 1540,     16800,  4200)
-    Buffalo1 =     (12, 1900,     20000,  5000)
-    Buffalo2 =     (13, 2320,     24200,  6100)
-    Buffalo3 =     (14, 2740,     28400,  7100)
-    Rinoceros1 =   (15, 3300,     34000,  8500)
-    Rinoceros2 =   (16, 3960,     41200, 11900)
-    Rinoceros3 =   (17, 4620,     48400, 16000)
-    Elephant1 =    (18, 5500,     58000, 22000)
-    Elephant2 =    (19, 6400,     70600, 31100)
-    Elephant3 =    (20, 7300,     83200,)
-    Dragon1 =      (21, 8500,    100000,)
-    Dragon2 =      (22, 10000,    125000,)
-    Dragon3 =      (23, 11500,    160000,)
-    RedDragon1 =   (24, 13500,    100000,)
-    RedDragon2 =   (25, 15500,    200000,)
-    RedDragon3 =   (26, 17500,    320000,)
-    BlackDragon1 = (27, 20000,    400000,)
-    BlackDragon2 = (28, 22500,    500000,)
-    BlackDragon3 = (29, 25000,    630000,)
-    Phenix1 =      (30, 29000,   1000000,)
-    Phenix2 =      (31, 34000,   1600000,)
-    Phenix3 =      (32, 40000,   2550000,)
-    IcePhenix1 =   (33, 47000,   4000000,)
-    IcePhenix2 =   (34, 55000,   6400000,)
-    IcePhenix3 =   (35, 64000,  10000000,)
-    Kraken1 =      (36, 74000,  15000000,)
-    Kraken2 =      (37, 85000,  23000000,)
-    Kraken3 =      (38, 98000,  34000000,)
-    RedKraken1 =   (39, 113000,  51000000,)
-    RedKraken2 =   (40, 130000,  77000000,)
-    RedKraken3 =   (41, 150000, 116000000,)
-    Leviathan1 =   (42, 173000, 160000000,)
-    Leviathan2 =   (43, 199000, 200000000,)
-    Leviathan3 =   (44, 229000, 250000000,)
+    Dunkey1 =      ( 0,      0,      2000,   500,  2000, None)
+    Dunkey2 =      ( 1,     80,      2600,   700,  2100, None)
+    Dunkey3 =      ( 2,    110,      3200,   800,  2200, None)
+    Wolf1 =        ( 3,    150,      4000,  1000,  2300, None)
+    Wolf2 =        ( 4,    240,      4900,  1200,  2400, None)
+    Wolf3 =        ( 5,    330,      5800,  1500,  2500, None)
+    Horse1 =       ( 6,    450,      7000,  1800,  2600, None)
+    Horse2 =       ( 7,    615,      8500,  2100,  2700, None)
+    Horse3 =       ( 8,    780,     10000,  2500,  2800, None)
+    Camel1 =       ( 9,   1000,     12000,  3000,  2900, None)
+    Camel2 =       (10,   1270,     14400,  3600,  3000, None)
+    Camel3 =       (11,   1540,     16800,  4200,  3200, None)
+    Buffalo1 =     (12,   1900,     20000,  5000,  3400, None)
+    Buffalo2 =     (13,   2320,     24200,  6100,  3600, None)
+    Buffalo3 =     (14,   2740,     28400,  7100,  3800, None)
+    Rinoceros1 =   (15,   3300,     34000,  8500,  4000, None)
+    Rinoceros2 =   (16,   3960,     41200, 11900,  4200, None)
+    Rinoceros3 =   (17,   4620,     48400, 16000,  4400, None)
+    Elephant1 =    (18,   5500,     58000, 22000,  4600, None)
+    Elephant2 =    (19,   6400,     70600, 31100,  4800, None)
+    Elephant3 =    (20,   7300,     83200,  None,  5000, None)
+    Dragon1 =      (21,   8500,    100000,  None,  5300, None)
+    Dragon2 =      (22,  10000,    125000,  None,  5600, None)
+    Dragon3 =      (23,  11500,    160000,  None,  5900, 1522200)
+    RedDragon1 =   (24,  13500,    100000,  None,  6200, None)
+    RedDragon2 =   (25,  15500,    200000,  None,  6500, 2444000)
+    RedDragon3 =   (26,  17500,    320000,  None,  6800, 3066800)
+    BlackDragon1 = (27,  20000,    400000,  None,  7100, 3784300)
+    BlackDragon2 = (28,  22500,    500000,  None,  7500, 4185000)
+    BlackDragon3 = (29,  25000,    630000,  None,  7900, 6659700)
+    Phenix1 =      (30,  29000,   1000000,  None,  8300, 10682100)
+    Phenix2 =      (31,  34000,   1600000,  None,  8700, 17090400)
+    Phenix3 =      (32,  40000,   2550000,  None,  9100, 26544700)
+    IcePhenix1 =   (33,  47000,   4000000,  None,  9600, 42585600)
+    IcePhenix2 =   (34,  55000,   6400000,  None, 10100, None)
+    IcePhenix3 =   (35,  64000,  10000000,  None, 10600, 100265400)
+    Kraken1 =      (36,  74000,  15000000,  None, 11100, None)
+    Kraken2 =      (37,  85000,  23000000,  None, 11700, None)
+    Kraken3 =      (38,  98000,  34000000,  None, 12300, None)
+    RedKraken1 =   (39, 113000,  51000000,  None, 12900, 515045400)
+    RedKraken2 =   (40, 130000,  77000000,  None, 13500, 771970500)
+    RedKraken3 =   (41, 150000, 116000000,  None, 14200, None)
+    Leviathan1 =   (42, 173000, 160000000,  None, 14900, None)
+    Leviathan2 =   (43, 199000, 200000000,  None, 15600, None)
+    Leviathan3 =   (44, 229000, 250000000,  None, 16400, None)
 
-    def __init__(self, rank: int, required_trophy: int, traiding_base: int, raid_goods_bonus: int = None):
+    def __init__(self, rank: int, required_trophy: int, trading_base: int, raid_goods_bonus: Optional[int],
+                 clan_war_goods_bounty: Optional[int], clan_war_gold_bounty: Optional[int]):
         self.rank = rank
-        self.traiding_base = traiding_base
-        self.raid_goods_bonus = raid_goods_bonus or (traiding_base / 2)
+        self.required_trophy = required_trophy
+        self.traiding_base = trading_base
+        self.raid_goods_bonus: int = raid_goods_bonus or (trading_base / 2)
+        self.clan_war_goods_bounty = clan_war_goods_bounty
+        self.clan_war_gold_bounty = clan_war_gold_bounty or (10*trading_base)
 
 
 Rank.upgrade_costs = [

@@ -189,7 +189,8 @@ class ClanWarFights(ChallengeOfTheDay):
         :param opponent_rank: Optional[leagues.Rank], the rank of your opponent, if omitted he is assumed to be of the same rank as you
         """
         # Need more data on it's internal logic
-        raise NotImplementedError()
+        opponent_rank = opponent_rank or rank
+        return ResourcePacket(R.Gold(opponent_rank.clan_war_gold_bounty))
 
 
 clan_rank_param = UIParameter(
@@ -228,9 +229,16 @@ class ClanMission(ChallengeOfTheDay):
     end_day = Days.Saturday
 
     @classmethod
-    def iteration_income(cls, rank: Rank = Rank.NONE, **kwargs) -> ResourcePacket:
+    def iteration_income(cls, **kwargs) -> ResourcePacket:
         # TODO allow partial reward?
-        raise NotImplementedError()
+        raise NotImplemented()
+
+    @classmethod
+    def daily_income(cls, rank: Rank = Rank.NONE, **kwargs) -> ResourcePacket:
+        return ResourcePacket(
+            R.Gold(2 * 10 * rank.traiding_base),
+            R.Gem(150),
+            ) * (1/7)
 
 
 personal_boss_kill_per_fight_param = UIParameter(
@@ -299,6 +307,6 @@ class WeeklyQuest(Gain):
 
 GAINS_DICTIONARY['challenges'] = {GateChallenge, BanditChallenge, BossChallenge, ConvoyChallenge}
 
-GAINS_DICTIONARY['clan'] = {ClanWarReward, ClanBoss} # {ClanMission, ClanMission, ClanWarFights, ClanWarReward}
+GAINS_DICTIONARY['clan'] = {ClanWarReward, ClanBoss, ClanMission, ClanWarFights}
 
 GAINS_DICTIONARY['weekly'] = GAINS_DICTIONARY['challenges'].union(GAINS_DICTIONARY['clan']).union({WeeklyQuest})
