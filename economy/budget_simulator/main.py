@@ -168,7 +168,7 @@ side_bar = html.Div(
 content = html.Div(
     children=[
         dcc.Markdown("## Global weekly incomes"),
-        ResourceTable('global_resource_table'),
+        ResourceTable(app, 'global_resource_table'),
         ] + [elt
              for resource_type in (Resources.Gold, Resources.Goods, Resources.Gem)
              for elt in (dcc.Markdown("## {}".format(resource_type.name)), ResourceBarPie(resource_type)) ],

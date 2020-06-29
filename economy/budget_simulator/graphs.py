@@ -20,13 +20,14 @@
 """
 Definition of all the graphs functions present in the application and their callback functions
 """
-import math
+import os
 from collections import namedtuple
 from typing import List, Union, Dict, Type
 
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
+from dash import dash
 from plotly.subplots import make_subplots
 
 from common.resources import ResourceQuantity, Resources, ResourcePacket
@@ -42,7 +43,12 @@ resource_colors = {
     Resources.Gold: "gold",
     Resources.Goods: "#FF5000",
     Resources.Gem: "purple",
+    Resources.Dust: "green",
     }
+
+# (Init later when an dash.Dash instance exists)
+resource_icons: Dict[Resources, List[html.Img]] = None
+"""Map the resource to the corresponding html.Img tag for the icon of that resource"""
 
 # default_colorway = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]
 # negative_default_colorway = ["#" + "".join(hex(int(int(i, 16)*0.5))[2:] for i in (color[1:3], color[3:5], color[5:7])) for color in default_colorway]
@@ -62,10 +68,21 @@ class ResourceTable(dbc.Table):
 
     EMPTY_TABLE = (html.Thead(html.Tr([])), html.Tbody([]))
 
-    def __init__(self, id: str, bordered=True, striped=False, hover=True, responsive=True, **kwargs):
+    def __init__(self, app: dash.Dash, id: str, bordered=True, striped=False, hover=True, responsive=True, **kwargs):
         super().__init__(self.EMPTY_TABLE, id, bordered=bordered, striped=striped, hover=hover, responsive=responsive, **kwargs)
         # Register the graph
         graphs_to_update.append(GraphsUpdates(self.figures_updates, id, 'children'))
+
+        # Init resource_icons
+        global resource_icons
+        resource_icons = {
+            resource: [html.Img(
+                src=app.get_asset_url(os.path.join("resources", "{}.png".format(resource.name))),
+                height="20px",  # FIXME do not hard-code values like that
+                )]
+            for resource in Resources
+            if os.path.isfile(os.path.join("..", "..", "assets", "resources", "{}.png".format(resource.name)))  # FIXME there is probably a better solution
+            }
 
     @staticmethod
     def figures_updates(incomes: Dict[str, Dict[Union[Type[Gain], Type[GainConverter]], ResourcePacket]]) -> List[Union[html.Table, html.Tbody]]:
@@ -91,8 +108,10 @@ class ResourceTable(dbc.Table):
                 className='text-danger' if len(pretty_value) > 0 and pretty_value[0] == '-' else 'text-success',
                 )
 
-        columns_names = [html.Th(camelcase_2_spaced(ResourceQuantity.prettify_type(res_types)))
-                         for res_types in all_res_types]
+        columns_names = [html.Th(resource_icons.get(res_type, [])  # Add the resource icon if it exists
+                                 + [html.Div(camelcase_2_spaced(ResourceQuantity.prettify_type(res_type)))],
+                                 className='text-center',)
+                         for res_type in all_res_types]
 
         return [
             Thead_or_Tbody
