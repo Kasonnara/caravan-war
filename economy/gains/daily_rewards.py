@@ -21,7 +21,7 @@
 List gains that obtainable on a daily basis
 """
 import math
-from typing import Optional
+from typing import Optional, Type
 
 from buildings import buildings
 from buildings.buildings import Mill, TransportStation
@@ -30,6 +30,7 @@ from common.rarity import Rarity
 from common.resources import ResourcePacket, ResourceQuantity, hero_pair_combinaisons
 from common.resources import Resources as R
 from common.vip import VIP
+from economy.chests import WoodenChest, IronChest, SilverChest, GoldenChest, Chest, RaidChest
 from economy.gains.abstract_gains import Gain, rank_param, vip_param, Days
 from units.bandits import Bandit
 from units.guardians import Guardian
@@ -39,9 +40,10 @@ from utils.ui_parameters import UIParameter
 class Trading(Gain):
     parameter_dependencies = [rank_param, vip_param]
     duration: int = None
-    traiding_limit = None
+    traiding_limit: int = None
     goods_cost_multiplier: int = None
     gold_reward_multiplier: float = None
+    reward_chest: Type[Chest] = None
 
     @classmethod
     def goods_cost(cls, rank: Rank) -> int:
@@ -64,7 +66,9 @@ class Trading(Gain):
     @classmethod
     def iteration_income(cls, rank: Rank = Rank.NONE, vip: VIP = 1, **kwargs) -> ResourcePacket:
         # TODO add card and reincarnation medals loots
-        return ResourcePacket(cls.goods_cost(rank), cls.gold_reward(rank, vip))
+        return ResourcePacket(cls.goods_cost(rank),
+                              cls.gold_reward(rank, vip),
+                              ResourceQuantity(cls.reward_chest, 1))
 
     @classmethod
     def daily_income(cls, rank: Rank = Rank.NONE, vip: VIP = 1,
@@ -91,6 +95,7 @@ class Trading10Km(Trading):
     traiding_limit = 100
     goods_cost_multiplier = 1
     gold_reward_multiplier = 1
+    reward_chest = WoodenChest
 
     @classmethod
     def daily_income(cls, daily_10km_trading_count: float = None, **kwargs):
@@ -111,6 +116,7 @@ class Trading100Km(Trading):
     traiding_limit = 3
     goods_cost_multiplier = 2
     gold_reward_multiplier = 2.6
+    reward_chest = IronChest
 
     @classmethod
     def daily_income(cls, daily_100km_trading_count: float = 0, **kwargs):
@@ -131,6 +137,7 @@ class Trading1000Km(Trading):
     traiding_limit = 2
     goods_cost_multiplier = 3
     gold_reward_multiplier = 4.8
+    reward_chest = SilverChest
 
     @classmethod
     def daily_income(cls, daily_1000km_trading_count: float = 0, **kwargs):
@@ -151,6 +158,7 @@ class BestTrading(Trading):
     traiding_limit = 1
     goods_cost_multiplier = 4
     gold_reward_multiplier = 8
+    reward_chest = GoldenChest
 
     @classmethod
     def daily_income(cls, daily_best_trading_count: float = 0, **kwargs):
@@ -339,6 +347,7 @@ class Ambushes(Gain):
         R.LifePotion(1/3),
         R.LegendarySoul(1.13),
         R.ReincarnationToken(1.13),
+        ResourceQuantity(RaidChest, 3/10),
         )
     """Reward average expectation per attack (doesn't take daily limits into account)"""
     _max_reward_per_day = ResourcePacket(
@@ -346,6 +355,7 @@ class Ambushes(Gain):
         R.LifePotion(5),
         R.LegendarySoul(26),
         R.ReincarnationToken(26),
+        ResourceQuantity(RaidChest, 1),
         )
 
     @classmethod
@@ -379,6 +389,9 @@ class Ambushes(Gain):
             buildings.HeroTemple.ambush_xp_incomes[temple_lvl - 1] * ambush_won,   # Assume all ambush are made with a hero in the army
             R.Goods(rank.traiding_base * 2.5 * ambush_won),  # Assume that on average you fight against enemies of the same rank as you, and attack 10km, 100km, 100km and best exchangez indiferently
             R.Trophy(average_trophy * ambush_won),
+            ResourceQuantity(RaidChest,
+                min(cls._ambush_reward[RaidChest] * ambush_won,
+                    cls._max_reward_per_day[RaidChest])),
             )
 
 

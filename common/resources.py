@@ -47,7 +47,7 @@ class ResourceQuantity:
     It doesn't aim for computation heavy process but for clarity instead. For consequent computation inside a process
     just use integers.
     """
-    VALID_RESOURCE_TYPE = Union['Resources', Type['Card'], Tuple[Type['Card'], 'Rarity'], 'Rarity']
+    VALID_RESOURCE_TYPE = Union['Resources', Type['Card'], Tuple[Type['Card'], 'Rarity'], 'Rarity', Type['Chest']]
 
     def __init__(self, res_type: VALID_RESOURCE_TYPE, quantity: float):
         self.type = res_type
@@ -69,12 +69,16 @@ class ResourceQuantity:
 
         from common.rarity import Rarity
         from common.cards import Card
+        from economy.chests import Chest
 
         # FIXME it may be better organized to only allow final unit class as types and instead use CardCategories
         #  for unspecified cards. (But currently is work fine with a simpler code)
         if type(other_type) is Type:
-            assert issubclass(other_type, Card)
-            o_card, o_rarity = other_type, other_type.rarity
+            if issubclass(other_type, Chest):
+                return False  # Should already have matched
+            else:
+                assert issubclass(other_type, Card)
+                o_card, o_rarity = other_type, other_type.rarity
         elif type(other_type) is Tuple:
             assert issubclass(other_type[0], Card) and isinstance(other_type[1], Rarity)
             o_card, o_rarity = other_type
@@ -83,8 +87,11 @@ class ResourceQuantity:
             return False  # Should already have matched
 
         if type(main_type) is Type:
-            assert issubclass(main_type, Card)
-            return False  # Should already have matched
+            if issubclass(main_type, Chest):
+                return False  # Should already have matched
+            else:
+                assert issubclass(main_type, Card)
+                m_card, m_rarity = main_type, main_type.rarity
         elif type(other_type) is Tuple:
             assert issubclass(main_type[0], Card) and isinstance(main_type[1], Rarity)
             m_card, m_rarity = main_type
@@ -92,7 +99,8 @@ class ResourceQuantity:
             assert isinstance(main_type, Rarity)
             m_card, m_rarity = None, main_type
 
-        return o_rarity is m_rarity and (m_card is not None and issubclass(o_card, m_card))
+        # assert (m_card is not None or m_rarity is not None) and (o_card is not None or o_rarity is not None)
+        return (m_rarity is None or o_rarity is m_rarity) and (m_card is None or (o_card is not None and issubclass(o_card, m_card)))
 
     def __add__(self, other: Union['ResourceQuantity', int, float]):
         if isinstance(other, (int, float)):
@@ -132,6 +140,7 @@ class ResourceQuantity:
 
         from common.rarity import Rarity
         from common.cards import Card
+        from economy.chests import Chest
         if isinstance(res_type, Rarity):
             return "Unspecified{}Card".format(res_type.name)
         elif isinstance(res_type, tuple):
@@ -140,11 +149,15 @@ class ResourceQuantity:
             assert res_type[0].rarity is None, "When using (CardType, Rarity) type, that card type should be a category base class not a final unit class" # and thus .rarity shouldn't be defined yet
             return "Unspecified{}{}".format(res_type[1].name, res_type[0].__name__)
         else:
-            assert isinstance(res_type, Type) and issubclass(res_type, Card), "Invalid resource type, expected one of: Ressources enum, Rarity enum, unit Card or a tuple(Card category base class, rarity). But {} was found".format(type(res_type))
-            if res_type.rarity is None:
-                return "Unspecified{}".format(res_type.__name__)
-            else:
+            assert isinstance(res_type, Type), "Invalid resource type, expected one of: Ressources enum, Rarity enum, unit Card, a tuple(Card category base class, rarity) or a Chest. But {} was found".format(type(res_type))
+            if issubclass(res_type, Chest):
                 return res_type.__name__
+            else:
+                assert issubclass(res_type, Card), "Invalid resource type, expected one of: Ressources enum, Rarity enum, unit Card, a tuple(Card category base class, rarity) or a Chest. But {} was found".format(res_type.__name__)
+                if res_type.rarity is None:
+                    return "Unspecified{}".format(res_type.__name__)
+                else:
+                    return res_type.__name__
 
     def prettify(self) -> str:
         """

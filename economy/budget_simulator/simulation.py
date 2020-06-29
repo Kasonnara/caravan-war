@@ -26,6 +26,7 @@ from common.card_categories import CardCategories
 from common.rarity import Rarity
 from common.resources import Resources, ResourcePacket
 from economy.budget_simulator.bs_ui_parameters import BUDGET_SIMULATION_PARAMETERS
+from economy.chests import ALL_CHESTS
 from economy.converters.abstract_converter import GainConverter
 from economy.gains import GAINS_DICTIONARY
 from economy.gains.abstract_gains import Gain
@@ -59,10 +60,12 @@ def update_income(selected_parameters) -> Dict[str, Dict[Union[Type[Gain], Type[
 
     return incomes
 
+
 RESOURCE_SORTING_MAP = {
     resource_type: order
     for order, resource_type in enumerate(
         [native_resource_type for native_resource_type in Resources]    # Prioritize native resources in the order of the enum
+        + ALL_CHESTS
         + [rarity_type for rarity_type in Rarity]                       # then unspecified rarity
         + [(card_category.card_base_class, rarity_type) for rarity_type in Rarity for card_category in CardCategories]  # then (category,rarity) tuples
         + [card_category.card_base_class for card_category in CardCategories]  # Then unspecified card categories
