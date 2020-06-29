@@ -118,7 +118,7 @@ class ResourceTable(dbc.Table):
             for k, category in enumerate(incomes)
             for Thead_or_Tbody in [
                 html.Thead(html.Tr([html.Th(category.upper())]
-                                   + (columns_names if k == 0 else ([html.Th()] * len(columns_names))),
+                                   + (columns_names if k == 0 or category == 'totals' else ([html.Th()] * len(columns_names))),
                                    className='thead-light')),
                 html.Tbody([
                     html.Tr(
