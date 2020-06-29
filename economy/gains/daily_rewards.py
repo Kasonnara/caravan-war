@@ -198,7 +198,7 @@ class TradingResets(Gain):
             daily_1000km_trading_count / Trading1000Km.traiding_limit,
             daily_best_trading_count / BestTrading.traiding_limit,
             ))
-        n = max(0, reset_count_same_day - vip.traiding_quota_free_reset)
+        n = max(0, reset_count_same_day - vip.traiding_quota_free_reset - 1)
         return cls.cumulative_reset_costs[n]
 
 
