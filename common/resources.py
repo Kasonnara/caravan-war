@@ -239,7 +239,8 @@ class ResourcePacket(defaultdict):
         if type(other) is type(self):
             # Addition of two ResourcePack
             for res_type in other:
-                result[res_type] += other[res_type]
+                if other[res_type] != 0:
+                    result[res_type] += other[res_type]
         elif isinstance(other, ResourceQuantity):
             # Addition of one resource to a ResourcePack
             result[other.type] += other.quantity
@@ -256,7 +257,8 @@ class ResourcePacket(defaultdict):
         if type(other) is type(self):
             # Addition of two ResourcePack
             for res_type in other:
-                result[res_type] -= other[res_type]
+                if other[res_type] != 0:
+                    result[res_type] -= other[res_type]
         elif isinstance(other, ResourceQuantity):
             # Addition of one resource to a ResourcePack
             result[other.type] -= other.quantity
