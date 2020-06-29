@@ -100,7 +100,7 @@
   - [ ] Allow re-accessing this disclaimer
   - [ ] Check everything is ok
 - Bugs
-  - [ ] Gains and resources order is messed up
+  - [X] Gains and resources order is messed up
   - [ ] Including positive and negative value in a pie chart mess the total sum (instead implement a double pie chart component)
 
 ## Automatic data gathering

@@ -198,8 +198,8 @@ app.layout = html.Div(children=[
 
 
 @app.callback(
-    [Output(graph_id, grph_target_attr)
-     for _, graph_id, grph_target_attr in graphs_to_update],
+    [Output(graph.component_id, graph.target_attribute)
+     for graph in graphs_to_update],
     [Input(ui_param.parameter_name + "_selector", 'value' if ui_param.value_range is not bool else 'checked')
      for ui_param in all_parameters],
     )
@@ -211,9 +211,8 @@ def update_simulation(*simulation_parameter):
     :return: the new data for every graphs
     """
     # Get the new resources
-    gains_df = update_income(simulation_parameter)
-    # TODO compute total?
-    return [graphs_update.update_func(gains_df) for graphs_update in graphs_to_update]
+    incomes = update_income(simulation_parameter)
+    return [graph.update_func(incomes) for graph in graphs_to_update]
 
 
 if production_mode_on_heroku:

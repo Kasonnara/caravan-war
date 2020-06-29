@@ -26,7 +26,7 @@ from common.resources import ResourcePacket, ResourceQuantity
 from common.resources import Resources as R
 from common.vip import VIP
 
-from economy.gains.abstract_gains import Gain, GAINS_DICTIONARY
+from economy.gains.abstract_gains import Gain
 
 # TODO: daily shop
 from units.bandits import Bandit
@@ -77,10 +77,6 @@ class EquipmentCrafting(Gain):
             ResourceQuantity(Rarity.Common, -5 * equipment_craft_number),  # Fixme, check average values
             )
 
-# TODO: Legendary soul exchange
-
 # TODO: recycle chest
 
 # TODO: premium chest/offers
-
-GAINS_DICTIONARY['purchase'] = {EquipmentCrafting}

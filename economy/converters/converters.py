@@ -39,7 +39,7 @@ class Lottery(GainConverter):
     parameter_dependencies = [rank_param, selected_heroes_param]
 
     @classmethod
-    def get_diff(cls, resource_packet: ResourcePacket, gain_name: str,
+    def get_diff(cls, resource_packet: ResourcePacket,
                  rank: Rank = Rank.NONE, selected_heroes=hero_pair_combinaisons[0], **kwargs) -> ResourcePacket:
         if resource_packet[R.LotteryTicket] <= 0:
             return ResourcePacket()
@@ -56,14 +56,14 @@ class Lottery(GainConverter):
 
 
 lottery_convert_mode_param = ConverterModeUIParameter(Lottery, display_txt="Convert Lottery Tickets")
-GainConverter.ALL_CONVERTERS.append(Lottery)  # TODO use a Metaclass for that
+GainConverter.ALL.append(Lottery)  # TODO use a Metaclass for that
 
 
 class LegendarySoulExchange(GainConverter):
     """Convert legendary souls to unit cards"""
 
     @classmethod
-    def get_diff(cls, resource_packet: ResourcePacket, gain_name: str, **kwargs) -> ResourcePacket:
+    def get_diff(cls, resource_packet: ResourcePacket, **kwargs) -> ResourcePacket:
         if resource_packet[R.LegendarySoul] <= 0:
             return ResourcePacket()
         return ResourcePacket(
@@ -75,7 +75,7 @@ class LegendarySoulExchange(GainConverter):
 
 
 legendary_soul_convert_mode_param = ConverterModeUIParameter(LegendarySoulExchange, display_txt="Convert legendary souls")
-GainConverter.ALL_CONVERTERS.append(LegendarySoulExchange)
+GainConverter.ALL.append(LegendarySoulExchange)
 
 
 class DefenseLost(GainConverter):
@@ -85,7 +85,7 @@ class DefenseLost(GainConverter):
     """
 
     @classmethod
-    def get_diff(cls, resource_packet: ResourcePacket, gain_name: str,
+    def get_diff(cls, resource_packet: ResourcePacket, gain: Type[Gain] = None,
                  daily_10km_trading_count: float = None,
                  daily_100km_trading_count: float = 0,
                  daily_1000km_trading_count: float = 0,
@@ -95,7 +95,7 @@ class DefenseLost(GainConverter):
                  mesurement_range=MeasurementPeriod.DAY,
                  **kwargs) -> ResourcePacket:
         # Stop for gains that are not convoys
-        if gain_name not in [gain.__name__ for gain in [BestTrading, Trading1000Km, Trading100Km, Trading10Km, TransportStationProduction]]:
+        if gain not in [BestTrading, Trading1000Km, Trading100Km, Trading10Km, TransportStationProduction]:
             return ResourcePacket()
 
         # Check inputs
@@ -114,7 +114,7 @@ class DefenseLost(GainConverter):
 
         # Count how many convoys of each
         for convoy, count in convoys_counts:
-            if gain_name == convoy.__name__:
+            if gain is convoy:
                 # We found the current trading gain
                 convoy_lost = min(count, defense_lost)
                 return ResourcePacket(
@@ -131,7 +131,7 @@ defense_lost_convert_mode_param = ConverterModeUIParameter(
     value_range=[ConverterModeUIParameter.ConversionMode.IN_PLACE, ConverterModeUIParameter.ConversionMode.EXTERNAL],
     display_txt="Resource stolen display",
     )
-GainConverter.ALL_CONVERTERS.append(DefenseLost)
+GainConverter.ALL.append(DefenseLost)
 
 
 # TODO converter that expand unspecified cards loots into all possible cards or on the contrary that compact any card

@@ -75,6 +75,7 @@ class Gain:
     Gains are implemented as static singletons, and thus must never be instantiated nor have instance methods, only
     static or class methods. Each new class defining a different gain.
     """
+    # TODO try making Gain into a metaclass
 
     parameter_dependencies: List[UIParameter] = []
 
@@ -115,7 +116,3 @@ class Gain:
         """
         assert 'day' not in kwargs.keys()
         return cls.daily_income(**kwargs) * mesurement_range.value               # More economical
-
-
-# FIXME make a clean and ordered list of gains, and clean categories or even deleting them
-GAINS_DICTIONARY: Dict[str, Set[Type[Gain]]] = defaultdict(set)

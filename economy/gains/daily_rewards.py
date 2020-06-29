@@ -20,7 +20,6 @@
 """
 List gains that obtainable on a daily basis
 """
-import itertools
 import math
 from typing import Optional
 
@@ -31,8 +30,7 @@ from common.rarity import Rarity
 from common.resources import ResourcePacket, ResourceQuantity, hero_pair_combinaisons
 from common.resources import Resources as R
 from common.vip import VIP
-from economy.gains.adds import Adds
-from economy.gains.abstract_gains import Gain, GAINS_DICTIONARY, rank_param, vip_param, Days
+from economy.gains.abstract_gains import Gain, rank_param, vip_param, Days
 from units.bandits import Bandit
 from units.guardians import Guardian
 from utils.ui_parameters import UIParameter
@@ -411,8 +409,3 @@ class ClanDonation(Gain):
 
 # TODO daily connection reward
 
-
-GAINS_DICTIONARY['trading'] = {Trading10Km, Trading100Km, Trading1000Km, BestTrading, TradingResets, Ambushes}
-
-GAINS_DICTIONARY['daily'] = GAINS_DICTIONARY['trading'].union(
-    {Lottery, MillProduction, TransportStationProduction, Adds, DailyQuest, FreeDailyOffer, ClanDonation})

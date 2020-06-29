@@ -32,7 +32,7 @@ from common.resources import Resources as R
 from common.vip import VIP
 from economy.gains.daily_rewards import Lottery
 
-from economy.gains.abstract_gains import Gain, Days, GAINS_DICTIONARY, rank_param
+from economy.gains.abstract_gains import Gain, Days, rank_param
 from spells.convoy_boosts import ModuleBoost
 from spells.spells import Storm
 from units.bandits import Bandit
@@ -303,10 +303,3 @@ class WeeklyQuest(Gain):
     @classmethod
     def daily_income(cls, rank: Rank = Rank.NONE, **kwargs) -> ResourcePacket:
         return cls.iteration_income(rank=rank) * (1/7)
-
-
-GAINS_DICTIONARY['challenges'] = {GateChallenge, BanditChallenge, BossChallenge, ConvoyChallenge}
-
-GAINS_DICTIONARY['clan'] = {ClanWarReward, ClanBoss, ClanMission, ClanWarFights}
-
-GAINS_DICTIONARY['weekly'] = GAINS_DICTIONARY['challenges'].union(GAINS_DICTIONARY['clan']).union({WeeklyQuest})

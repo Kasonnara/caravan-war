@@ -20,25 +20,22 @@
 """
 Manage the parameters of the simulator
 """
-from collections import defaultdict
-from typing import Type, Dict, Set
+from typing import Type, Dict, Set, Union
 
-import pandas
-
-from common.resources import ResourcePacket, ResourceQuantity
+from common.card_categories import CardCategories
+from common.rarity import Rarity
+from common.resources import Resources, ResourcePacket
 from economy.budget_simulator.bs_ui_parameters import BUDGET_SIMULATION_PARAMETERS
 from economy.converters.abstract_converter import GainConverter
-from economy.gains.abstract_gains import GAINS_DICTIONARY, Gain
-from utils.prettifying import camelcase_2_spaced
+from economy.gains import GAINS_DICTIONARY
+from economy.gains.abstract_gains import Gain
 
 all_parameters = [ui_param
                   for category in BUDGET_SIMULATION_PARAMETERS
                   for ui_param in BUDGET_SIMULATION_PARAMETERS[category]]
 
-all_gains: Set[Type[Gain]] = set.union(*(GAINS_DICTIONARY[gains_category] for gains_category in GAINS_DICTIONARY))
 
-
-def update_income(selected_parameters) -> pandas.DataFrame:
+def update_income(selected_parameters) -> Dict[str, Dict[Union[Type[Gain], Type['GainConverter']], ResourcePacket]]:
     assert len(selected_parameters) == len(all_parameters)
 
     # Generate the parameter value dict
@@ -51,12 +48,24 @@ def update_income(selected_parameters) -> pandas.DataFrame:
         }
     # Recompute all gains
     incomes = {
-        gain.__name__: gain.average_income(**ui_parameter_values)
-        for gain in all_gains
+        gain_category: {
+            gain: gain.average_income(**ui_parameter_values)
+            for gain in GAINS_DICTIONARY[gain_category]
+            }
+        for gain_category in GAINS_DICTIONARY
         }
     # Apply converters
-    incomes = GainConverter.apply_all(incomes, ui_parameter_values)
+    GainConverter.apply_all(incomes, ui_parameter_values)
 
-    # Prettify and convert to pandas dataframe
-    return pandas.DataFrame(data=[resource_packet.to_pandas() for resource_packet in incomes.values()],
-                            index=[camelcase_2_spaced(key, unbreakable_spaces=True) for key in incomes.keys()])
+    return incomes
+
+RESOURCE_SORTING_MAP = {
+    resource_type: order
+    for order, resource_type in enumerate(
+        [native_resource_type for native_resource_type in Resources]    # Prioritize native resources in the order of the enum
+        + [rarity_type for rarity_type in Rarity]                       # then unspecified rarity
+        + [(card_category.card_base_class, rarity_type) for rarity_type in Rarity for card_category in CardCategories]  # then (category,rarity) tuples
+        + [card_category.card_base_class for card_category in CardCategories]  # Then unspecified card categories
+        + [specific_card for card_category in CardCategories for specific_card in card_category]  # And finally very targeted card type
+        )
+    }

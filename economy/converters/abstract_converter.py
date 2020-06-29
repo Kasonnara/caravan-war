@@ -22,6 +22,7 @@ from enum import Enum
 from typing import List, Union, Type, Iterable, Optional, Dict, Any
 
 from common.resources import ResourcePacket
+from economy.gains import Gain
 from utils.class_property import classproperty
 from utils.ui_parameters import UIParameter, T
 
@@ -54,7 +55,7 @@ class GainConverter:
     and thus must be applied after.
     """
 
-    ALL_CONVERTERS: List[Type['GainConverter']] = []
+    ALL: List[Type['GainConverter']] = []
     """
     List all gain converters created (doesn't guaranty the order) 
     """
@@ -62,16 +63,13 @@ class GainConverter:
 
     @classmethod
     @abstractmethod
-    def get_diff(cls, resource_packet: ResourcePacket, gain_name: str, **kwargs) -> ResourcePacket:
+    def get_diff(cls, resource_packet: ResourcePacket, gain: Type[Gain] = None, **kwargs) -> ResourcePacket:
         """
         Return the difference resulting from this Converter application.
 
-        The input ResourcePacket object can be returned as is if no change are made, but it's never modified. If any
-        change occur a new ResourcePacket object is created.
-
         :param resource_packet: ResourcePacket, the resources to convert
-        :param gain_name: str, the name of the gain class
-        :return: ResourcePacket, difference
+        :param gain: Optional[Gain], the gain class if the input resource_packet come from one.
+        :return: ResourcePacket, the difference
         """
         raise NotImplemented()
 
@@ -80,24 +78,27 @@ class GainConverter:
         return cls.__name__.lower() + "_mode"
 
     @classmethod
-    def apply_all(cls, resources_dict: Dict[str, ResourcePacket], ui_parameters: Dict[str, Any], converters: List[Type['GainConverter']] = None):
+    def apply_all(cls, resources_dict: Dict[str, Dict[Type[Gain], ResourcePacket]],
+                  ui_parameters: Dict[str, Any],
+                  converters: List[Type['GainConverter']] = None):
         """
-        Apply all teh converters
+        Apply all the converters to the input resources packets.
 
-        :param resources: Dict[ResourcePacket], the resources packets to eventually convert
+        Note: type of resource_dict may become Dict[str, Dict[Union[Type[Gain], Type['GainConverter']], ResourcePacket]]
+
+        :param resources_dict: Dict[ResourcePacket], the resources packets to eventually convert
             (WARNING: current implementation modify the dictionary in place for simplicity).
         :param ui_parameters: Dict[str, Any] the values of the UIParameter forwarded to the converters.
         :param converters: List[Type['GainConverter']], the converter to apply (default to cls.ALL_CONVERTERS).
-        :return: Dict[ResourcePacket], reference to the modified <resources_dict> input parameter.
         """
-        converters = converters or cls.ALL_CONVERTERS
+        converters = converters or cls.ALL
         # Init the result dict
         #   init keys for the converter configured in EXTERNAL mode
-        results = {converter.__name__: ResourcePacket()
-                   for converter in converters
-                   if ui_parameters.get(converter.mode_parameter_name, None) is ConverterModeUIParameter.ConversionMode.EXTERNAL}
-        #   init other keys with all the values from input resources_dict (may override converter keys, ex: the lottery)
-        results.update(resources_dict)
+        for converter in converters:
+            if ui_parameters.get(converter.mode_parameter_name, None) is ConverterModeUIParameter.ConversionMode.EXTERNAL:
+                if 'converters' not in resources_dict.keys():
+                    resources_dict['converters'] = {}
+                resources_dict['converters'][converter] = ResourcePacket()
 
         # Apply each converter
         for converter in converters:
@@ -106,12 +107,12 @@ class GainConverter:
             if converter_mode is ConverterModeUIParameter.ConversionMode.DISABLED:
                 pass
             else:
-                for gain_key in resources_dict:
-                    # if in place mode keep the same gain key, else take the converter key
-                    if converter_mode is ConverterModeUIParameter.ConversionMode.IN_PLACE:
-                        target_key = gain_key
-                    else:  # converter_mode is ConverterModeUIParameter.ConversionMode.EXTERNAL
-                        target_key = converter.__name__
-                    results[target_key] = results[target_key] + converter.get_diff(resources_dict[gain_key], gain_key, **ui_parameters)
+                for gain_category in resources_dict:
+                    for gain in resources_dict[gain_category]:
+                        # if in place mode keep the same gain key, else take the converter key
+                        if converter_mode is ConverterModeUIParameter.ConversionMode.IN_PLACE:
+                            target_category, target_key = gain_category, gain
+                        else:  # converter_mode is ConverterModeUIParameter.ConversionMode.EXTERNAL
+                            target_category, target_key = 'converters', converter
+                        resources_dict[target_category][target_key] = resources_dict[target_category][target_key] + converter.get_diff(resources_dict[gain_category][gain], gain=gain, **ui_parameters)
 
-        return results

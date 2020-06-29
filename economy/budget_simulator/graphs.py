@@ -22,18 +22,20 @@ Definition of all the graphs functions present in the application and their call
 """
 import math
 from collections import namedtuple
-from typing import Tuple, List, Union
+from typing import List, Union, Dict, Type
 
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
-import pandas
 from plotly.subplots import make_subplots
 
-from common.resources import ResourceQuantity, Resources
+from common.resources import ResourceQuantity, Resources, ResourcePacket
+from economy.budget_simulator.simulation import RESOURCE_SORTING_MAP
+from economy.converters.abstract_converter import GainConverter
+from economy.gains import Gain
 from utils.prettifying import camelcase_2_spaced, human_readable
 
-GraphsUpdates = namedtuple('GraphsUpdates', 'update_func update_ids update_attributes')
+GraphsUpdates = namedtuple('GraphsUpdates', 'update_func component_id target_attribute')
 
 # Maybe not the best place to put this
 resource_colors = {
@@ -60,21 +62,26 @@ class ResourceTable(dbc.Table):
 
     EMPTY_TABLE = (html.Thead(html.Tr([])), html.Tbody([]))
 
-    def __init__(self, id: str, bordered=True, striped=True, hover=True, **kwargs):
-        super().__init__(self.EMPTY_TABLE, id, bordered=bordered, striped=striped, hover=hover, **kwargs)
+    def __init__(self, id: str, bordered=True, striped=False, hover=True, responsive=True, **kwargs):
+        super().__init__(self.EMPTY_TABLE, id, bordered=bordered, striped=striped, hover=hover, responsive=responsive, **kwargs)
         # Register the graph
         graphs_to_update.append(GraphsUpdates(self.figures_updates, id, 'children'))
 
     @staticmethod
-    def figures_updates(data: pandas.DataFrame) -> Tuple[html.Table, html.Tbody]:
-        # TODO add color
-        # TODO add human readable units (K, M, B, etc)
-        all_res_types = data.columns  # TODO sort columns
-        prettified_res_types = [camelcase_2_spaced(res_type) for res_type in all_res_types]
+    def figures_updates(incomes: Dict[str, Dict[Union[Type[Gain], Type[GainConverter]], ResourcePacket]]) -> List[Union[html.Table, html.Tbody]]:
+        # Compute total
+        total = ResourcePacket()
+        for gain_category in incomes:
+            for key in incomes[gain_category]:
+                # TODO there should be a function in ResourcePacket for that
+                total = total + incomes[gain_category][key]
 
-        totals: pandas.Series = data.sum()
-        totals.name = "totals"
-        data_with_total = data.append(totals)
+        incomes = incomes.copy()
+        incomes['totals'] = {None: total}
+
+        all_res_types = [res_type for res_type in RESOURCE_SORTING_MAP.keys() if res_type in total.keys()]
+        """List all resource types present in incomes, sorted according to the RESOURCE_SORTING_MAP"""
+        # O(n²) : There probably a better way to proceed
 
         def pretty_Td(value):
             """Generate a dash html Td while prettifying its content"""
@@ -84,46 +91,46 @@ class ResourceTable(dbc.Table):
                 className='text-danger' if len(pretty_value) > 0 and pretty_value[0] == '-' else 'text-success',
                 )
 
-        return (
-            html.Thead(html.Tr([html.Th("")] + [
-                html.Th(res_types_str)
-                for res_types_str in prettified_res_types
-                ])),
-            html.Tbody([
-                html.Tr([html.Td(line_key)] + [
-                    pretty_Td(data_with_total.loc[line_key].get(res_types, 0))
-                    for res_types in all_res_types
-                    ])
-                for line_key in data_with_total.index
-                ]),
-            )
+        columns_names = [html.Th(camelcase_2_spaced(ResourceQuantity.prettify_type(res_types)))
+                         for res_types in all_res_types]
+
+        return [
+            Thead_or_Tbody
+            for k, category in enumerate(incomes)
+            for Thead_or_Tbody in [
+                html.Thead(html.Tr([html.Th(category.upper())]
+                                   + (columns_names if k == 0 else ([html.Th()] * len(columns_names))),
+                                   className='thead-light')),
+                html.Tbody([
+                    html.Tr(
+                        [html.Td(camelcase_2_spaced(gain.__name__, unbreakable_spaces=True)
+                                 if gain is not None else ''  # Special case for the total line which doesn't have gain
+                                 )]
+                        + [pretty_Td(incomes[category][gain][res_types])
+                           for res_types in all_res_types]
+                        )
+                    for gain in incomes[category]
+                    ]),
+                ]
+            ]
 
 
 class ResourceBarPie(dcc.Graph):
     def __init__(self, target_resource: ResourceQuantity.VALID_RESOURCE_TYPE, id=None, **kwargs):
         # Generate the pie plot, with directly with plotly, as dash seems to not work with some parameters
-        self.str_target_resource = ResourceQuantity.prettify_type(target_resource)
-        id: str = id or self.str_target_resource + "_plot"
+        self.target_resource = target_resource
+        str_target_resource = ResourceQuantity.prettify_type(self.target_resource)
+        id: str = id or str_target_resource + "_plot"
 
         self.fig = make_subplots(rows=1, cols=2, specs=[[{"type": "bar"}, {"type": "pie"}]])
         self.fig.add_bar(
             x=[],
             y=[],
-            name=self.str_target_resource,
+            name=str_target_resource,
             texttemplate="%{y: .2s}",
-            #textposition='outside',
             row=1, col=1,
             marker_color=resource_colors[target_resource]
             )
-        #self.fig.update_layout(xaxis={'categoryorder': 'total descending'})
-
-
-        #'x': data[plot_label][0],
-        #                'y': data[plot_label][1],
-        #                'type': 'bar',
-        #                'name': plot_label,
-        #                'texttemplate': "%{y: .2s}",
-        #                'textposition': 'outside',
 
         self.fig.add_pie(
             hole=0.5,
@@ -131,8 +138,6 @@ class ResourceBarPie(dcc.Graph):
             values=[],
             labels=[],
             textinfo='none',
-            #marker={'colors': ['green', 'red', 'blue'],
-            #        'line': {'color': 'white', 'width': 1}}
             row=1, col=2,
             marker_line_width=2,
             )
@@ -141,25 +146,32 @@ class ResourceBarPie(dcc.Graph):
         # Register the graph
         graphs_to_update.append(GraphsUpdates(self.figures_updates, id, 'figure'))
 
-    def figures_updates(self, data: pandas.DataFrame) -> List:
-        # Drop useless value and manually sort the values
-        target_data=data[self.str_target_resource].dropna().sort_values(ascending=False)
+    def figures_updates(self, incomes: Dict[str, Dict[Union[Type[Gain], Type[GainConverter]], ResourcePacket]]) -> List:
+        # Extract incomes for the target resource, erase too small values, prettify gains names and sort them
+        target_incomes_label, target_incomes_values = zip(
+            *sorted(
+                [(camelcase_2_spaced(gain.__name__, unbreakable_spaces=True),  # Prettify gains names
+                  incomes[category][gain][self.target_resource])
+                    for category in incomes
+                    for gain in incomes[category]
+                    if abs(incomes[category][gain][self.target_resource]) >= 10**-2  # Erase small values
+                 ],
+                key=lambda x: x[1],
+                reverse=True,
+                )
+            )
+
         self.fig.update_traces(
-            values=target_data.abs(),
-            labels=target_data.index,
-            # pull=[0.07 if x < 0 else 0 for x in target_data],
-            # marker_colors = [gains_colors[res_str][target_data[res_str] > 0]
-            #                                            for res_str in target_data.index],
+            values=[abs(x) for x in target_incomes_values],  # Pie chart doesn't like negative values
+            labels=target_incomes_label,
             selector=dict(type='pie'),
-            marker_line_width=[0 if x > 0 else 4 for x in target_data],
-            marker_line_color=["#00C000" if x > 0 else "#C00000" for x in target_data],
+            marker_line_width=[0 if x > 0 else 4 for x in target_incomes_values],
+            marker_line_color=["#00C000" if x > 0 else "#C00000" for x in target_incomes_values],
             )
         self.fig.update_traces(
-            y=target_data,
-            x=target_data.index,
+            y=target_incomes_values,
+            x=target_incomes_label,
             selector=dict(type='bar'),
             )
 
-        #self.fig.update_layout(color_discrete_sequence=, selector=dict(type='pie'),)
-        #print(self.pie.to_plotly_json())
         return self.fig
