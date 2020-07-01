@@ -73,26 +73,30 @@ class ResourceQuantity:
 
         # FIXME it may be better organized to only allow final unit class as types and instead use CardCategories
         #  for unspecified cards. (But currently is work fine with a simpler code)
-        if type(other_type) is Type:
+        if isinstance(other_type, Resources):
+            return False  # Should already have matched
+        elif isinstance(other_type, Type):
             if issubclass(other_type, Chest):
                 return False  # Should already have matched
             else:
                 assert issubclass(other_type, Card)
                 o_card, o_rarity = other_type, other_type.rarity
-        elif type(other_type) is Tuple:
+        elif isinstance(other_type, tuple):
             assert issubclass(other_type[0], Card) and isinstance(other_type[1], Rarity)
             o_card, o_rarity = other_type
         else:
             assert isinstance(other_type, Rarity)
             return False  # Should already have matched
 
-        if type(main_type) is Type:
+        if isinstance(main_type, Resources):
+            return False  # Should already have matched
+        elif isinstance(main_type, Type):
             if issubclass(main_type, Chest):
                 return False  # Should already have matched
             else:
                 assert issubclass(main_type, Card)
                 m_card, m_rarity = main_type, main_type.rarity
-        elif type(other_type) is Tuple:
+        elif isinstance(main_type, tuple):
             assert issubclass(main_type[0], Card) and isinstance(main_type[1], Rarity)
             m_card, m_rarity = main_type
         else:
@@ -165,7 +169,7 @@ class ResourceQuantity:
         :return: str
         """
 
-        return "{value} {type}".format(value=human_readable(self.quantity), type=self.type.name)
+        return "{value} {type}".format(value=human_readable(self.quantity), type=self.prettify_type(self.type))
 
 
 class Resources(Enum):
