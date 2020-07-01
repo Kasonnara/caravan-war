@@ -23,7 +23,8 @@ This module list budget simulator user defined parameters (in order to automatic
 from typing import List, Dict
 
 from economy.converters.converters import lottery_convert_mode_param, defense_lost_convert_mode_param, \
-    legendary_soul_convert_mode_param
+    legendary_soul_convert_mode_param, recycle_target_type_param, chest_opener_convert_mode_param, \
+    recycle_convert_mode_param
 from economy.gains.abstract_gains import rank_param, vip_param, hq_param, mesurement_range_param
 from economy.gains.adds import pub_viewed_per_day_param
 from economy.gains.daily_purchases import equipment_craft_number_param
@@ -48,6 +49,9 @@ BUDGET_SIMULATION_PARAMETERS: Dict[str, List[UIParameter]] = {
         lottery_convert_mode_param,
         selected_heroes_param,
         legendary_soul_convert_mode_param,
+        recycle_convert_mode_param,
+        recycle_target_type_param,
+        chest_opener_convert_mode_param,
         ],
     'Trading': [
         daily_10km_trading_count_param,

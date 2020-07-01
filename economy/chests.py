@@ -16,12 +16,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from typing import List, Type
+from typing import List, Type, Tuple
 
 from common.leagues import Rank
 from common.rarity import Rarity
 from common.resources import ResourcePacket, ResourceQuantity, Resources
 from spells.common_spell import AbstractSpell
+from units.base_units import MovableUnit
 
 
 class Chest:
@@ -89,6 +90,11 @@ class GoldenChest(Chest):
 
 
 class RecycleChest(Chest):
+    required_sacrifice = 100
+    recyclable_types: List[Tuple[ResourceQuantity.VALID_RESOURCE_TYPE, int]] = [
+        ((MovableUnit, Rarity.Common), 2),
+        ((MovableUnit, Rarity.Rare),   6),
+        ]  # FIXME this should include heroes!!
     number_of_card = 5
     _average_loot = ResourcePacket(
         ResourceQuantity(AbstractSpell, 3),

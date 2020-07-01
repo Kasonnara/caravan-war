@@ -30,6 +30,8 @@ from economy.chests import ALL_CHESTS
 from economy.converters.abstract_converter import GainConverter
 from economy.gains import GAINS_DICTIONARY
 from economy.gains.abstract_gains import Gain
+from spells.common_spell import AbstractSpell
+from units.base_units import MovableUnit
 
 all_parameters = [ui_param
                   for category in BUDGET_SIMULATION_PARAMETERS
@@ -67,8 +69,10 @@ RESOURCE_SORTING_MAP = {
         [native_resource_type for native_resource_type in Resources]    # Prioritize native resources in the order of the enum
         + ALL_CHESTS
         + [rarity_type for rarity_type in Rarity]                       # then unspecified rarity
-        + [(card_category.card_base_class, rarity_type) for rarity_type in Rarity for card_category in CardCategories]  # then (category,rarity) tuples
-        + [card_category.card_base_class for card_category in CardCategories]  # Then unspecified card categories
+        + [(card_category.card_base_class, rarity_type) for rarity_type in Rarity for card_category in CardCategories]
+          + [(group_class, rarity_type) for rarity_type in Rarity for group_class in (AbstractSpell, MovableUnit)]  # then (category,rarity) tuples
+        + [card_category.card_base_class for card_category in CardCategories]
+          + [AbstractSpell, MovableUnit]  # Then unspecified card categories
         + [specific_card for card_category in CardCategories for specific_card in card_category]  # And finally very targeted card type
         )
     }

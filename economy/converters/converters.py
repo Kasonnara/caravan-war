@@ -27,11 +27,15 @@ from common.rarity import Rarity
 from common.resources import ResourcePacket, hero_pair_combinaisons, ResourceQuantity
 from common.resources import Resources as R
 from common.vip import VIP
+from economy.chests import ALL_CHESTS, RecycleChest
 
 from economy.converters.abstract_converter import GainConverter, ConverterModeUIParameter
 from economy.gains.abstract_gains import rank_param, Gain, MeasurementPeriod
 from economy.gains.daily_rewards import selected_heroes_param, BestTrading, Trading10Km, Trading100Km, Trading1000Km, \
     TransportStationProduction
+from spells.common_spell import AbstractSpell
+from units.base_units import MovableUnit
+from utils.ui_parameters import UIParameter
 
 
 class Lottery(GainConverter):
@@ -132,6 +136,80 @@ defense_lost_convert_mode_param = ConverterModeUIParameter(
     display_txt="Resource stolen display",
     )
 GainConverter.ALL.append(DefenseLost)
+
+
+class ChestOpening(GainConverter):
+
+    @classmethod
+    def get_diff(cls, resource_packet: ResourcePacket, gain: Type[Gain] = None, rank=Rank.NONE, **kwargs) -> ResourcePacket:
+        result = ResourcePacket()
+        for chest_type in ALL_CHESTS:
+            if resource_packet[chest_type] > 0:
+                result = result + (chest_type.average_loot(rank=rank)
+                                   + ResourceQuantity(chest_type, -1)) * resource_packet[chest_type]
+
+        return result
+
+
+chest_opener_convert_mode_param = ConverterModeUIParameter(
+    ChestOpening,
+    value_range=[ConverterModeUIParameter.ConversionMode.DISABLED, ConverterModeUIParameter.ConversionMode.IN_PLACE],
+    display_txt="Open Chests",
+    )
+GainConverter.ALL.append(ChestOpening)
+
+
+recycle_target_type_param = UIParameter(
+    'recycle_target_type',
+    [RecycleChest.recyclable_types[:1], RecycleChest.recyclable_types],  # Todo add more choices
+    display_range=["All Common", "All Common and Rare"],
+    display_txt="Cards to recycle",
+    )
+
+
+class Recycle(GainConverter):
+    @classmethod
+    def get_diff(cls, resource_packet: ResourcePacket, gain: Type[Gain] = None, rank=Rank.NONE,
+                 chest_opener_convert_mode_param=ConverterModeUIParameter.ConversionMode.IN_PLACE,
+                 recycle_target_type=RecycleChest.recyclable_types, **kwargs) -> ResourcePacket:
+        result = ResourcePacket()
+        # Iterate over all the resource type of the input ResourcePacket
+        for resource_type, resource_quantity in resource_packet.items():
+            # Workaround to enable recycling the Rarity types that also includes spells
+            if resource_type is Rarity.Common or resource_type is Rarity.Rare:  # FIXME also include (Card, rarity)
+                spells_count, card_count = 0.1 * resource_quantity, 0.9 * resource_quantity
+                # FIXME it's a rough approximation, the ratio usually depend of the gain so ultimately we should
+                #  always do the separation from the beginning Rarity as types shouldn't inclue spells
+                # Split between spells and Movable units
+                result = result + ResourcePacket(
+                    ResourceQuantity((AbstractSpell, resource_type), spells_count),
+                    ResourceQuantity((MovableUnit, resource_type), card_count),
+                    ResourceQuantity(resource_type, -resource_quantity),
+                    )
+                # Alter the iteration parameters to take the change into account
+                resource_type, resource_quantity = ((MovableUnit, resource_type), card_count)
+
+            # Iterate over all the resource type we want to recycle
+            for targeted_types, sacrifice_score in recycle_target_type:
+                # Check if the resources types are compatible
+                if ResourceQuantity.compatible_types(targeted_types, resource_type):
+                    chest_quantity = resource_quantity * sacrifice_score / RecycleChest.required_sacrifice
+                    if chest_quantity > 0:
+                        # Check if the chest opener converter is enabled, if yes we must do the conversion because
+                        # this converter is processed after the chest opener.
+                        if chest_opener_convert_mode_param is ConverterModeUIParameter.ConversionMode.DISABLED:
+                            result = result + ResourceQuantity(RecycleChest, chest_quantity)
+                        else:
+                            result = result + RecycleChest.average_loot(rank=rank) * chest_quantity
+                        result = result + ResourceQuantity(resource_type, -resource_quantity)
+        return result
+
+
+recycle_convert_mode_param = ConverterModeUIParameter(
+    Recycle,
+    display_txt="Recycle cards",
+    )
+GainConverter.ALL.append(Recycle)
 
 
 # TODO converter that expand unspecified cards loots into all possible cards or on the contrary that compact any card
