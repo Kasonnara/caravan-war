@@ -445,3 +445,17 @@ day,id,is_bot,star_score,gems,potions,legendary_souls,reincarnation_medals,bandi
 24/05/2020,38, True,2, 0,0,0,0,True
 24/05/2020,39, True,3, 0,0,0,0,False
 24/05/2020,40, True,3, 0,0,0,0,False
+
+06/06/2020, 1,,,,,,,, CARD_EVENT, assume all unspecified index lines are ambush without card drop
+06/06/2020,30,,,,,,,
+
+07/06/2020, 1,,,,,,, CARD_EVENT, assume all unspecified index lines are ambush without card drop
+07/06/2020,35,,3
+
+20/06/2020, 1,,,,,,, CARD_EVENT, assume all unspecified index lines are ambush without card drop
+20/06/2020, 3, True,3,,,,,True, epic
+20/06/2020,30,,,,,,,
+20/06/2020,31,,,,,,, epic, 21/06/2020:01:57:00FR
+
+21/06/2020, 1,,,,,,, CARD_EVENT, assume all unspecified index lines are ambush without card drop
+21/06/2020, 6,,,,,,,

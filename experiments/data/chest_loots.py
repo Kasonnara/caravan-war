@@ -68,6 +68,58 @@ chest_opening_examples = {
         Loot(8, L.Horse3, 6, None, ResourcePacket(), (Meteor, Drone, Drone, Archer, Balista)),
         Loot(19, L.Phenix1, 8, None, ResourcePacket(), (Archer, Maraudeur, Hunter, Follet, Follet)),
         Loot(19, L.Phenix1, 8, (6, 6), ResourcePacket(), (Guard, Guard, Follet, Follet, Healer)),
+        # --- Test day 1 ---
+        Loot(19, L.Phenix1, 8, None, ResourcePacket(Resources.ReincarnationToken(1)), (Archer, Follet, Follet, Follet, Guard)),
+        Loot(19, L.Phenix1, 8, (1, 1), ResourcePacket(Resources.ReincarnationToken(1)), (Maraudeur,)*5),
+        Loot(19, L.Phenix1, 8, (2, 2), ResourcePacket(Resources.ReincarnationToken(0)), (Scout,)*4 + (Archer,)),
+        Loot(19, L.Phenix1, 8, (3, 3), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Poison, Scout, Scout, Balista, Drone)),
+        Loot(19, L.Phenix1, 8, (4, 4), ResourcePacket(Resources.ReincarnationToken(0)), (Guard, Guard, Follet, Follet, Scout)),
+        Loot(19, L.Phenix1, 8, (5, 5), ResourcePacket(Resources.ReincarnationToken(0)), (Follet, Balista, Archer, Archer, LifeBoost)),
+        # -- reset
+        Loot(19, L.Phenix1, 8, (6, 6), ResourcePacket(Resources.ReincarnationToken(2)), (Landmine, Guard, Maraudeur, Scout, Poison)),
+        Loot(19, L.Phenix1, 8, (7, 7), ResourcePacket(), (Maraudeur, Archer, Archer, Archer, Follet)),
+        Loot(19, L.Phenix1, 8, (8, 8), ResourcePacket(Resources.ReincarnationToken(2)),
+             (Guard, Guard, Scout, Scout, Archer)),
+        # -- reset
+        Loot(19, L.Phenix1, 8, (9, 9), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Guard, Guard, Drone, Drone, LifeBoost)),
+        Loot(19, L.Phenix1, 8, (10, 10), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Follet, Guard, Guard, Guard, Archer)),
+        # -- reset
+        Loot(19, L.Phenix1, 8, (11, 11), ResourcePacket(Resources.ReincarnationToken(2)),
+             (Follet, Follet, Archer, Archer, Scout)),
+        Loot(19, L.Phenix1, 8, (12, 12), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Guard, Guard, Archer, Follet, Follet)),
+        Loot(19, L.Phenix1, 8, (13, 13), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Maraudeur, Maraudeur, Guard, Guard, Follet)),
+        Loot(19, L.Phenix1, 8, (14, 14), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Scout, Scout, Landmine, Maraudeur, Drone)),
+        Loot(19, L.Phenix1, 8, (15, 15), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Follet, Follet, Archer, Balista, Balista)),
+        Loot(19, L.Phenix1, 8, (16, 16), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Maraudeur, Maraudeur, Scout, Scout, Guard)),
+        Loot(19, L.Phenix1, 8, (17, 17), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Scout, Scout, Balista, Balista, Maraudeur)),
+        # --- End test day 1 ---
+        # --- Test day 2 ---
+        Loot(19, L.Phenix1, 8, (0, 0), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Arrow, Maraudeur, Maraudeur, Guard, Scout)),
+        Loot(19, L.Phenix1, 8, (1, 1), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Guard, Guard, Brute, Scout, Scout)),
+        Loot(19, L.Phenix1, 8, (2, 2), ResourcePacket(Resources.ReincarnationToken(1)),
+             (Guard, Guard, Follet, Scout, Scout)),
+        Loot(19, L.Phenix1, 8, (3, 3), ResourcePacket(Resources.ReincarnationToken(2)),
+             (Scout, Guard, Guard, Guard, Poison)),
+        #  -- reset
+        Loot(19, L.Phenix1, 8, (4, 4), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Landmine, Follet, Archer, Archer, Balista)),
+        Loot(19, L.Phenix1, 8, (5, 5), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Guard, Guard, Drone, Drone, Balista)),
+        Loot(19, L.Phenix1, 8, (6, 6), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Scout, Balista, Balista, Knight, Maraudeur)),
+        #  -- reset
+        # --- End test day 2 ---
         ],
 
     IronChest: [
@@ -76,6 +128,47 @@ chest_opening_examples = {
         Loot(8, L.Horse3, 6, None, ResourcePacket(), (Scout, Guard, Knight, LifeBoost, Archer, Archer)),
         Loot(19, L.Phenix1, 8, None, ResourcePacket(Resources.ReincarnationToken(1)), (Meteor, Landmine, Drone, Healer, Brute, Knight)),
         Loot(19, L.Phenix1, 8, (0, 6), ResourcePacket(), (Drone, Follet, Mortar, Scout, Scout, Chariot)),
+        # --- Test day 1 ---
+        Loot(19, L.Phenix1, 8, (1, 1), ResourcePacket(Resources.ReincarnationToken(2)), (Guard, Maraudeur, Berserk, Follet, Brute, Meteor)),
+        Loot(19, L.Phenix1, 8, (2, 2), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Chariot, Knight, Arrow, Archer, Alchimist)),
+        Loot(19, L.Phenix1, 8, (3, 3), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Follet, Follet, Maraudeur, Lutin, Scout, Scout)),
+        # -- reset
+        Loot(19, L.Phenix1, 8, (0, 4), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Archer, Archer, Archer, Guard, Berserk, Maraudeur)),
+        Loot(19, L.Phenix1, 8, (1, 5), ResourcePacket(),
+             (Follet, Guard, Archer, Hunter, Mortar, Berserk)),
+        # -- reset
+        Loot(19, L.Phenix1, 8, (2, 6), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Scout,Follet, Chariot, Lutin, Drone, Alchimist)),
+        Loot(19, L.Phenix1, 8, (0, 7), ResourcePacket(Resources.ReincarnationToken(0)),
+             (SpeedBoost, Follet, Berserk, Berserk, Hunter, Brute)),
+        Loot(19, L.Phenix1, 8, (1, 8), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Lutin, Archer, Maraudeur, Shield, Guard, Guard)),
+        # -- reset
+        Loot(19, L.Phenix1, 8, (2, 9), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Jetpack, Archer, Drone, Hunter, Hunter, Hunter)),
+        Loot(19, L.Phenix1, 8, (0, 10), ResourcePacket(), None),
+        Loot(19, L.Phenix1, 8, (1, 11), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Scout, Scout, Scout, Hunter, Maraudeur, Drone)),
+        Loot(19, L.Phenix1, 8, (2, 12), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Charrette, Follet, Archer, Brute, Guard, Chariot)),
+        # --- End test day 1 ---
+        # --- Test day 2 ---
+        Loot(19, L.Phenix1, 8, (0, 0), ResourcePacket(Resources.ReincarnationToken(3)),
+             (Guard, AttackSpeedBoost, Arrow, Scout, Alchimist, Lutin)),
+        Loot(19, L.Phenix1, 8, (1, 1), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Guard, Guard, Follet, Maraudeur, Maraudeur, Maraudeur)),
+        #  -- reset
+        Loot(19, L.Phenix1, 8, (2, 2), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Landmine, Maraudeur, Healer, Follet, Alchimist, Guard)),
+        Loot(19, L.Phenix1, 8, (0, 3), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Drone, Drone, Jetpack, Hunter, Knight, Archer)),
+        Loot(19, L.Phenix1, 8, (1, 4), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Maraudeur,) * 4 + (Archer, Knight)),
+        #  -- reset
+        # --- End test day 2 ---
         ],
 
     SilverChest: [
@@ -87,6 +180,32 @@ chest_opening_examples = {
         Loot(8, L.Horse2, 6, None, ResourcePacket(Resources.ReincarnationToken(2)),
              (Maraudeur, Maraudeur, Archer, Alchimist, Scout, Maraudeur, Alchimist)),
         Loot(19, L.Phenix1, 8, (1, 3), ResourcePacket(), (Hunter, Alchimist, Maraudeur, Maraudeur, Archer, Archer, Scout)),
+        # --- Test day 1 ---
+        Loot(19, L.Phenix1, 8, (0, 0), ResourcePacket(Resources.ReincarnationToken(3)),
+             (Shield, Shield, Maraudeur, Maraudeur, Guard, Guard, Guard)),
+        Loot(19, L.Phenix1, 8, (1, 1), ResourcePacket(Resources.ReincarnationToken(1)),
+             (Shield, Guard, Guard, Follet, Dirigeable, Drone, Drone)),
+        # -- reset
+        Loot(19, L.Phenix1, 8, (0, 2), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Shield, Sword, Follet, Follet, Spider, Spider, Drone)),
+        # -- reset
+        Loot(19, L.Phenix1, 8, (1, 3), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Arrow, Storm, Paladin, Maraudeur, Spider, Shield, Shield)),
+        Loot(19, L.Phenix1, 8, (0, 4), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Alchimist, Scout, Scout, Shotgun, Drone, Maraudeur, Maraudeur)),
+        #  -- reset
+        Loot(19, L.Phenix1, 8, (1, 5), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Lutin, Arrow, Knight, Sword, Follet, Guard, Guard)),
+        Loot(19, L.Phenix1, 8, (0, 6), ResourcePacket(), None),
+        # --- End test day 1 ---
+        # --- Test day 2 ---
+        Loot(19, L.Phenix1, 8, (0, 0), ResourcePacket(Resources.ReincarnationToken(4)),
+             (Maraudeur, Maraudeur, Hunter, DarkKnight, Archer, Mortar, Jetpack)),
+        #  -- reset
+        Loot(19, L.Phenix1, 8, (0, 2), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Maraudeur, Scout, LifeBoost, Berserk, Shotgun, Drone, Drone)),
+        #  -- reset
+        # --- End test day 2 ---
         ],
 
     GoldenChest: [
@@ -94,6 +213,26 @@ chest_opening_examples = {
              (Follet, Healer, Maraudeur, Guard, Guard, Maraudeur, Chariot)),
         Loot(8, L.Horse3, 6, 5, ResourcePacket(), (Hunter, Maraudeur, Arrow, Shield, Brute, Follet, Archer, Archer)),
         Loot(19, L.Phenix1, 8, (0, 1), ResourcePacket(Resources.ReincarnationToken(1)), (Hunter, Maraudeur, Maraudeur, Alchimist, Alchimist, AttackBoost, Scout, Healer)),
+        # --- Test day 1 ---
+        Loot(19, L.Phenix1, 8, (0, 0), ResourcePacket(Resources.ReincarnationToken(3)),
+             (Follet, Berserk, Ice, Arrow, Guard, LifeBoost, Alchimist, Scout)),
+        # -- reset
+        Loot(19, L.Phenix1, 8, (0, 1), ResourcePacket(Resources.ReincarnationToken(2)),
+             (Landmine, Charrette, Scout, Scout, Alchimist, Maraudeur, Maraudeur, Hunter)),
+        # -- reset
+        Loot(19, L.Phenix1, 8, (0, 2), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Scout, Scout, Follet, Berserk, Maraudeur, Maraudeur, Maraudeur, Maraudeur)),
+        #  -- reset
+        Loot(19, L.Phenix1, 8, (0, 3), ResourcePacket(Resources.ReincarnationToken(0)), (Hunter, Drone, Scout, Momie, Alchimist, Berserk, Guard, ModuleBoost)),
+        # --- End test day 1 ---
+        # --- Test day 2 ---
+        Loot(19, L.Phenix1, 8, (0, 0), ResourcePacket(Resources.ReincarnationToken(4)),
+             (Follet, Maraudeur, Hunter, Arrow, Shield, Shield, Shield, Lutin)),
+        #  -- reset
+        Loot(19, L.Phenix1, 8, (0, 1), ResourcePacket(Resources.ReincarnationToken(1)),
+             (Sword, Archer, Archer, Guard, Drone, Drone, Hunter, Arrow)),
+        #  -- reset
+        # --- End test day 2 ---
         ],
 
     RaidChest: [
