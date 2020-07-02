@@ -21,7 +21,7 @@ from typing import List, Type, Tuple
 from common.leagues import Rank
 from common.rarity import Rarity
 from common.resources import ResourcePacket, ResourceQuantity, Resources
-from spells.common_spell import AbstractSpell
+from spells.common_spell import Spell
 from units.base_units import MovableUnit
 
 
@@ -102,7 +102,7 @@ class RecycleChest(Chest):
         ]  # FIXME this should include heroes!!
     number_of_card = 5
     _average_loot = ResourcePacket(
-        ResourceQuantity(AbstractSpell, 3),
+        ResourceQuantity(Spell, 3),
         )
     _average_gold_base = 0.75
     _average_goods_base = 1.5

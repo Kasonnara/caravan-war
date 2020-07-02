@@ -20,10 +20,10 @@
 
 from common.card_categories import CONVOY_BOOSTS
 from common.rarity import Rarity
-from spells.common_spell import AbstractSpell
+from spells.common_spell import Spell
 
 
-class ConvoyBoost(AbstractSpell):
+class ConvoyBoost(Spell):
     def _effect_factor(self) -> float:
         assert self.level > 0, "Spell at level 0 aren't unlocked yet, you shouldn't need their _effect_factor yet"
         if self.rarity is Rarity.Common:

@@ -9,8 +9,8 @@ from typing import Type
 from buildings.buildings import *
 from buildings.headquarters import HQ
 from common.card_categories import CardCategories
-from spells.spells import *
-from spells.convoy_boosts import *
+from spells.defense_spells import *
+from spells.attack_spells import *
 from units.bandits import *
 from units.equipments import Weapon, Armor
 from units.guardians import *

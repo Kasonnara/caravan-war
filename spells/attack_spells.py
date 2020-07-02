@@ -19,36 +19,36 @@
 
 from common.card_categories import SPELLS
 from common.rarity import Rarity
-from spells.common_spell import AbstractSpell
+from spells.common_spell import Spell
 
 
-class Spell(AbstractSpell):
+class AmbushSpell(Spell):
     pass
 
 
-class Arrow(Spell):
+class Arrow(AmbushSpell):
     rarity = Rarity.Common
 
 
-class Landmine(Spell):
+class Landmine(AmbushSpell):
     rarity = Rarity.Common
 
 
-class Storm(Spell):
+class Storm(AmbushSpell):
     rarity = Rarity.Epic
 
 
-class Ice(Spell):
+class Ice(AmbushSpell):
     rarity = Rarity.Epic
 
 
-class Poison(Spell):
+class Poison(AmbushSpell):
     rarity = Rarity.Rare
 
 
-class Meteor(Spell):
+class Meteor(AmbushSpell):
     rarity = Rarity.Rare
 
 
 # Register all defined cards
-SPELLS.register_cards_in_module(Spell, __name__)
+SPELLS.register_cards_in_module(AmbushSpell, __name__)

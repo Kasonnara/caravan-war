@@ -23,7 +23,7 @@ from common.resources import resourcepackets_gold
 from utils.class_property import classproperty
 
 
-class AbstractSpell(Card):
+class Spell(Card):
     # TODO move gem and gold cost from rarity class to unit class, refactor to store_gem/gold_cost and return ResQty
     @classproperty
     def gem_cost(cls):

@@ -33,7 +33,7 @@ from economy.converters.abstract_converter import GainConverter, ConverterModeUI
 from economy.gains.abstract_gains import rank_param, Gain, MeasurementPeriod
 from economy.gains.daily_rewards import selected_heroes_param, BestTrading, Trading10Km, Trading100Km, Trading1000Km, \
     TransportStationProduction
-from spells.common_spell import AbstractSpell
+from spells.common_spell import Spell
 from units.base_units import MovableUnit
 from utils.ui_parameters import UIParameter
 
@@ -185,7 +185,7 @@ class CardUnpacker(GainConverter):
                 result = result + ResourcePacket(
                     ResourceQuantity(resource_type, -resource_quantity),
                     ResourceQuantity((MovableUnit, resource_type), card_count),
-                    ResourceQuantity((AbstractSpell, resource_type), spells_count),
+                    ResourceQuantity((Spell, resource_type), spells_count),
                     )
         return result
 

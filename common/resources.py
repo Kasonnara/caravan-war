@@ -144,6 +144,7 @@ class ResourceQuantity:
 
         from common.rarity import Rarity
         from common.cards import Card
+        from units.base_units import MovableUnit
         from economy.chests import Chest
         if isinstance(res_type, Rarity):
             return "Unspecified{}Card".format(res_type.name)
@@ -151,6 +152,8 @@ class ResourceQuantity:
             assert issubclass(res_type[0], Card)
             assert isinstance(res_type[1], Rarity)
             assert res_type[0].rarity is None, "When using (CardType, Rarity) type, that card type should be a category base class not a final unit class" # and thus .rarity shouldn't be defined yet
+            if res_type[0] is MovableUnit:
+                return "Unspecified{}{}".format(res_type[1].name, "Unit")  # Exception dispay MovableUnit as "Unit"
             return "Unspecified{}{}".format(res_type[1].name, res_type[0].__name__)
         else:
             assert isinstance(res_type, Type), "Invalid resource type, expected one of: Ressources enum, Rarity enum, unit Card, a tuple(Card category base class, rarity) or a Chest. But {} was found".format(type(res_type))
@@ -159,6 +162,8 @@ class ResourceQuantity:
             else:
                 assert issubclass(res_type, Card), "Invalid resource type, expected one of: Ressources enum, Rarity enum, unit Card, a tuple(Card category base class, rarity) or a Chest. But {} was found".format(res_type.__name__)
                 if res_type.rarity is None:
+                    if res_type is MovableUnit:  # Exception dispay MovableUnit as "Unit"  (FIXME:maybe cleaner with a display_text attribute on all Card subclass)
+                        return "UnspecifiedUnit"
                     return "Unspecified{}".format(res_type.__name__)
                 else:
                     return res_type.__name__

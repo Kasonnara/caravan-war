@@ -30,7 +30,7 @@ from economy.chests import ALL_CHESTS
 from economy.converters.abstract_converter import GainConverter
 from economy.gains import GAINS_DICTIONARY
 from economy.gains.abstract_gains import Gain
-from spells.common_spell import AbstractSpell
+from spells.common_spell import Spell
 from units.base_units import MovableUnit
 
 all_parameters = [ui_param
@@ -66,13 +66,13 @@ def update_income(selected_parameters) -> Dict[str, Dict[Union[Type[Gain], Type[
 RESOURCE_SORTING_MAP = {
     resource_type: order
     for order, resource_type in enumerate(
-        [native_resource_type for native_resource_type in Resources]    # Prioritize native resources in the order of the enum
+        [native_resource_type for native_resource_type in Resources]  # Prioritize native resources in the order of the enum
         + ALL_CHESTS
-        + [rarity_type for rarity_type in Rarity]                       # then unspecified rarity
-        + [(card_category.card_base_class, rarity_type) for rarity_type in Rarity for card_category in CardCategories]
-          + [(group_class, rarity_type) for rarity_type in Rarity for group_class in (AbstractSpell, MovableUnit)]  # then (category,rarity) tuples
+        + [rarity_type for rarity_type in Rarity]  # then unspecified rarity
+        + [(card_category.card_base_class, rarity_type) for card_category in CardCategories for rarity_type in Rarity]
+        + [(group_class, rarity_type) for group_class in (MovableUnit, Spell) for rarity_type in Rarity]  # then (category,rarity) tuples
         + [card_category.card_base_class for card_category in CardCategories]
-          + [AbstractSpell, MovableUnit]  # Then unspecified card categories
+        + [MovableUnit, Spell]  # Then unspecified card categories
         + [specific_card for card_category in CardCategories for specific_card in card_category]  # And finally very targeted card type
         )
     }

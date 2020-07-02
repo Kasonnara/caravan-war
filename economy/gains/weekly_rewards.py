@@ -33,8 +33,8 @@ from common.vip import VIP
 from economy.gains.daily_rewards import Lottery
 
 from economy.gains.abstract_gains import Gain, Days, rank_param
-from spells.convoy_boosts import ModuleBoost
-from spells.spells import Storm
+from spells.defense_spells import ModuleBoost
+from spells.attack_spells import Storm
 from units.bandits import Bandit
 from units.equipments import Equipment
 
