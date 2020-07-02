@@ -31,6 +31,7 @@ class Chest:
     _average_gold_base = None
     _average_goods_base = None
     _average_loot: ResourcePacket = None
+    max_reincarnation_token = None
 
     @classmethod
     def average_loot(cls, rank=Rank.NONE):
@@ -54,8 +55,9 @@ class WoodenChest(Chest):
     _average_loot = ResourcePacket(
         ResourceQuantity(Rarity.Rare, 2/35),
         ResourceQuantity(Rarity.Common, 4 + 33 / 35),
-        Resources.ReincarnationToken(1),
+        #Resources.ReincarnationToken(1),
         )
+    max_reincarnation_token = 3
 
 
 class IronChest(Chest):
@@ -63,8 +65,9 @@ class IronChest(Chest):
     _average_loot = ResourcePacket(
         ResourceQuantity(Rarity.Rare, number_of_card * (3/10)),
         ResourceQuantity(Rarity.Common, number_of_card * (7/10)),
-        Resources.ReincarnationToken(2),
+        # Resources.ReincarnationToken(2),
         )
+    max_reincarnation_token = 3
 
 
 class SilverChest(Chest):
@@ -74,8 +77,9 @@ class SilverChest(Chest):
         ResourceQuantity(Rarity.Epic, 18 / 100),
         ResourceQuantity(Rarity.Rare, 1 + (579/100) * (2/10)),
         ResourceQuantity(Rarity.Common, (579/100) * (8/10)),
-        Resources.ReincarnationToken(2.5),
+        # Resources.ReincarnationToken(2.5),
         )
+    max_reincarnation_token = 4
 
 
 class GoldenChest(Chest):
@@ -85,8 +89,9 @@ class GoldenChest(Chest):
         ResourceQuantity(Rarity.Epic, 42 / 100),
         ResourceQuantity(Rarity.Rare, 1 + (651 / 100) * (3 / 10)),
         ResourceQuantity(Rarity.Common, (651 / 100) * (7 / 10)),
-        Resources.ReincarnationToken(4),
+        # Resources.ReincarnationToken(4),
         )
+    max_reincarnation_token = 5
 
 
 class RecycleChest(Chest):

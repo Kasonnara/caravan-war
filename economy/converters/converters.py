@@ -147,6 +147,14 @@ class ChestOpening(GainConverter):
             if resource_packet[chest_type] > 0:
                 result = result + (chest_type.average_loot(rank=rank)
                                    + ResourceQuantity(chest_type, -1)) * resource_packet[chest_type]
+                # Workaround: to count the reincarnation token that are limited on a daily basis
+                #   seems ugly to compute that here, but i couldn't find a clean way to introduce this.
+                if chest_type.max_reincarnation_token is not None:
+                    result = result + R.ReincarnationToken(min(chest_type.max_reincarnation_token,
+                                                               2 * resource_packet[chest_type]))
+                # FIXME: BUG the daily limit only apply on current gain, so if multiple gains provide the same chests
+                #  the limit will be boggy... currently it isn't a problem, the only chest that can apear multiple times
+                #  is the recycle chest which doesn't provide tokens.
 
         return result
 
@@ -157,6 +165,33 @@ chest_opener_convert_mode_param = ConverterModeUIParameter(
     display_txt="Open Chests",
     )
 GainConverter.ALL.append(ChestOpening)
+
+
+class CardUnpacker(GainConverter):
+    # Workaround to enable recycling the Rarity types that also includes spells
+    # FIXME: it's a rough approximation, the ratio usually depend of the gain so ultimately we should
+    #  always do the separation from the beginning. And thus Rarity as types shouldn't mean to include spells.
+    SPELL_UNIT_RATIO = 0.1
+
+    @classmethod
+    def get_diff(cls, resource_packet: ResourcePacket, gain: Type[Gain] = None, **kwargs) -> ResourcePacket:
+        result = ResourcePacket()
+        for resource_type, resource_quantity in resource_packet.items():
+            # FIXME also include (Card, rarity) or ban it from VALID TYPES
+            if resource_type is Rarity.Common or resource_type is Rarity.Rare or resource_type is Rarity.Epic:
+                spells_count, card_count = cls.SPELL_UNIT_RATIO * resource_quantity, (1 - cls.SPELL_UNIT_RATIO) * resource_quantity
+
+                # Split between spells and Movable units
+                result = result + ResourcePacket(
+                    ResourceQuantity(resource_type, -resource_quantity),
+                    ResourceQuantity((MovableUnit, resource_type), card_count),
+                    ResourceQuantity((AbstractSpell, resource_type), spells_count),
+                    )
+        return result
+
+
+# DO not have an UIParameter mode yet as it is ALWAYS IN_PLACE mode
+GainConverter.ALL.append(CardUnpacker)
 
 
 recycle_target_type_param = UIParameter(
@@ -175,26 +210,13 @@ class Recycle(GainConverter):
         result = ResourcePacket()
         # Iterate over all the resource type of the input ResourcePacket
         for resource_type, resource_quantity in resource_packet.items():
-            # Workaround to enable recycling the Rarity types that also includes spells
-            if resource_type is Rarity.Common or resource_type is Rarity.Rare:  # FIXME also include (Card, rarity)
-                spells_count, card_count = 0.1 * resource_quantity, 0.9 * resource_quantity
-                # FIXME it's a rough approximation, the ratio usually depend of the gain so ultimately we should
-                #  always do the separation from the beginning Rarity as types shouldn't inclue spells
-                # Split between spells and Movable units
-                result = result + ResourcePacket(
-                    ResourceQuantity((AbstractSpell, resource_type), spells_count),
-                    ResourceQuantity((MovableUnit, resource_type), card_count),
-                    ResourceQuantity(resource_type, -resource_quantity),
-                    )
-                # Alter the iteration parameters to take the change into account
-                resource_type, resource_quantity = ((MovableUnit, resource_type), card_count)
-
             # Iterate over all the resource type we want to recycle
             for targeted_types, sacrifice_score in recycle_target_type:
                 # Check if the resources types are compatible
                 if ResourceQuantity.compatible_types(targeted_types, resource_type):
                     chest_quantity = resource_quantity * sacrifice_score / RecycleChest.required_sacrifice
-                    if chest_quantity > 0:
+                    #if chest_quantity > 0:
+                    if True:  # FIXME, as long as the the negative value bug exist and IN_PLACE mode is forbidden, we also must accept negative values
                         # Check if the chest opener converter is enabled, if yes we must do the conversion because
                         # this converter is processed after the chest opener.
                         if chest_opener_convert_mode_param is ConverterModeUIParameter.ConversionMode.DISABLED:
@@ -207,6 +229,9 @@ class Recycle(GainConverter):
 
 recycle_convert_mode_param = ConverterModeUIParameter(
     Recycle,
+    value_range=[ConverterModeUIParameter.ConversionMode.DISABLED, ConverterModeUIParameter.ConversionMode.EXTERNAL],
+    # FIXME: WORKAROUND, converters currently badly behave with negative values in IN_PLACE mode
+    #  (see AbstractConverter.apply_all for more details) so as long as this bug exists IN_PLACE mode is forbidden.
     display_txt="Recycle cards",
     )
 GainConverter.ALL.append(Recycle)

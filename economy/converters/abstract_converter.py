@@ -91,6 +91,21 @@ class GainConverter:
         :param ui_parameters: Dict[str, Any] the values of the UIParameter forwarded to the converters.
         :param converters: List[Type['GainConverter']], the converter to apply (default to cls.ALL_CONVERTERS).
         """
+        # FIXME: converters badly behave with consumed negative values, at best they ignore them, at worst as they do
+        #    not have an overall vue, they remove all positive values of a certain type which already has negative
+        #    values. They cant simply apply negatively to this negative gains (at least not in IN_PLACE mode), but
+        #    ignoring them make the converters convert more that what is allowed.
+        #    To solve that the converter should have know before hand how many it can convert in total including the
+        #    negative values in order to consume a little less on any other positive value.
+        #    This can be done with the current structure... As a workaround we can fill a precomputed 'total' dict that
+        #    indicate the amount of positive and negative values to anticipate but it's not pretty.
+        #    A cleaner way would probably need to ask converter to apply to the entire diction at once insted of gain by
+        #    gain. This need a certain quantity of rework and probably abandon the level of code factorization we now
+        #    have...
+        #    [As a quick fix I only forbid the Recycle converter to work in IN_PLACE mode which is the only one which
+        #    currently makes ths problem to apear in practice]
+
+
         converters = converters or cls.ALL
         # Init the result dict
         #   init keys for the converter configured in EXTERNAL mode
@@ -103,7 +118,7 @@ class GainConverter:
         # Apply each converter
         for converter in converters:
             converter_mode = ui_parameters.get(converter.mode_parameter_name,
-                                               ConverterModeUIParameter.ConversionMode.DISABLED)
+                                               ConverterModeUIParameter.ConversionMode.IN_PLACE)
             if converter_mode is ConverterModeUIParameter.ConversionMode.DISABLED:
                 pass
             else:
