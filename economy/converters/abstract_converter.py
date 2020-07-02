@@ -109,6 +109,9 @@ class GainConverter:
             else:
                 for gain_category in resources_dict:
                     for gain in resources_dict[gain_category]:
+                        if gain == converter:
+                            # Avoid applying a converter to it's own results, it makes no sense
+                            continue
                         # if in place mode keep the same gain key, else take the converter key
                         if converter_mode is ConverterModeUIParameter.ConversionMode.IN_PLACE:
                             target_category, target_key = gain_category, gain
