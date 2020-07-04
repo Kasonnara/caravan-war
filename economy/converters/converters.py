@@ -141,7 +141,8 @@ GainConverter.ALL.append(DefenseLost)
 class ChestOpening(GainConverter):
 
     @classmethod
-    def get_diff(cls, resource_packet: ResourcePacket, gain: Type[Gain] = None, rank=Rank.NONE, **kwargs) -> ResourcePacket:
+    def get_diff(cls, resource_packet: ResourcePacket, gain: Type[Gain] = None, rank=Rank.NONE,
+                 mesurement_range=MeasurementPeriod.DAY, **kwargs) -> ResourcePacket:
         result = ResourcePacket()
         for chest_type in ALL_CHESTS:
             if resource_packet[chest_type] > 0:
@@ -150,7 +151,7 @@ class ChestOpening(GainConverter):
                 # Workaround: to count the reincarnation token that are limited on a daily basis
                 #   seems ugly to compute that here, but i couldn't find a clean way to introduce this.
                 if chest_type.max_reincarnation_token is not None:
-                    result = result + R.ReincarnationToken(min(chest_type.max_reincarnation_token,
+                    result = result + R.ReincarnationToken(min(chest_type.max_reincarnation_token * mesurement_range.value,
                                                                2 * resource_packet[chest_type]))
                 # FIXME: BUG the daily limit only apply on current gain, so if multiple gains provide the same chests
                 #  the limit will be boggy... currently it isn't a problem, the only chest that can apear multiple times
