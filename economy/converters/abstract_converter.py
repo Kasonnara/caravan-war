@@ -19,7 +19,7 @@
 from abc import abstractmethod
 
 from enum import Enum
-from typing import List, Union, Type, Iterable, Optional, Dict, Any
+from typing import List, Union, Type, Iterable, Optional, Dict, Any, Callable
 
 from common.resources import ResourcePacket
 from economy.gains import Gain
@@ -42,9 +42,10 @@ class ConverterModeUIParameter(UIParameter):
     def __init__(self, converter_class: Type['GainConverter'], value_range: Iterable[ConversionMode] = ConversionMode,
                  display_range: Iterable[str] = None,
                  default_value: Union[ConversionMode, int] = 0,
-                 display_txt: Optional[str] = None, dependencies: Iterable['UIParameter'] = ()):
+                 display_txt: Optional[str] = None,
+                 update_callback: Callable = None, dependencies: Iterable['UIParameter'] = None):
         super().__init__(converter_class.mode_parameter_name, value_range, display_range or [mode.value for mode in value_range], default_value,
-                         (display_txt or (converter_class.__name__ + " conversion")), dependencies)
+                         (display_txt or (converter_class.__name__ + " conversion")), update_callback, dependencies)
 
 
 class GainConverter:

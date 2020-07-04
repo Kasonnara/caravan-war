@@ -71,6 +71,46 @@ header = html.Div(
     )
 
 
+def get_parameter_selector_id(parameter: UIParameter):
+    """
+    Return the html id of the UIParameter's selector
+
+    Used to define dash callbacks triggered by a change of the selector value
+
+    :param parameter: UIParameter, the
+    :return: str
+    """
+    return parameter.parameter_name + "_selector"
+
+
+def get_parameter_selector_value_attibute(parameter: UIParameter):
+    """
+    For the given UIParameter's selector, return the name of the attribute to use as value.
+
+    Used to define dash callbacks triggered by a change of the selector value
+
+    :param parameter: UIParameter, the
+    :return: str
+    """
+    return 'value' if parameter.value_range is not bool else 'checked'
+
+
+def generate_dropdown_options(parameter: UIParameter):
+    assert isinstance(parameter.value_range, tuple)
+    return [{'label': txt, 'value': str(i)}
+            for i, txt in enumerate(parameter.display_range)
+            ]
+
+
+def get_parameter_value(parameter: UIParameter, raw_value):
+    if parameter.value_range is bool:
+        return bool(raw_value)
+    elif parameter.value_range is int:
+        return int(raw_value)
+    else:
+        return parameter.value_range[min(len(parameter.value_range)-1, int(raw_value))]
+
+
 def build_parameter_selector(parameter: UIParameter):
     """
     Generate a bootstrap row containing a title label and a selector for the given SimulationParameter
@@ -84,6 +124,7 @@ def build_parameter_selector(parameter: UIParameter):
     :return: bcc.Row:  a Dash Bootstrap Row
     """
 
+    parameter_selector_id = get_parameter_selector_id(parameter)
     # Generate the interactive selector component that best fit the UI parameter type
     if parameter.value_range is int:
         # An input textbox for integers parameter
@@ -92,7 +133,7 @@ def build_parameter_selector(parameter: UIParameter):
             type="number",
             value=parameter.default_value_index,
             className="col-sm-{}".format(bootstrap_cols[1]),
-            id=parameter.parameter_name + "_selector",
+            id=parameter_selector_id,
             persistence=True,
             )
     elif parameter.value_range is bool:
@@ -101,7 +142,7 @@ def build_parameter_selector(parameter: UIParameter):
         selector = dbc.Checkbox(
             checked=parameter.default_value_index,
             className="col-sm-{}".format(bootstrap_cols[1]),
-            id=parameter.parameter_name+"_selector",
+            id=parameter_selector_id,
             persistence=True,
             )
     elif isinstance(parameter.value_range, tuple):
@@ -110,21 +151,35 @@ def build_parameter_selector(parameter: UIParameter):
         bootstrap_cols = LABEL_SETTING_BOOTSTRAP_COL["default"]
         selector = html.Div([
             dcc.Dropdown(
-                options=[{'label': txt, 'value': str(i)}
-                         for i, txt in enumerate(parameter.display_range)
-                         ],
+                options=generate_dropdown_options(parameter),
                 value=str(parameter.default_value_index),
                 clearable=False,
-                id=parameter.parameter_name+"_selector",
+                id=parameter_selector_id,
                 persistence=True,
                 )],
             className="col-sm-{}".format(bootstrap_cols[1]),
             )
+        # Setup the selector update callback if this parameter have dependencies
+        if parameter.dependencies is not None:
+            @app.callback(
+                [Output(parameter_selector_id, 'options')],
+                [Input(get_parameter_selector_id(parent_parameter),
+                       get_parameter_selector_value_attibute(parent_parameter))
+                 for parent_parameter in parameter.dependencies],
+                )
+            def update_dropdown_selector(*dependencies_raw_values):
+                # Get the values of the parent parameter
+                dependencies_values = [get_parameter_value(parent_parameter, raw_value)
+                                       for parent_parameter, raw_value in zip(parameter.dependencies, dependencies_raw_values)]
+                # Update the UIParameter attributes
+                parameter.update(dependencies_values)
+                # Re-generate the dropdown options
+                return [generate_dropdown_options(parameter)]
     else:
         raise NotImplementedError("Cannot generate a selector for {} UIParameter of type {}".format(parameter.display_txt, type(parameter.value_range)))
 
     # Register the persistent element
-    persistent_components_ids.append(parameter.parameter_name + "_selector")
+    persistent_components_ids.append(parameter_selector_id)
 
     # Generate a title label
     label = html.Label(
@@ -200,18 +255,25 @@ app.layout = html.Div(children=[
 @app.callback(
     [Output(graph.component_id, graph.target_attribute)
      for graph in graphs_to_update],
-    [Input(ui_param.parameter_name + "_selector", 'value' if ui_param.value_range is not bool else 'checked')
+    [Input(get_parameter_selector_id(ui_param),
+           get_parameter_selector_value_attibute(ui_param))
      for ui_param in all_parameters],
     )
-def update_simulation(*simulation_parameter):
+def update_simulation(*ui_parameters_raw_values):
     """
     Main call back that update every graph as soon as any parameter changes
-    :param simulation_parameter:
+    :param ui_parameters_raw_values:
     :param weekly: bool
     :return: the new data for every graphs
     """
-    # Get the new resources
-    incomes = update_income(simulation_parameter)
+    # Generate the parameter value dict
+    # TODO add category filtering
+    ui_parameter_values = {
+        ui_parameter.parameter_name: get_parameter_value(ui_parameter, raw_value)
+        for ui_parameter, raw_value in zip(all_parameters, ui_parameters_raw_values)
+        }
+    # Get the new resources incomes
+    incomes = update_income(ui_parameter_values)
     return [graph.update_func(incomes) for graph in graphs_to_update]
 
 

@@ -32,7 +32,8 @@ class UIParameter:
                  display_range: Optional[Iterable[str]] = None,
                  default_value: Union[T, int] = 0,
                  display_txt: Optional[str] = None,
-                 dependencies: Iterable['UIParameter'] = (),
+                 update_callback: Callable = None,
+                 dependencies: Iterable['UIParameter'] = None,
                  ):
         """
         :param parameter_name: str, the name of the parameter. This is used as key in the parameter dictionary.
@@ -45,6 +46,8 @@ class UIParameter:
         :param display_txt: An optional string used by the UI to display this parameter. If omitted, a display name will
             be generated from parameter_name.
         :param default_value: The default value of the parameter or it's index in value_range.
+        :param update_callback: Callable(**kwargs) -> (List,List), a function that take all other uiparameter values in input and return the
+            new value range and and display range to use after at least one of the dependencies changed
         :param dependencies: The list other parameters this parameter depends on, if they change a callback is
             triggered. (Not implemented yet)
         """
@@ -72,4 +75,14 @@ class UIParameter:
             else self.value_range.index(default_value)
         )
         """The index of the value selected by default"""
-        self.dependencies = dependencies
+
+        assert (update_callback is None) == (dependencies is None), "If update_callback or dependencies is set, both must be set"
+        assert (update_callback is None) or isinstance(value_range, collections.abc.Iterable), "Only List type UIParmaeter can be dynamically updated"
+
+        self._update_callback_function: Optional[Callable] = update_callback
+        self.dependencies: Optional[List[UIParameter]] = dependencies
+
+    def update(self, dependencie_values: list):
+        """Callback to use to update the UIParameter attributes when values of one of its dependencies change"""
+        assert self._update_callback_function is not None
+        self.value_range, self.display_range = (tuple(r) for r in self._update_callback_function(*dependencie_values))

@@ -71,7 +71,7 @@
   - [X] Piechart and Barplot graphs
   - [X] Converters
     - [ ] unspecified unit packing/unpacking converter
-  - [ ] Parameters dependencies callbacks
+  - [X] Parameters dependencies callbacks
   - [ ] Extend with a growth simulator
   - [ ] Add custom growth strategies
   - [ ] Add contact and github source links

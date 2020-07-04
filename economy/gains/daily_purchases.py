@@ -26,7 +26,7 @@ from common.resources import ResourcePacket, ResourceQuantity
 from common.resources import Resources as R
 from common.vip import VIP
 
-from economy.gains.abstract_gains import Gain
+from economy.gains.abstract_gains import Gain, vip_param
 
 # TODO: daily shop
 from units.bandits import Bandit
@@ -34,11 +34,20 @@ from units.equipments import Equipment
 from utils.ui_parameters import UIParameter
 
 
+def update_craft_number_range(vip: VIP):
+    return (
+        [None] + list(range(vip.equipment_building_limit + 1)),
+        ["Auto (Max)"] + [str(x) for x in range(vip.equipment_building_limit + 1)],
+    )
+
+
 equipment_craft_number_param = UIParameter(
     'equipment_craft_number',
-    list(range(12))+ [None],
-    display_range=[str(x) for x in range(12)] + ["Auto (Max)"],
+    update_craft_number_range(VIP.lvl0)[0],
+    display_range=update_craft_number_range(VIP.lvl0)[1],
     display_txt="Equipment forging",
+    update_callback=update_craft_number_range,
+    dependencies=[vip_param]
     )
 
 

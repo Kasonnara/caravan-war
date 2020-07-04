@@ -20,6 +20,7 @@
 """
 List gains that obtainable on a daily basis
 """
+import functools
 import math
 from typing import Optional, Type
 
@@ -31,7 +32,7 @@ from common.resources import ResourcePacket, ResourceQuantity, hero_pair_combina
 from common.resources import Resources as R
 from common.vip import VIP
 from economy.chests import WoodenChest, IronChest, SilverChest, GoldenChest, Chest, RaidChest
-from economy.gains.abstract_gains import Gain, rank_param, vip_param, Days
+from economy.gains.abstract_gains import Gain, rank_param, vip_param, Days, hq_param
 from units.bandits import Bandit
 from units.guardians import Guardian
 from utils.ui_parameters import UIParameter
@@ -102,12 +103,28 @@ class Trading10Km(Trading):
         return super().daily_income(daily_trading_count=daily_10km_trading_count, **kwargs)
 
 
+def update_tradings_parameter(num_trading_per_reset: int, vip: VIP):
+    max_trading_cycle = (1 + vip.traiding_quota_free_reset + 3)
+    return (
+        list(range(1 + num_trading_per_reset * max_trading_cycle)),
+        ['0'] + ["{} {}".format(
+            num_reset * num_trading_per_reset + x + 1,
+            "" if num_reset == 0 else ("(free reset)" if num_reset <= vip.traiding_quota_free_reset
+                                       else "({} reset)".format(num_reset - vip.traiding_quota_free_reset))
+            )
+         for num_reset in range(max_trading_cycle) for x in range(num_trading_per_reset)]
+        )
+
+
+values_range_100km, dispaly_range_100km = update_tradings_parameter(3, VIP.lvl0)
 daily_100km_trading_count_param = UIParameter(
     'daily_100km_trading_count',
-    list(range(3 * 5)),
-    display_range=[(str(x) if x <= 3 else "{} ({} reset)".format(x, (x-1)//3)) for x in range(3 * 5)],
+    values_range_100km,
+    display_range=dispaly_range_100km,
     display_txt="100km trading count",
     default_value=9,
+    update_callback=functools.partial(update_tradings_parameter, 3),
+    dependencies=[vip_param],
     )
 
 
@@ -123,12 +140,15 @@ class Trading100Km(Trading):
         return super().daily_income(daily_trading_count=daily_100km_trading_count, **kwargs)
 
 
+values_range_1000km, dispaly_range_1000km = update_tradings_parameter(2, VIP.lvl0)
 daily_1000km_trading_count_param = UIParameter(
     'daily_1000km_trading_count',
-    list(range(2 * 5)),
-    display_range=[(str(x) if x <= 2 else "{} ({} reset)".format(x, (x-1)//2)) for x in range(2 * 5)],
+    values_range_1000km,
+    display_range=dispaly_range_1000km,
     display_txt="1000km trading count",
     default_value=6,
+    update_callback=functools.partial(update_tradings_parameter, 2),
+    dependencies=[vip_param],
     )
 
 
@@ -144,12 +164,15 @@ class Trading1000Km(Trading):
         return super().daily_income(daily_trading_count=daily_1000km_trading_count, **kwargs)
 
 
+values_range_best_exchange, dispaly_range_best_exchange = update_tradings_parameter(1, VIP.lvl0)
 daily_best_trading_count_param = UIParameter(
     'daily_best_trading_count',
-    list(range(1 * 5)),
-    display_range=[(str(x) if x <= 1 else "{} ({} reset)".format(x, x - 1)) for x in range(1 * 5)],
+    values_range_best_exchange,
+    display_range=dispaly_range_best_exchange,
     display_txt="Best trading count",
     default_value=3,
+    update_callback=functools.partial(update_tradings_parameter, 1),
+    dependencies=[vip_param],
     )
 
 
@@ -215,11 +238,23 @@ class Lottery(Gain):
         return ResourcePacket(R.LotteryTicket(3))
 
 
+def update_buidlding_level_param(building_difference_with_hq, hq_lvl):
+    return (
+        [None] + list(range(1, hq_lvl - building_difference_with_hq + 1)),
+        ["Auto (Max)".format()] + ["{} {}".format(lvl, "(HQ {})".format(lvl + building_difference_with_hq)
+                                                       if building_difference_with_hq else "")
+         for lvl in range(1, hq_lvl - building_difference_with_hq + 1)],
+        )
+
+
+mill_value_range, mill_display_range = update_buidlding_level_param(0, 30)
 mill_lvl_param = UIParameter(
     'mill_lvl',
-    list(range(1, 31)) + [None],
-    display_range=[str(lvl) for lvl in range(1, 31)] + ["Auto (= HQ level)"],
+    mill_value_range,
+    display_range=mill_display_range,
     default_value=None,
+    update_callback=functools.partial(update_buidlding_level_param, 0),
+    dependencies=[hq_param],
     )
 
 
@@ -247,11 +282,14 @@ class MillProduction(Gain):
         return income
 
 
+station_value_range, station_display_range = update_buidlding_level_param(0, 30)
 station_lvl_param = UIParameter(
     'station_lvl',
-    list(range(1, 31)) + [None],
-    display_range=[str(lvl) for lvl in range(1, 31)] + ["Auto (= HQ level)"],
+    station_value_range,
+    display_range=station_display_range,
     default_value=None,
+    update_callback=functools.partial(update_buidlding_level_param, 0),
+    dependencies=[hq_param],
     )
 
 
@@ -326,11 +364,15 @@ ambush_won_param = UIParameter(
     default_value=20,
     )
 
+
+temple_value_range, temple_display_range = update_buidlding_level_param(6, 30)
 temple_lvl_param = UIParameter(
     'temple_lvl',
-    list(range(1, 24)) + [None],
-    display_range=["{} (HQ {})".format(lvl, lvl + 6) for lvl in range(1, 24)] + ["Auto (= HQ level)"],
+    temple_value_range,
+    display_range=temple_display_range,
     default_value=None,
+    update_callback=functools.partial(update_buidlding_level_param, 6),
+    dependencies=[hq_param],
     )
 
 average_trophy_param = UIParameter(

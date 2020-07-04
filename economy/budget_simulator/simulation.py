@@ -38,27 +38,17 @@ all_parameters = [ui_param
                   for ui_param in BUDGET_SIMULATION_PARAMETERS[category]]
 
 
-def update_income(selected_parameters) -> Dict[str, Dict[Union[Type[Gain], Type['GainConverter']], ResourcePacket]]:
-    assert len(selected_parameters) == len(all_parameters)
-
-    # Generate the parameter value dict
-    # TODO add category filtering
-    ui_parameter_values = {
-        ui_parameter.parameter_name: (bool(raw_value) if ui_parameter.value_range is bool
-                                      else (int(raw_value) if ui_parameter.value_range is int
-                                      else ui_parameter.value_range[int(raw_value)]))
-        for ui_parameter, raw_value in zip(all_parameters, selected_parameters)
-        }
+def update_income(ui_parameters_values: dict) -> Dict[str, Dict[Union[Type[Gain], Type['GainConverter']], ResourcePacket]]:
     # Recompute all gains
     incomes = {
         gain_category: {
-            gain: gain.average_income(**ui_parameter_values)
+            gain: gain.average_income(**ui_parameters_values)
             for gain in GAINS_DICTIONARY[gain_category]
             }
         for gain_category in GAINS_DICTIONARY
         }
     # Apply converters
-    GainConverter.apply_all(incomes, ui_parameter_values)
+    GainConverter.apply_all(incomes, ui_parameters_values)
 
     return incomes
 
