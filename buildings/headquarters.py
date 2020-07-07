@@ -98,6 +98,7 @@ class HQ(Building):
         ('HQ', "Mill", "Camp", "WorkShop"),
         ('HQ', "TransportStation", "Weaponsmith", "Garage"),
         ('HQ', "Tavern", "Academy", "WorkShop"),  # level 19 -> 20
+        ('HQ', "Tavern", "Academy", "WorkShop"),
         ('HQ', "Mill", "Weaponsmith", "Camp"),
         ('HQ', "TransportStation", "Laboratory", "Tavern"),
         ('HQ', "Camp", "Mill", "WorkShop"),
@@ -107,7 +108,7 @@ class HQ(Building):
         ('HQ', "TransportStation", "Laboratory", "Tavern"),
         ('HQ', "WorkShop", "TransportStation", "Garage"),
         ('HQ', "Camp", "Weaponsmith", "Laboratory"),
-        ('HQ', "Academy", "TransportStation", "Mill"),
+        ##('HQ', "Academy", "TransportStation", "Mill"),
         ]
     """List the buildings needed for upgrading the HQ. Here requirements are stored as strings, you will probably
     be more interested in the attribute <upgrade_requirements> which is the same but with classes instead."""
