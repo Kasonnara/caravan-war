@@ -306,7 +306,7 @@ class Griffon(Guardian):
     armor = 3
     armor_piercing = 0
     cost = 4
-    esquive_rate = 0.2
+    esquive_rate = 0.8
     move_speed = 1.8
     bossfight_cost = None
     rarity = Rarity.Epic
