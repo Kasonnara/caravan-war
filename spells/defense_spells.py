@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+ #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 # This is a personal project to understand and improve my knowledge/tactics in the game Caravan War.
@@ -18,58 +18,57 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
+from common.alignment import Alignment
 from common.card_categories import CONVOY_BOOSTS
 from common.rarity import Rarity
 from spells.common_spell import Spell
+from units.vehicles import Vehicle
+from units.modules import ModuleWeapon
 
 
 class ConvoyBoost(Spell):
+    alignment = Alignment.DEFENDER
     def _effect_factor(self) -> float:
         assert self.level > 0, "Spell at level 0 aren't unlocked yet, you shouldn't need their _effect_factor yet"
+
         if self.rarity is Rarity.Common:
             return 1.038 + 0.002 * self.level
         elif self.rarity is Rarity.Rare:
-            return 1.077 + 0.003 * self.level  # FIXME: expression is not exact at all levels
+            if self.level <= 15:
+                return 1.077 + 0.003 * self.level
+            else:
+                return 1.092 + 0.002 * self.level
         elif self.rarity is Rarity.Epic:
-            return 1.1 + 0.005 * self.level
+            if self.level <= 15:
+                return 1.1 + 0.005 * self.level
+            else:
+                return 1.175 + 0.003 * self.level
 
 
 class AttackSpeedBoost(ConvoyBoost):
-    boost = 8
     rarity = Rarity.Rare
-    # upgrade cost : 11->12=407000, 12->13=711000, 14=1255000
-    # speed_factor lvl 13 = 11.6
 
 
 class AttackBoost(ConvoyBoost):
-    boost = 4
     rarity = Rarity.Common
-    # atk_factor lvl 11=1.06, 12=1.065
 
 
 class LifeBoost(ConvoyBoost):
-    boost = 4
     rarity = Rarity.Common
-    # life_factor lvl 11=1.06, 12=1.065
 
 
 class SpeedBoost(ConvoyBoost):
-    boost = 8
     rarity = Rarity.Rare
-    # upgrade cost : 12->13=711000, 14=1255000
-    # speed_factor lvl 13 = 11.6
 
 
 class VehicleArmor(ConvoyBoost):
-    boost = 15
     rarity = Rarity.Epic
-    # hp_boost 11=1.2, 12=1.205
+    apply_to = Vehicle
 
 
 class ModuleBoost(ConvoyBoost):
-    boost = 15
     rarity = Rarity.Epic
-    # damage_boost 11=1.2, 12=1.205
+    apply_to = ModuleWeapon
 
 
 # Register all defined cards

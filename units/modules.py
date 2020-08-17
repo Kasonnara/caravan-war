@@ -18,6 +18,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from buildings.buildings import Weaponsmith
+from common.alignment import Alignment
 from common.card_categories import MODULES
 from common.rarity import Rarity
 from common.resources import resourcepackets_gold
@@ -29,6 +30,7 @@ from units.towers import Tower
 class ModuleWeapon(BaseUnit):
     base_building = Weaponsmith
     cost = 1
+    alignment = Alignment.DEFENDER
 
     def __init__(self, level: int, stars=0):
         super().__init__(level, stars, None)

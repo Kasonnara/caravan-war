@@ -20,6 +20,7 @@
 from typing import Union, List, Optional
 
 from buildings.buildings import WorkShop
+from common.alignment import Alignment
 from common.card_categories import TOWERS
 from common.resources import resourcepackets_gold
 from units.heroes import Hero
@@ -30,6 +31,7 @@ from units.base_units import BaseUnit, AOE, Heal, MovableUnit, FakeMovableUnit
 
 class Tower(BaseUnit):
     base_building = WorkShop
+    alignment = Alignment.ATTACKER
     parent_tower = None
     _cost = None
 

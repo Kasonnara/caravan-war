@@ -18,6 +18,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from buildings.buildings import Garage
+from common.alignment import Alignment
 from common.card_categories import VEHICLES
 from common.rarity import Rarity
 from common.resources import resourcepackets_gold
@@ -27,6 +28,7 @@ from common.target_types import TargetType
 
 class Vehicle(MovableUnit):
     base_building = Garage
+    alignment = Alignment.DEFENDER
     move_speed = 1.2
     weapon_slot = 1
 
