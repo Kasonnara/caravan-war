@@ -30,13 +30,19 @@ MAX_LEVEL = 30
 
 
 class Upgradable:
+    """This top class define the upgrade logic at the core of most units.
+
+    Note: in documentation when I say "units" or "cards" I often mean to refer to this class (which includes buildings
+    and spells as well as classes of the units package) because using the more accurate Upgradable would sounds weird"""
     upgrade_costs: List[ResourcePacket] = []
     # FIXME: fill <get_upgrade> for all unit and all level, or find an approximation formula
     #        to predict it (cf economy/analyse_costs.py)
     base_building: 'Type[Building]' = None
+    """The building that must be built/upgraded to unlock/upgrade this unit"""
     base_building_level = 1
+    """Level of the base building required before unlocking this unit"""
     sub_levels_per_level = 1
-    """Number of upgradable level per basebuilding level (Specific to heroes)"""
+    """Number of upgradable level per base building level (Specific to heroes)"""
 
     # Following parameter will be later defined for category base classes by the register_card_in_module call
     category: str = None
@@ -175,6 +181,8 @@ class Upgradable:
 
 
 class Card(Upgradable):
+    """Any collectible battle elements (Bandits, Guardians, Vehicles, Modules, Towers, Heroes and Spells)
+    only exclude buildings."""
     rarity: Rarity = None
 
     def __init__(self, level=1):

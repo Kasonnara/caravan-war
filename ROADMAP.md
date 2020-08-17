@@ -58,9 +58,9 @@
 - find predictive formulas for:
     - [X] upgrade costs
     - [X] each weekly gain / cost
-- [ ] Enumerate and estimate all possible daily costs / revenues
+- [X] Enumerate and estimate all possible daily costs / revenues
     - [X] Exchanges
-    - [ ] chests
+    - [X] chests
     - [X] wish temple
 
 ### Budget Simulator
@@ -82,7 +82,8 @@
 - Ergonomics
   - [X] Configuration persistence
   - [ ] tooltips bubble on every component
-  - [ ] FR translation
+  - [ ] Add a notification when something go wrong and raise an issue
+  - [ ] FR translation (Work in progress)
   - [ ] Highlight what elements currently focused parameter will modify
   - [ ] Add a loading widget when processing
   - [ ] Improve/equalize overall design
@@ -98,10 +99,11 @@
   - [X] Allow disabling persistence
   - [ ] 13 month cookie storage limitation
   - [ ] Allow re-accessing this disclaimer
+  - [ ] Ask for images copyright
   - [ ] Check everything is ok
 - Bugs
   - [X] Gains and resources order is messed up
-  - [ ] Including positive and negative value in a pie chart mess the total sum (instead implement a double pie chart component)
+  - [ ] Including positive and negative value in a pie chart mess the total sum (instead implement a double pie chart component)
 
 ## Automatic data gathering
 

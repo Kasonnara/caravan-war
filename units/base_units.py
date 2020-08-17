@@ -45,22 +45,34 @@ class COE(AOE):
 
 class BaseUnit(Card):
     attack_base = None
+    """Damage value (at level 1)"""
     hit_frequency: int = None
+    """Hit frequency"""
     range: int = None
+    """Attack reach range"""
     shoot_to: TargetType = None
+    """Types of movable unit this unit can shoot to"""
     armor_piercing: int = None
+    """Armor piercing value"""
     cost: int = None  # TODO: Refactor this attribute which is ambiguous (slot_cost? use_cost? army_cost?)
+    """Cost value (exact meaning may vary from a unit type to another, but it's used to compute fair scores 
+    between small and big units)"""
     multiple_target_limit = 1
     """Maximum number of simultaneous target"""
     can_miss = True
     """If false the unit is not affected by evasion abilities (deamon slayer, fire tower, etc)"""
 
     level_grow_factor = 1.15
+    """Damage and heath exponential increase factor earned with each unit level"""
     star_factor = .05
+    """Damage and heath linear increase earned with each unit star"""
 
     consecutive_hit_attack_boost = 0.
-    """Damage boost """
+    """Damage boost with consecutive attack combo on the same target 
+    (0.0 means no increase; 0.1 means +10% damage increase of base damage each time)"""
     max_consecutive_boost = 1.
+    """Maximum damage boost obtainable with combo on the same target 
+    (1.0 means normal damage; 2.0 mean double damages)"""
 
     def __init__(self, level: int, stars=0, weapon: Weapon=None):
         super().__init__(level)
@@ -147,12 +159,21 @@ class BaseUnit(Card):
 
 class MovableUnit(BaseUnit):
     hp_base = None
+    """Heath value (at level 1)"""
     shooted_as: TargetType = None
+    """Basically is this unit flying or not"""
     armor: int = None
+    """Armor value"""
     move_speed: float = None
+    """Moving speed"""
     esquive_rate = 1
+    """The accuracy factor of an attacker shooting at this unit.  
+    (1 means attacker will never miss, 0.5 means they will miss one attack every two shots)
+    (assert 0 < esquive_rate <= 1)"""
     is_summoned = False
+    """Is this unit subject to invoked units penalties"""
     is_immune_to_effect = False
+    """Is this unit immune to all indirect effects or penalties"""
 
     def __init__(self, level: int, stars=0, weapon_item: Weapon = None, armor_item: Armor = None):
         super().__init__(level, stars, weapon_item)
@@ -311,14 +332,16 @@ class Summon:
 
 def reincarnation(cls: Type[BaseUnit]):
     assert cls.rarity is Rarity.Epic, "Only Epic card can be reincarned"
+    # Define new unit stats increased by 10%
     cls.attack_base = (cls.__base__.attack_base * 1.1 if cls.__base__.attack_base is not None else None)
-
+    # In practice no reborn unit have attack_base set to None
     if issubclass(cls, MovableUnit):
         cls.hp_base = cls.__base__.hp_base * 1.1
-
+        # In practice all reborn units are MovableUnit subclasses
     if issubclass(cls, Summon):
         cls.summon_hp_base = cls.__base__.summon_hp_base * 1.1
         cls.summon_attack_base = cls.__base__.summon_attack_base * 1.1
 
+    # Set new unit rarity
     cls.rarity = Rarity.Legendary
     return cls
