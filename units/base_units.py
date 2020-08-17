@@ -62,9 +62,9 @@ class BaseUnit(Card):
     can_miss = True
     """If false the unit is not affected by evasion abilities (deamon slayer, fire tower, etc)"""
 
-    level_grow_factor = 1.15
+    LEVEL_GROW_FACTOR = 1.15
     """Damage and heath exponential increase factor earned with each unit level"""
-    star_factor = .05
+    STAR_GROW_INCREASE = .05
     """Damage and heath linear increase earned with each unit star"""
 
     consecutive_hit_attack_boost = 0.
@@ -87,10 +87,10 @@ class BaseUnit(Card):
         if self.attack_base is None:
             return None
         return round(
-            self.attack_base                            # base stat
-            * self.level_grow_factor ** (self.level-1)  # exponential grows with level
-            * (1 + self.star_factor * self.stars)       # linear grows with stars
-            + (0 if self.weapon is None else self.weapon.bonus_factor * self.attack_base) # equipment bonus
+            self.attack_base                              # base stat
+            * self.LEVEL_GROW_FACTOR ** (self.level - 1)  # exponential grows with level
+            * (1 + self.STAR_GROW_INCREASE * self.stars)  # linear grows with stars
+            + (0 if self.weapon is None else self.weapon.bonus_factor * self.attack_base)  # equipment bonus
             )
 
     @classmethod
@@ -127,7 +127,7 @@ class BaseUnit(Card):
 
         damages = [(self.damage_formule(target, target_index=k), target)
                    for k, target in enumerate(targets)]
-        damages = [damage * (target.esquive_rate if self.can_miss else 1)
+        damages = [damage * (target.dodge_inaccuracy if self.can_miss else 1)
                    for damage, target in damages
                    if damage is not None]
         if len(damages) == 0 or self.hit_frequency is None:
@@ -166,10 +166,10 @@ class MovableUnit(BaseUnit):
     """Armor value"""
     move_speed: float = None
     """Moving speed"""
-    esquive_rate = 1
+    dodge_inaccuracy = 1
     """The accuracy factor of an attacker shooting at this unit.  
     (1 means attacker will never miss, 0.5 means they will miss one attack every two shots)
-    (assert 0 < esquive_rate <= 1)"""
+    (assert 0 < dodge_inaccuracy <= 1)"""
     is_summoned = False
     """Is this unit subject to invoked units penalties"""
     is_immune_to_effect = False
@@ -186,15 +186,15 @@ class MovableUnit(BaseUnit):
         #       the runtime unit and the stat considerated?
         return round(
             self.hp_base
-            * self.level_grow_factor ** (self.level-1)
-            * (1 + self.star_factor * self.stars)
+            * self.LEVEL_GROW_FACTOR ** (self.level - 1)
+            * (1 + self.STAR_GROW_INCREASE * self.stars)
             + (0 if self.armor_item is None else self.armor_item.bonus_factor * self.hp_base)
             )
 
     def hp_score(self, attackers: List[BaseUnit]) -> float:
         # TODO take into account that multiple small units are more sensible to AOE? or that faster units take less attacks
         # TODO: sum or mean or ... ? Do we want the hp part of the score to change when fighting multiple units?
-        armor_esquive_factor = mean([armor_reduction(self.armor - attacker.armor_piercing) / (self.esquive_rate if attacker.can_miss else 1)
+        armor_esquive_factor = mean([armor_reduction(self.armor - attacker.armor_piercing) / (self.dodge_inaccuracy if attacker.can_miss else 1)
                                      for attacker in attackers])
         return self.hp * armor_esquive_factor / self.cost
 
@@ -246,7 +246,7 @@ class MovableUnit(BaseUnit):
             return None
         return (
             self.damage_formule(target)
-            * (target.esquive_rate if self.can_miss else 1)
+            * (target.dodge_inaccuracy if self.can_miss else 1)
             / distance
             )
 

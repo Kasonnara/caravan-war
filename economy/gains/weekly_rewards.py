@@ -29,9 +29,6 @@ from common.rarity import Rarity
 from common.resources import ResourcePacket, ResourceQuantity
 from common.resources import Resources as R
 
-from common.vip import VIP
-from economy.gains.daily_rewards import Lottery
-
 from economy.gains.abstract_gains import Gain, Days, rank_param
 from spells.defense_spells import ModuleBoost
 from spells.attack_spells import Storm

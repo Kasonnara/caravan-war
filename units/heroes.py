@@ -29,7 +29,7 @@ from utils.class_property import classproperty
 
 class Hero(MovableUnit):
     base_building = HeroTemple
-    level_grow_factor = 1.018
+    LEVEL_GROW_FACTOR = 1.018
     ultimate = False
     cost = 1
     soul_class: Resources = None

@@ -23,7 +23,7 @@ Gains common code
 from abc import abstractmethod
 from collections import defaultdict
 from enum import Enum, IntEnum
-from typing import List, Dict, Type, Set
+from typing import List
 
 from common.cards import MAX_LEVEL
 from common.leagues import Rank
