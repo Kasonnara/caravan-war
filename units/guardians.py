@@ -20,6 +20,7 @@
 from typing import Union, List
 
 from buildings.buildings import Academy
+from common.alignment import Alignment
 from common.card_categories import GUARDIANS
 from common.rarity import Rarity
 from common.resources import resourcepackets_gold
@@ -29,6 +30,7 @@ from common.target_types import TargetType
 
 
 class Guardian(MovableUnit):
+    alignment = Alignment.DEFENDER
     base_building = Academy
     move_speed = 1.2
     bossfight_cost = None

@@ -16,7 +16,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
+from common.alignment import TargetCategory, Alignment
 from common.cards import Card
 from common.rarity import Rarity
 from common.resources import resourcepackets_gold
@@ -25,6 +25,9 @@ from utils.class_property import classproperty
 
 class Spell(Card):
     # TODO move gem and gold cost from rarity class to unit class, refactor to store_gem/gold_cost and return ResQty
+
+    apply_to: TargetCategory = Alignment.DEFENDER
+
     @classproperty
     def gem_cost(cls):
         return cls.rarity.spell_gem_cost

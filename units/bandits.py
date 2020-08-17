@@ -18,6 +18,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from buildings.buildings import Camp
+from common.alignment import Alignment
 from common.card_categories import BANDITS
 from common.rarity import Rarity
 from common.resources import resourcepackets_gold
@@ -28,6 +29,7 @@ from units.vehicles import Vehicle
 
 class Bandit(MovableUnit):
     base_building = Camp
+    alignment = Alignment.ATTACKER
 
 
 class Maraudeur(Bandit):
