@@ -406,7 +406,7 @@ class Ambushes(Gain):
         return (
             cls._ambush_reward
             + buildings.HeroTemple.ambush_xp_incomes[temple_lvl - 1]  # Assume all ambush are made with a hero in the army
-            + R.Goods(rank.traiding_base * 2,5)  # Assume that on average you fight against enemies of the same rank as you, and attack 10km, 100km, 100km and best exchangez indiferently
+            + R.Goods(rank.traiding_base * 2.5)  # Assume that on average you fight against enemies of the same rank as you, and attack 10km, 100km, 100km and best exchangez indiferently
             + R.Trophy(average_trophy)
         )
 
