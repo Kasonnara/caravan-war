@@ -39,7 +39,7 @@ class HQ(Building):
             R.VIP(vip_gain),
             )
         for goods_cost, gold_cost, vip_gain in [
-            (-0, -0, 0),  # level 0 -> 1
+            (-0, -0, 0),  # level 0 -> 1, should be None level 0 doesn't exist
             (-400, -800, 20),  # level 1 -> 2
             (-1700, -4800, 30),
             (-11000, -27200, 40),
@@ -78,7 +78,7 @@ class HQ(Building):
     #       already include it when resolving full dependency, but I include it in case this is used without resolving
     #       all dependancies.
     _upgrade_requirements_str = [
-        (),  # level 0 -> 1
+        (),  # level 0 -> 1, should be None level 0 doesn't exist
         ('HQ', ),  # level 1 -> 2
         ('HQ', "Camp", "Academy"),
         ('HQ', "Tavern", "Garage"),
@@ -98,17 +98,17 @@ class HQ(Building):
         ('HQ', "Mill", "Camp", "WorkShop"),
         ('HQ', "TransportStation", "Weaponsmith", "Garage"),
         ('HQ', "Tavern", "Academy", "WorkShop"),  # level 19 -> 20
-        ('HQ', "Tavern", "Academy", "WorkShop"),
+        ('HQ', "Tavern", "Academy", "WorkShop"),  # level 20 -> 21, This is not an error, there is the same requirements twice in the game.
         ('HQ', "Mill", "Weaponsmith", "Camp"),
         ('HQ', "TransportStation", "Laboratory", "Tavern"),
         ('HQ', "Camp", "Mill", "WorkShop"),
-        ('HQ', "Weaponsmith", "TransportStation", "Garage"),
+        ('HQ', "Weaponsmith", "TransportStation", "Garage"),  # level 24 -> 25
         ('HQ', "Tavern", "Academy", "WorkShop"),
         ('HQ', "Mill", "Weaponsmith", "Camp"),
         ('HQ', "TransportStation", "Laboratory", "Tavern"),
         ('HQ', "WorkShop", "TransportStation", "Garage"),
-        ('HQ', "Camp", "Weaponsmith", "Laboratory"),
-        ##('HQ', "Academy", "TransportStation", "Mill"),
+        ('HQ', "Camp", "Weaponsmith", "Laboratory"),  # level 29 -> 30
+        ##('HQ', "Academy", "TransportStation", "Mill"),  # level 30 -> 31
         ]
     """List the buildings needed for upgrading the HQ. Here requirements are stored as strings, you will probably
     be more interested in the attribute <upgrade_requirements> which is the same but with classes instead."""

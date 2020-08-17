@@ -26,7 +26,7 @@ from common.resources import Resources as R
 from utils.utils import get_index_greather_than
 
 _MILL_TRANSPORTSTATION_HOURLY_INCOMES = (
-    0,  # level 0
+    0,  # should be None level 0 doesn't exist
     300, 525, 1500, 2250, 3750,
     6000, 7500, 12000, 18000, 25500,
     35000, 55000, 85000, 130000, 200000,
@@ -37,8 +37,8 @@ _MILL_TRANSPORTSTATION_HOURLY_INCOMES = (
 
 
 class Mill(Building):
-    upgrade_costs = [ResourcePacket(Resources.Goods(-50))] \
-        + resourcepackets_gold(
+    upgrade_costs = resourcepackets_gold(
+        0,  # should be None level 0 doesn't exist
         -510, -3400, -19400, -58000, -191000,                     # 1 -> 6
         -437000, -930000, -1300000, -1900000, -3670000,          # 6 -> 11
         -6860000, -12000000, -21170000, -36260000, -63000000,    # 11 -> 16
@@ -53,7 +53,7 @@ class Mill(Building):
 
 class TransportStation(Building):
     upgrade_costs = resourcepackets_goods(
-        -50,  # 0 -> 1
+        0,  # should be None level 0 doesn't exist
         -500, -2100, -13000, -36000, -119000,                   # 1 -> 6
         -297000, -700000, -1000000, -1400000, -1700000,         # 6 -> 11
         -2900000, -4700000, -7900000, -13100000, -22200000,     # 11 -> 16
@@ -70,7 +70,7 @@ del _MILL_TRANSPORTSTATION_HOURLY_INCOMES
 
 class Bank(Building):
     upgrade_costs = resourcepackets(
-        (-0, -0),  # 0 -> 1
+        (0, 0),  # should be None level 0 doesn't exist
         (-300, -0),
         (-1300, -0),
         (-8000, -0),
@@ -103,7 +103,7 @@ class Bank(Building):
         )
 
     storage_limits = (
-        0,  # level 0
+        0,  # should be None level 0 doesn't exist
         10000, 20000, 60000, 150000, 490000,
         1090000, 1790000, 2790000, 3590000, 5990000,
         10990000, 19990000, 34990000, 59990000, 109990000,
@@ -115,7 +115,7 @@ class Bank(Building):
 
 class Storage(Building):
     upgrade_costs = resourcepackets_gold(
-        0,  # 0 -> 1
+        0,  # should be None level 0 doesn't exist
         -510, -3400, -23300, -69000, -229000,  # 1 -> 6
         -525000, -1110000, -1560000, -2280000, -2900000,  # 6 -> 11
         -5300000, -9300000, -16500000, -28200000, -49000000,  # 11 -> 16
@@ -124,7 +124,7 @@ class Storage(Building):
         -21043000000, -32448000000, -45450000000, -63690000000,
         )
     storage_limits = (
-        0,  # level 0
+        0,  # should be None level 0 doesn't exist
         10000, 20000, 40000, 80000, 230000,
         530000, 830000, 1090000, 1390000, 1790000,
         2990000, 4990000, 7990000, 12990000, 21990000,
@@ -136,7 +136,7 @@ class Storage(Building):
 
 class Laboratory(Building):
     upgrade_costs = resourcepackets_gold(
-        0,  # 0 -> 1
+        0,  # should be None level 0 doesn't exist
         -210, -1400, -7800, -23000, -77000,                  # 1 -> 6
         -175000, -370000, -520000, -760000, -1360000,        # 6 -> 11
         -2540000, -4450000, -7850000, -13430000, -23340000,  # 11 -> 16
@@ -147,7 +147,8 @@ class Laboratory(Building):
 
 
 class Tavern(Building):
-    upgrade_costs = [ResourcePacket(-500, 0)] + resourcepackets_gold(
+    upgrade_costs = resourcepackets_gold(
+        0,  # FIXME should be None level 0 doesn't exist
         -690, -4600, -26400, -79000, -259000,   # 1 -> 6
         -595000, -1260000, -1770000, -2580000, -5160000,  # 6 -> 11
         -9150000, -16000000, -28230000, -48350000, -84000000,  # 11 -> 16
@@ -169,7 +170,7 @@ class Tavern(Building):
 
 class Camp(Building):
     upgrade_costs = resourcepackets_gold(
-        -100,  # 0 -> 1
+        0,  # should be None level 0 doesn't exist
         -650, -4400, -25700, -76000, -259000,  # 1 -> 6
         -630000, -1410000, -2020000, -3110000, -5430000,  # 6 -> 11
         -10160000, -17770000, -31370000, -53720000, -93330000,  # 11 -> 16
@@ -181,7 +182,7 @@ class Camp(Building):
 
 class Academy(Building):
     upgrade_costs = resourcepackets_gold(
-        -250,  # 0 -> 1
+        0,  # should be None level 0 doesn't exist
         -410, -2700, -15500, -46000, -153000,  # 1 -> 6
         -350000, -740000, -1040000, -1520000, -3400000,  # 6 -> 11
         -6350000, -11110000, -19610000, -33580000, -58330000,  # 11 -> 16
@@ -193,7 +194,7 @@ class Academy(Building):
 
 class Weaponsmith(Building):
     upgrade_costs = resourcepackets(
-        (-0, -0),
+        (-0, -0),  # should be None level 0 doesn't exist
         (-200, -210),
         (-700, -1600),
         (-4000, -10900),
@@ -228,7 +229,7 @@ class Weaponsmith(Building):
 
 class Garage(Building):
     upgrade_costs = resourcepackets(
-        (-100, -0),  # 0 -> 1
+        (-0, -0),  # 0 -> 1, should be None level 0 doesn't exist
         (-100, -250),
         (-500, -1600),
         (-3000, -9300),
@@ -262,7 +263,8 @@ class Garage(Building):
 
 
 class WorkShop(Building):
-    upgrade_costs = [ResourcePacket(-300, 0)] + resourcepackets_gold(
+    upgrade_costs = resourcepackets_gold(
+        0,  # should be None level 0 doesn't exist
         -610, -4100, -23300, -79000, -259000,  # 1 -> 6
         -630000, -1410000, -2080000, -3190000, -5160000,  # 6 -> 11
         -9660000, -16880000, -29800000, -51030000, -88670000,  # 11 -> 16
