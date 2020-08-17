@@ -26,7 +26,8 @@ from math import sqrt, log, log10
 
 import matplotlib.pyplot as plt
 
-armor_table = {0: 0, 0.5: 3.10, 1: 5.91, 1.5: 8.48, 2: 10.83, 3: 15.00, 4: 18.57, 4.5: 20.17, 5: 21.67, 6: 24.37, 7:26.78, 8: 28.89, 9.5: 31.67}
+armor_table = {0: 0, 0.5: 3.10, 1: 5.91, 1.5: 8.48, 2: 10.83, 3: 15.00, 4: 18.57, 4.5: 20.17, 5: 21.67, 6: 24.37,
+               6.5: 25.61, 7: 26.78, 8: 28.89, 9: 30.79, 9.5: 31.67, 10: 32.50}
 """Known armor value"""
 
 def armor_reduction(armor_level: int) -> float:
