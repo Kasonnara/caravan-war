@@ -24,6 +24,7 @@ from common.alignment import Alignment
 from common.card_categories import GUARDIANS
 from common.rarity import Rarity
 from common.resources import resourcepackets_gold
+from lang.languages import TranslatableString
 from units.base_units import MovableUnit, Heal, AOE, reincarnation, DPS_SCORE_FACTOR, \
     HP_SCORE_FACTOR
 from common.target_types import TargetType
@@ -34,6 +35,8 @@ class Guardian(MovableUnit):
     base_building = Academy
     move_speed = 1.2
     bossfight_cost = None
+
+    __display_name = TranslatableString("Guardian", french="Gardien")
 
 
 class Scout(Guardian):
@@ -58,6 +61,8 @@ class Scout(Guardian):
         -1770440000, -2729940000, -3823860000, -5358430000,
         )
 
+    __display_name = TranslatableString("Scout", french="Scout")
+
 
 class Guard(Guardian):
     hp_base = 800
@@ -72,6 +77,8 @@ class Guard(Guardian):
     bossfight_cost = 18
     rarity = Rarity.Common
     upgrade_costs = Scout.upgrade_costs
+
+    __display_name = TranslatableString("Guard", french="Garde")
 
 
 class Healer(AOE, Heal, Guardian):
@@ -96,6 +103,8 @@ class Healer(AOE, Heal, Guardian):
         -3186790000, -4913890000, -6882960000, -9645180000,
         )
 
+    __display_name = TranslatableString("Artificer", french="Artificière")
+
 
 class Follet(Guardian):
     hp_base = 760
@@ -118,6 +127,7 @@ class Follet(Guardian):
         -158610000, -270510000, -446090000, -745330000, -1259840000,  # 21 -> 26
         -2124530000, -3275930000, -4588640000, -6430120000,
         )
+    __display_name = TranslatableString("Wisp", french="Feu follet")
 
 
 class Shield(Guardian):
@@ -141,6 +151,7 @@ class Shield(Guardian):
         -264340000, -450850000, -743490000, -1242220000, -2099730000,  # 21 -> 26
         -3540880000, -5459880000, -8649730000, -10716870000,
         )
+    __display_name = TranslatableString("Shield Master", french="Bouclier")
 
 
 class Jetpack(Guardian):
@@ -165,6 +176,7 @@ class Jetpack(Guardian):
         -211480000, -360680000, -594790000, -993780000, -1679790000,  # 21 -> 26
         -2832700000, -4367900000, -6118180000, -8573490000,
         )
+    __display_name = TranslatableString("Jet Trooper", french="Unité jetpack")
 
 
 class Knight(Guardian):
@@ -181,6 +193,7 @@ class Knight(Guardian):
     bossfight_cost = 35
     rarity = Rarity.Rare
     upgrade_costs = Shield.upgrade_costs
+    __display_name = "Champion"
 
 
 class Sword(AOE, Guardian):
@@ -205,6 +218,7 @@ class Sword(AOE, Guardian):
         -251130000, -428300000, -706320000, -1180110000, -1994740000,  # 21 -> 26
         -3363830000, -5186880000, -7265340000, -10181870000,
         )
+    __display_name = TranslatableString("Blade Master", french="Maître épéiste")
 
 
 class Sparte(Guardian):
@@ -231,6 +245,7 @@ class Sparte(Guardian):
         -356870000, -608640000, -1003710000, -1677000000, -2834640000,  # 21 -> 26
         -4780190000, -7370830000, -10324430000, -14467770000,
         )
+    __display_name = TranslatableString("Spartans", french="Spartiates")
 
 
 @reincarnation
@@ -262,6 +277,7 @@ class Paladin(Guardian):
         -396520000, -676270000, -1078060000, -1801230000, -3149600000,  # 21 -> 26
         -5311320000, -8189820000, -11471590000, -16075300000,
         )
+    __display_name = "Paladin"
 
 
 @reincarnation
@@ -291,6 +307,7 @@ class Marchal(Guardian):
         -370080000, -631190000, -1040890000, -1739110000, -2939620000,  # 21 -> 26
         -4957230000, -7643830000, -10706820000, -15063610000,
         )
+    __display_name = TranslatableString("Marshal", french="Marchal")
 
 
 @reincarnation
@@ -321,6 +338,7 @@ class Griffon(Guardian):
         -383300000, -653730000, -1078060000, -1801230000, -3044610000,  # 21 -> 26
         -5134270000, -7916820000, -11089210000, -15539460000,
         )
+    __display_name = TranslatableString("Griffin Rider", french="Chevaucheur de Griffon")
 
 
 @reincarnation
@@ -344,6 +362,7 @@ class Hammer(Guardian):
     bossfight_cost = None
     rarity = Rarity.Epic
     upgrade_costs = Sparte.upgrade_costs
+    __display_name = TranslatableString("Chaplain", french="Aumonier")
 
 
 @reincarnation
@@ -373,6 +392,7 @@ class Canonner(Guardian, AOE):
         -541910000, -924240000, -1524160000, -2546560000, -4304450000,  # 21 -> 26
         -7258800000, -11192750000, -15677840000, -21969580000,
         )
+    __display_name = TranslatableString("Cannoneer", french="Cannonière")
 
 
 class DemonSlayer(Guardian):
@@ -398,6 +418,7 @@ class DemonSlayer(Guardian):
         -555120000, -946780000, -1561330000, -2608670000, -4514420000,  # 21 -> 26
         -7612890000, -11738740000, -16442620000, -23041260000,
         )
+    __display_name = TranslatableString("Demon Hunter", french="Chasseur de démon")
 
 
 class Golem(AOE, Guardian):
@@ -423,6 +444,7 @@ class Golem(AOE, Guardian):
         -581560000, -991860000, -1635680000, -2732890000, -4619410000,  # 21 -> 26
         -7789930000, -12011730000, -16825000000, -23577110000,
         )
+    __display_name = "Golem"
 
 
 class Seraphin(Guardian, Heal):
@@ -446,6 +468,7 @@ class Seraphin(Guardian, Heal):
         -4409440000,  # 21 -> 26
         -7435840000, -11465740000, -16060230000, -22505420000,
         )
+    __display_name = TranslatableString("Seraph", french="Seraphin")
 
     def score(self, allies_targets: Union['MovableUnit', List['MovableUnit']]):
         # FIXME: heal doesn't apply to ennemy but to allies!
@@ -480,6 +503,7 @@ class Wizard(Guardian):
         -568340000, -969320000, -1598500000, -2670780000, -4514420000,  # 21 -> 26
         -7612890000, -11738740000, -16442620000, -23041260000,
         )
+    __display_name = TranslatableString("Warlock", french="Sorcier")
 
 
 # Register all defined cards

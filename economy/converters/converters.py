@@ -33,6 +33,7 @@ from economy.converters.abstract_converter import GainConverter, ConverterModeUI
 from economy.gains.abstract_gains import rank_param, Gain, MeasurementPeriod
 from economy.gains.daily_rewards import selected_heroes_param, BestTrading, Trading10Km, Trading100Km, Trading1000Km, \
     TransportStationProduction
+from lang.languages import TranslatableString
 from spells.common_spell import Spell
 from units.base_units import MovableUnit
 from utils.ui_parameters import UIParameter
@@ -58,6 +59,8 @@ class Lottery(GainConverter):
             R.Gold((rank.traiding_base * 3 * 7 + rank.traiding_base * 1 * 10) / 100),
             ) * resource_packet[R.LotteryTicket]
 
+    __display_name = TranslatableString("Lottery", french="Lotterie")
+
 
 lottery_convert_mode_param = ConverterModeUIParameter(Lottery, display_txt="Convert Lottery Tickets")
 GainConverter.ALL.append(Lottery)  # TODO use a Metaclass for that
@@ -76,6 +79,8 @@ class LegendarySoulExchange(GainConverter):
             ResourceQuantity(Rarity.Epic, 2),
             ResourceQuantity(Rarity.Legendary, 1),
             ) * (resource_packet[R.LegendarySoul] / 1000)
+
+    __display_name = TranslatableString("Souls exchanges", french="Échanges d'âmes")
 
 
 legendary_soul_convert_mode_param = ConverterModeUIParameter(LegendarySoulExchange, display_txt="Convert legendary souls")
@@ -128,6 +133,8 @@ class DefenseLost(GainConverter):
                     ) * (convoy_lost * mesurement_range.value)
             defense_lost = max(0, defense_lost - count)
         assert False
+
+    __display_name = TranslatableString("Attacks received", french="Embuscades subies")
 
 
 defense_lost_convert_mode_param = ConverterModeUIParameter(
@@ -226,6 +233,8 @@ class Recycle(GainConverter):
                             result = result + RecycleChest.average_loot(rank=rank) * chest_quantity
                         result = result + ResourceQuantity(resource_type, -resource_quantity)
         return result
+
+    __display_name = TranslatableString("Recycle chests", french="Coffres de recyclage")
 
 
 recycle_convert_mode_param = ConverterModeUIParameter(

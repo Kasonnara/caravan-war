@@ -37,6 +37,7 @@ from economy.budget_simulator.graphs import graphs_to_update, ResourceTable, Res
 from economy.budget_simulator.simulation import update_income, all_parameters
 from economy.budget_simulator.style import external_stylesheets, HEADER_STYLE, SIDEBAR_STYLE, \
     LABEL_SETTING_BOOTSTRAP_COL
+from lang.languages import Language
 
 from utils.ui_parameters import UIParameter
 
@@ -51,14 +52,32 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 """The main dash application object"""
 
 # Register all persistent elements in order to build a callback that can disable all of them if the user disagree
-persistent_components_ids: List[str] = []
-"""Store all persistent elements ids"""
+persistent_components_ids: List[str] = ['lang_dropdown']
+"""Store ids of all persistent elements"""
+
+translatable_components_ids: List[str] = []
+"""Store ids of all elements affected by translations"""
 
 # Build the application TODO: move to another file
 header = html.Div(
     children=[
         dbc.Container(
             children=[
+                dbc.Row(
+                    children=[
+                        html.Label("Language:"),
+                        dcc.Dropdown(
+                            options=[{'label': lang.display_name, 'value': lang.name}
+                                     for lang in Language
+                                    ],
+                            value=Language.ENGLISH.name,
+                            clearable=False,
+                            id="lang_dropdown",
+                            persistence=True,
+                            className="col-sm-1",
+                            ),
+                    ],
+                ),
                 html.H1(children='CaravanWar Budget Simulator'),
 
                 dcc.Markdown(children='''
@@ -255,17 +274,21 @@ app.layout = html.Div(children=[
 @app.callback(
     [Output(graph.component_id, graph.target_attribute)
      for graph in graphs_to_update],
+    [Input('lang_dropdown', 'value')] + \
     [Input(get_parameter_selector_id(ui_param),
            get_parameter_selector_value_attibute(ui_param))
      for ui_param in all_parameters],
     )
-def update_simulation(*ui_parameters_raw_values):
+def update_simulation(selected_lang_name, *ui_parameters_raw_values):
     """
     Main call back that update every graph as soon as any parameter changes
     :param ui_parameters_raw_values:
     :param weekly: bool
     :return: the new data for every graphs
     """
+    # Get the lang object
+    selected_lang = Language.__members__[selected_lang_name]
+
     # Generate the parameter value dict
     # TODO add category filtering
     ui_parameter_values = {
@@ -274,7 +297,7 @@ def update_simulation(*ui_parameters_raw_values):
         }
     # Get the new resources incomes
     incomes = update_income(ui_parameter_values)
-    return [graph.update_func(incomes) for graph in graphs_to_update]
+    return [graph.update_func(incomes, selected_lang) for graph in graphs_to_update]
 
 
 if production_mode_on_heroku:

@@ -22,6 +22,7 @@ Data about adds rewards
 """
 from common.resources import Resources as R, ResourcePacket
 from economy.gains.abstract_gains import Gain
+from lang.languages import TranslatableString
 from utils.ui_parameters import UIParameter
 
 gold_adds_per_day = 10
@@ -57,6 +58,7 @@ pub_viewed_per_day_param = UIParameter(
 
 
 class Adds(Gain):
+    __display_name = TranslatableString("Adds", french="Publicités")
 
     @classmethod
     def iteration_income(cls, hq_lvl: int = 1, **kwargs) -> ResourcePacket:

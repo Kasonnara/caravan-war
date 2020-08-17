@@ -23,6 +23,7 @@ from buildings.buildings import WorkShop
 from common.alignment import Alignment
 from common.card_categories import TOWERS
 from common.resources import resourcepackets_gold
+from lang.languages import TranslatableString
 from units.heroes import Hero
 from utils.class_property import classproperty
 from common.target_types import TargetType
@@ -54,6 +55,8 @@ class Tower(BaseUnit):
     def gold_cost(cls, ligue: 'Ligue'):
         return cls.rarity.spell_gold_cost(ligue)
 
+    __display_name = TranslatableString("Tower", french="Tour")
+
 
 class Sentinelle(Tower):
     attack_base = 72
@@ -72,6 +75,7 @@ class Sentinelle(Tower):
         -235850000, -402250000, -663350000, -1108330000, -1873420000,  # 21 -> 26
         -3159230000, -4871390000, -6823430000, -9561770000,
         )
+    __display_name = TranslatableString("Ranger tower", french="Sentinelle")
 
 
 class Arbalete(Tower):
@@ -92,6 +96,7 @@ class Arbalete(Tower):
         -471710000, -804510000, -1326710000, -2216670000, -3746830000,  # 21 -> 26
         -6318460000, -9742790000, -13646860000, -19123540000,
         )
+    __display_name = TranslatableString("Crossbow", french="Arbalète")
 
 
 class Eolance(Tower):
@@ -111,6 +116,7 @@ class Eolance(Tower):
         -518880000, -884960000, -1459380000, -2438330000, -4121510000,  # 21 -> 26
         -6950310000, -10717070000, -15011550000, -21035890000,
         )
+    __display_name = TranslatableString("Windlance", french="Eolance")
 
 
 class Sniper(Tower):
@@ -130,6 +136,7 @@ class Sniper(Tower):
         -566050000, -965410000, -1592050000, -2660000000, -4496200000,  # 21 -> 26
         -7582160000, -11691350000, -16376230000, -22948240000,
         )
+    __display_name = TranslatableString("Marksman", french="Sniper")
 
 
 class HeavySniper(Tower):
@@ -147,6 +154,7 @@ class HeavySniper(Tower):
         -6318460000, -9742790000, -13646860000, -19123540000,
         )
     # damage, with 4 stars [240, 276, 318, 366, 421, 483, 555, 638, 734, 844, 972, 1117]
+    __display_name = TranslatableString("Sharpshooter", french="Sniper élite")
 
 
 class Mage(Tower):
@@ -158,6 +166,7 @@ class Mage(Tower):
     _cost = 150
     parent_tower = None
     upgrade_costs = Sentinelle.upgrade_costs  # basic towers seems to have the same upgrade costs
+    __display_name = TranslatableString("Mage tower", french="Tour de mage")
 
 
 class Lightning(Tower):
@@ -176,6 +185,8 @@ class Lightning(Tower):
             super().damage_formule(target, target_index=target_index)
             * (0.25 * max(0, 4 - target_index))  # Reduction factor
             )
+
+    __display_name = TranslatableString("Lightning", french="Éclair")
 
 
 class Stormspire(Tower, AOE):
@@ -204,6 +215,8 @@ class Stormspire(Tower, AOE):
             return 0
         return target.hp * (0.125 - 0.0125 * max(0, target.level - self.level))  # TODO test if it's -1.25% linear or exponential (by default I assumed it linear here )
 
+    __display_name = "Stormpire"
+
 
 class Fire(Tower):
     attack_base = 130
@@ -222,6 +235,7 @@ class Fire(Tower):
         -542460000, -925180000, -1525720000, -2549170000, -4308860000,  # 21 -> 26
         -7266230000, -11204210000, -15693890000, -21992070000,
         )
+    __display_name = TranslatableString("Blaze", french="Fournaise")
 
 
 class Bomber(AOE, Tower):
@@ -242,6 +256,7 @@ class Bomber(AOE, Tower):
         -283020000, -482700000, -796030000, -1330000000, -2248100000,  # 21 -> 26
         -3791080000, -5845670000, -8188120000, -11474120000,
         )
+    __display_name = TranslatableString("Bombard", french="Bombardier")
 
 
 class Canon(Tower):
@@ -254,6 +269,7 @@ class Canon(Tower):
     parent_tower = Bomber
     multiple_target_limit = 3
     upgrade_costs = Eolance.upgrade_costs
+    __display_name = TranslatableString("Cannon", french="Canon")
 
 
 class Hydra(Tower):
@@ -273,6 +289,7 @@ class Hydra(Tower):
         -613220000, -1045860000, -1724720000, -2881670000, -4870880000,  # 21 -> 26
         -8214000000, -12665620000, -17740920000, -24860600000,
         )
+    __display_name = TranslatableString("Hydra", french="Hydre")
 
 
 class MissileLaucher(AOE, Tower):
@@ -285,6 +302,7 @@ class MissileLaucher(AOE, Tower):
     parent_tower = Bomber
     aoe_radius = 2
     upgrade_costs = Arbalete.upgrade_costs
+    __display_name = TranslatableString("Missile Launcher", french="Lanceur de missiles")
 
 
 class Hospital(AOE, Heal, Tower):
@@ -307,6 +325,8 @@ class Hospital(AOE, Heal, Tower):
     def dps(self, targets: Union[MovableUnit, List[MovableUnit]]) -> Optional[float]:
         return None
 
+    __display_name = TranslatableString("Hospital", french="Hôpital")
+
 
 class Armory(Hospital):
     _cost = 80
@@ -320,18 +340,21 @@ class Armory(Hospital):
         -353780000, -603380000, -995030000, -1662500000, -2810120000,  # 21 -> 26
         -4738850000, -7307090000, -10235150000, -14342650000,
         )
+    __display_name = TranslatableString("Armorsmith", french="Armurerie")
 
 
 class Tambour(Hospital):
     _cost = 130
     parent_tower = Hospital
     upgrade_costs = Armory.upgrade_costs
+    __display_name = TranslatableString("Drums", french="Tambours")
 
 
 class Garnison(Tambour, Armory):
     _cost = 190
     parent_tower = Armory
     upgrade_costs = Arbalete.upgrade_costs
+    __display_name = TranslatableString("Garrison", french="Garnison")
 
 
 # Register all defined cards

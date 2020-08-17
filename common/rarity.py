@@ -20,15 +20,17 @@
 from enum import Enum
 from typing import Optional
 
+from lang.languages import TranslatableString, Language
+from utils.prettifying import Displayable
 
-class Rarity(Enum):
-    #  name   = gem card cost, gem spell card cost, ratio between 10km exchange and the cost in gold of the card, the same for spells, the value of the card when recycled
-    Legendary = 2400, None, None, None, None
-    Epic = 390, 8, None, 4/20, None
-    Rare = None, 4, 1, 2/20, 6
-    Common = None, 2, None, 1/20, 2
 
-    def __init__(self, gem_cost, spell_gem_cost, gold_cost, spell_gold_cost, recycle_value):
+class Rarity(Displayable, Enum):
+    Legendary = 2400, None, None, None, None, TranslatableString("Legendary", french="Legendaire")
+    Epic = 390, 8, None, 4/20, None, TranslatableString("Epic", french="Épique")
+    Rare = None, 4, 1, 2/20, 6, TranslatableString("Rare", french="Rare")
+    Common = None, 2, None, 1/20, 2, TranslatableString("Common", french="Commune")
+
+    def __init__(self, gem_cost, spell_gem_cost, gold_cost, spell_gold_cost, recycle_value, translations=None):
         self.gem_cost = gem_cost
         """Cost of weapons, vehicules, guardians and bandits cards when purchased with gems (may be None of the card is not purchasable with gem)"""
         self.spell_gem_cost = spell_gem_cost
@@ -37,6 +39,7 @@ class Rarity(Enum):
         self._spell_gold_cost_base = spell_gold_cost
         self.recycle_value = recycle_value
         """Value of the card if it is recycled"""
+        self._display_name = translations or TranslatableString(self.name)
 
     def gold_cost(self, ligue: 'Ligue') -> Optional[int]:
         """
@@ -57,3 +60,6 @@ class Rarity(Enum):
         if self._spell_gold_cost_base is None:
             return None
         return ligue.traiding_base * self._spell_gold_cost_base
+
+    def display_name(self, language=Language.ENGLISH):
+        return self._display_name.translated_into(language)

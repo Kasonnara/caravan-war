@@ -34,6 +34,7 @@ from common.resources import ResourceQuantity, Resources, ResourcePacket
 from economy.budget_simulator.simulation import RESOURCE_SORTING_MAP
 from economy.converters.abstract_converter import GainConverter
 from economy.gains import Gain
+from lang.languages import Language
 from utils.prettifying import camelcase_2_spaced, human_readable
 
 GraphsUpdates = namedtuple('GraphsUpdates', 'update_func component_id target_attribute')
@@ -85,7 +86,8 @@ class ResourceTable(dbc.Table):
             }
 
     @staticmethod
-    def figures_updates(incomes: Dict[str, Dict[Union[Type[Gain], Type[GainConverter]], ResourcePacket]]) -> List[Union[html.Table, html.Tbody]]:
+    def figures_updates(incomes: Dict[str, Dict[Union[Type[Gain], Type[GainConverter]], ResourcePacket]],
+                        language: Language) -> List[Union[html.Table, html.Tbody]]:
         # Compute total
         total = ResourcePacket()
         for gain_category in incomes:
@@ -109,7 +111,7 @@ class ResourceTable(dbc.Table):
                 )
 
         columns_names = [html.Th(resource_icons.get(res_type, [])  # Add the resource icon if it exists
-                                 + [html.Div(camelcase_2_spaced(ResourceQuantity.prettify_type(res_type)))],
+                                 + [html.Div(ResourceQuantity.prettify_type(res_type, language=language))],
                                  className='text-center',)
                          for res_type in all_res_types]
 
@@ -122,7 +124,7 @@ class ResourceTable(dbc.Table):
                                    className='thead-light')),
                 html.Tbody([
                     html.Tr(
-                        [html.Td(camelcase_2_spaced(gain.__name__, unbreakable_spaces=True)
+                        [html.Td(gain.display_name(language=language).replace(' ', ' ')
                                  if gain is not None else ''  # Special case for the total line which doesn't have gain
                                  )]
                         + [pretty_Td(incomes[category][gain][res_types])
@@ -165,11 +167,12 @@ class ResourceBarPie(dcc.Graph):
         # Register the graph
         graphs_to_update.append(GraphsUpdates(self.figures_updates, id, 'figure'))
 
-    def figures_updates(self, incomes: Dict[str, Dict[Union[Type[Gain], Type[GainConverter]], ResourcePacket]]) -> List:
+    def figures_updates(self, incomes: Dict[str, Dict[Union[Type[Gain], Type[GainConverter]], ResourcePacket]],
+                        language: Language) -> List:
         # Extract incomes for the target resource, erase too small values, prettify gains names and sort them
         target_incomes_label, target_incomes_values = zip(
             *sorted(
-                [(camelcase_2_spaced(gain.__name__, unbreakable_spaces=True),  # Prettify gains names
+                [(gain.display_name(language).replace(" ", " "),  # Prettify gains names
                   incomes[category][gain][self.target_resource])
                     for category in incomes
                     for gain in incomes[category]

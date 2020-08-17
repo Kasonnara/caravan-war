@@ -24,6 +24,7 @@ from typing import List, Union, Type, Iterable, Optional, Dict, Any, Callable
 from common.resources import ResourcePacket
 from economy.gains import Gain
 from utils.class_property import classproperty
+from utils.prettifying import Displayable
 from utils.ui_parameters import UIParameter, T
 
 
@@ -48,7 +49,7 @@ class ConverterModeUIParameter(UIParameter):
                          (display_txt or (converter_class.__name__ + " conversion")), update_callback, dependencies)
 
 
-class GainConverter:
+class GainConverter(Displayable):
     """
     Abstract class for gain resources converters
 

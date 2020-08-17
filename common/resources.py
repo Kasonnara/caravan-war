@@ -32,11 +32,12 @@ class.
 
 import itertools
 from collections import defaultdict
-from enum import Enum, auto
+from enum import Enum
 
 from typing import Type, Union, List, Tuple, Iterable
 
-from utils.prettifying import human_readable
+from lang.languages import TranslatableString, Language
+from utils.prettifying import human_readable, Displayable
 
 
 class ResourceQuantity:
@@ -131,53 +132,59 @@ class ResourceQuantity:
     def __repr__(self):
         return "{}[{}]".format(self.prettify_type(self.type), self.quantity)
 
-    @staticmethod
-    def prettify_type(res_type: VALID_RESOURCE_TYPE) -> str:
-        # Simple test for common cases where ResourceQuantity are only of type Resources enum.
-        # Doesn't recognize cards or rarity and combinaison of both as valid types.
-        #  return res_type.name
-        # --- new implementation ---
-        # More complex test that also works for Card, rarities and (Card, Rarity) types
-        # (This function is surprisingly complex just to handle that)
+    _UNSPECIFIED_RARITY_TEMPLATE = TranslatableString("Random {rarity} Card", french="Carte {rarity} Aléatoire")
+    _UNSPECIFIED_CATEGORY_TEMPLATE = TranslatableString("Random {type}", french="{type} Aléatoire")
+    _UNSPECIFIED_TUPLE_TEMPLATE = TranslatableString("Random {rarity} {type}", french="{type} {rarity} Aléatoire")
+
+    @classmethod
+    def prettify_type(cls, res_type: VALID_RESOURCE_TYPE, language=Language.ENGLISH) -> str:
+        # If we have a regular resource it's straight forward
         if isinstance(res_type, Resources):
-            return res_type.name
+            return res_type.display_name(language)
+        # Else we must do more complex analysis
 
         from common.rarity import Rarity
         from common.cards import Card
-        from units.base_units import MovableUnit
         from economy.chests import Chest
+
         if isinstance(res_type, Rarity):
-            return "Unspecified{}Card".format(res_type.name)
+            return (cls._UNSPECIFIED_RARITY_TEMPLATE
+                    .translated_into(language)
+                    .format(rarity=res_type.display_name(language)))
         elif isinstance(res_type, tuple):
             assert issubclass(res_type[0], Card)
             assert isinstance(res_type[1], Rarity)
             assert res_type[0].rarity is None, "When using (CardType, Rarity) type, that card type should be a category base class not a final unit class" # and thus .rarity shouldn't be defined yet
-            if res_type[0] is MovableUnit:
-                return "Unspecified{}{}".format(res_type[1].name, "Unit")  # Exception dispay MovableUnit as "Unit"
-            return "Unspecified{}{}".format(res_type[1].name, res_type[0].__name__)
+
+            return (cls._UNSPECIFIED_TUPLE_TEMPLATE
+                    .translated_into(language)
+                    .format(type=res_type[0].display_name(language),
+                            rarity=res_type[1].display_name(language)))
         else:
             assert isinstance(res_type, Type), "Invalid resource type, expected one of: Ressources enum, Rarity enum, unit Card, a tuple(Card category base class, rarity) or a Chest. But {} was found".format(type(res_type))
             if issubclass(res_type, Chest):
-                return res_type.__name__
+                return res_type.display_name(language)
             else:
                 assert issubclass(res_type, Card), "Invalid resource type, expected one of: Ressources enum, Rarity enum, unit Card, a tuple(Card category base class, rarity) or a Chest. But {} was found".format(res_type.__name__)
                 if res_type.rarity is None:
-                    if res_type is MovableUnit:  # Exception dispay MovableUnit as "Unit"  (FIXME:maybe cleaner with a display_text attribute on all Card subclass)
-                        return "UnspecifiedUnit"
-                    return "Unspecified{}".format(res_type.__name__)
+                    return (cls._UNSPECIFIED_CATEGORY_TEMPLATE
+                            .translated_into(language)
+                            .format(type=res_type.display_name(language)))
                 else:
-                    return res_type.__name__
+                    # Precisely defined unit type
+                    return res_type.display_name(language)
 
-    def prettify(self) -> str:
+    def prettify(self, language=Language.ENGLISH) -> str:
         """
         Format the resource like these examples: "156.2K Gold", "3 CapacityToken", "3.59B Goods"
         :return: str
         """
 
-        return "{value} {type}".format(value=human_readable(self.quantity), type=self.prettify_type(self.type))
+        return "{value} {type}".format(value=human_readable(self.quantity),
+                                       type=self.prettify_type(self.type, language))
 
 
-class Resources(Enum):
+class Resources(Displayable, Enum):
     """
     Enumeration of all the collectible resources.
     Each item in the enum can be called to generate the corresponding ResourceQuantity object (ex: Gold(1254) )
@@ -185,31 +192,34 @@ class Resources(Enum):
     It doesn't aim for computation heavy process or memory savings, but for clarity instead. For consequent computation
     inside a process just use integers.
     """
-    Goods = auto()
-    Gold = auto()
-    Gem = auto()
-    Dust = auto()
+    Goods = TranslatableString("Cargo", french="Marchandises")
+    Gold = TranslatableString("Gold", french="Or")
+    Gem = TranslatableString("Gems", french="Gemmes")
+    Dust = TranslatableString("Dust", french="Poussière")
 
-    LegendarySoul = auto()
-    ReincarnationToken = auto()
-    CapacityToken = auto()
-    DalvirSoul = auto()
-    ZoraSoul = auto()
-    GhohralSoul = auto()
-    AilulSoul = auto()
-    MardonSoul = auto()
-    HeroExperience = auto()
+    LegendarySoul = TranslatableString("Legendary Souls", french="Âmes Légendaires")
+    ReincarnationToken = TranslatableString("Reborn Medals", french="Médailles de réincarnation")
+    CapacityToken = TranslatableString("Skill Tokens", french="Jeton de compétence")
+    DalvirSoul = TranslatableString("Dalvir's Souls", french="Âmes de Dalvir")
+    ZoraSoul = TranslatableString("Zora's Souls", french="Âmes de Zora")
+    GhohralSoul = TranslatableString("Ghohral's Souls", french="Âmes de Ghohral")
+    AilulSoul = TranslatableString("Ailul's Souls", french="Âmes d'Ailul")
+    MardonSoul = TranslatableString("Mardon's Souls", french="Âmes de Mardon")
+    HeroExperience = TranslatableString("Hero Exp", french="XP de héros")
 
-    LifePotion = auto()
-    LotteryTicket = auto()
-    # BanditShieldSeconds = auto()
+    LifePotion = TranslatableString("Health Bottles", french="Flacons de santé")
+    LotteryTicket = TranslatableString("Spin Tickets", french="Tickets de lotterie")
+    # BanditShieldSeconds = TranslatableString("Bandits Aegis", french="Bouclier de bandits")
 
-    BeginnerGrowth = auto()
-    VIP = auto()
-    Trophy = auto()
+    BeginnerGrowth = TranslatableString("BeginnerGrowth", french="Croissance")
+    VIP = TranslatableString("VIP", french="VIP")
+    Trophy = TranslatableString("Trophy", french="Trophés")
 
     def __call__(self, quantity: float):
         return ResourceQuantity(self, quantity)
+
+    def display_name(self, language=Language.ENGLISH):
+        return self.value.translated_into(language)
 
 
 class ResourcePacket(defaultdict):
@@ -288,9 +298,9 @@ class ResourcePacket(defaultdict):
             raise ValueError("ResourcePacket can only be multiplied by scalars (int/float), not {}".format(type(other)))
         return result
 
-    def prettify(self, exact_value=False):
+    def prettify(self, exact_value=False, language=Language.ENGLISH):
         return '\n'.join(
-            ["- " + ("{} {}".format(self[key], ResourceQuantity.prettify_type(key))
+            ["- " + ("{} {}".format(self[key], ResourceQuantity.prettify_type(key, language=language))
                      if exact_value
                      else ResourceQuantity(key, self[key]).prettify())
              for key in self])

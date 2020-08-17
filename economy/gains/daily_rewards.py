@@ -33,6 +33,7 @@ from common.resources import Resources as R
 from common.vip import VIP
 from economy.chests import WoodenChest, IronChest, SilverChest, GoldenChest, Chest, RaidChest
 from economy.gains.abstract_gains import Gain, rank_param, vip_param, Days, hq_param
+from lang.languages import TranslatableString
 from units.bandits import Bandit
 from units.guardians import Guardian
 from utils.ui_parameters import UIParameter
@@ -102,6 +103,8 @@ class Trading10Km(Trading):
     def daily_income(cls, daily_10km_trading_count: float = None, **kwargs):
         return super().daily_income(daily_trading_count=daily_10km_trading_count, **kwargs)
 
+    __display_name = TranslatableString("10km trading", french="Échange de 10km")
+
 
 def update_tradings_parameter(num_trading_per_reset: int, vip: VIP):
     max_trading_cycle = (1 + vip.traiding_quota_free_reset + 3)
@@ -139,6 +142,8 @@ class Trading100Km(Trading):
     def daily_income(cls, daily_100km_trading_count: float = 0, **kwargs):
         return super().daily_income(daily_trading_count=daily_100km_trading_count, **kwargs)
 
+    __display_name = TranslatableString("100km trading", french="Échange de 100km")
+
 
 values_range_1000km, dispaly_range_1000km = update_tradings_parameter(2, VIP.lvl0)
 daily_1000km_trading_count_param = UIParameter(
@@ -163,6 +168,8 @@ class Trading1000Km(Trading):
     def daily_income(cls, daily_1000km_trading_count: float = 0, **kwargs):
         return super().daily_income(daily_trading_count=daily_1000km_trading_count, **kwargs)
 
+    __display_name = TranslatableString("1000km trading", french="Échange de 1000km")
+
 
 values_range_best_exchange, dispaly_range_best_exchange = update_tradings_parameter(1, VIP.lvl0)
 daily_best_trading_count_param = UIParameter(
@@ -186,6 +193,8 @@ class BestTrading(Trading):
     @classmethod
     def daily_income(cls, daily_best_trading_count: float = 0, **kwargs):
         return super().daily_income(daily_trading_count=daily_best_trading_count, **kwargs)
+
+    __display_name = TranslatableString("Best trading", french="Meilleur échange")
 
 
 # Declare an additional UI parameter for the lottery gains
@@ -224,6 +233,8 @@ class TradingResets(Gain):
         n = max(0, reset_count_same_day - vip.traiding_quota_free_reset - 1)
         return cls.cumulative_reset_costs[n]
 
+    __display_name = TranslatableString("Trading quota resets", french="Renouvellement du quota d'échange")
+
 
 class Lottery(Gain):
     """Gain for the three daily free lottery runs, see economy.converters.converters.Lottery for run reward details"""
@@ -236,6 +247,8 @@ class Lottery(Gain):
     @classmethod
     def daily_income(cls, **kwargs) -> ResourcePacket:
         return ResourcePacket(R.LotteryTicket(3))
+
+    __display_name = TranslatableString("Lottery", french="Lotterie")
 
 
 def update_buidlding_level_param(building_difference_with_hq, hq_lvl):
@@ -281,6 +294,8 @@ class MillProduction(Gain):
             income = min(income, Mill.storage_limits[mill_lvl or hq_lvl] * daily_collect_count)
         return income
 
+    __display_name = TranslatableString("Mill", french="Moulin")
+
 
 station_value_range, station_display_range = update_buidlding_level_param(0, 30)
 station_lvl_param = UIParameter(
@@ -319,6 +334,8 @@ class TransportStationProduction(Gain):
             income = min(income, Mill.storage_limits[station_lvl or hq_lvl] * daily_collect_count)
         return income
 
+    __display_name = TranslatableString("Transport station", french="Station de transport")
+
 
 class DailyQuest(Gain):
 
@@ -339,6 +356,8 @@ class DailyQuest(Gain):
     def daily_income(cls, rank: Rank = Rank.NONE, **kwargs) -> ResourcePacket:
         return cls.iteration_income(rank=rank)
 
+    __display_name = TranslatableString("Daily quests", french="Quêtes du jour")
+
 
 class FreeDailyOffer(Gain):
 
@@ -349,6 +368,8 @@ class FreeDailyOffer(Gain):
     @classmethod
     def daily_income(cls, rank: Rank = Rank.NONE, **kwargs) -> ResourcePacket:
         return cls.iteration_income(rank=rank, **kwargs)
+
+    __display_name = TranslatableString("Free daily offer", french="Offre du jour gratuite")
 
 
 defense_lost_param = UIParameter(
@@ -437,6 +458,8 @@ class Ambushes(Gain):
                     cls._max_reward_per_day[RaidChest])),
             )
 
+    __display_name = TranslatableString("Ambushes", french="Embuscades")
+
 
 ask_for_donation_param = UIParameter(
     'ask_for_donation',
@@ -461,6 +484,8 @@ class ClanDonation(Gain):
     @classmethod
     def daily_income(cls, hq_lvl: int = 1, ask_for_donation: bool = False, **kwargs) -> ResourcePacket:
         return cls.iteration_income(hq_lvl=hq_lvl, ask_for_donation=ask_for_donation, **kwargs) * 5
+
+    __display_name = "Donations"
 
 
 # TODO daily connection reward

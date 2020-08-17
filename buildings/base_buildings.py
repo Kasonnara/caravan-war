@@ -22,6 +22,8 @@ from common.cards import Upgradable
 
 # TODO, if necessary, caching all buildings (one instance for each [type, level] only) and reuse them may reduce
 #  object creation.
+from lang.languages import TranslatableString
+
 
 class Building(Upgradable):
-    pass
+    __display_name = TranslatableString("building", french="bâtiment")

@@ -21,11 +21,13 @@ from typing import List, Type, Tuple
 from common.leagues import Rank
 from common.rarity import Rarity
 from common.resources import ResourcePacket, ResourceQuantity, Resources
+from lang.languages import TranslatableString
 from spells.common_spell import Spell
 from units.base_units import MovableUnit
+from utils.prettifying import Displayable
 
 
-class Chest:
+class Chest(Displayable):
     """Represent an in-game chest and its loot"""
     number_of_card: int = None
     _average_gold_base = None
@@ -58,6 +60,7 @@ class WoodenChest(Chest):
         #Resources.ReincarnationToken(1),
         )
     max_reincarnation_token = 3
+    __display_name = TranslatableString("Wooden chest", french="Coffre en bois")
 
 
 class IronChest(Chest):
@@ -68,6 +71,7 @@ class IronChest(Chest):
         # Resources.ReincarnationToken(2),
         )
     max_reincarnation_token = 3
+    __display_name = TranslatableString("Iron chest", french="Coffre en fer")
 
 
 class SilverChest(Chest):
@@ -80,6 +84,7 @@ class SilverChest(Chest):
         # Resources.ReincarnationToken(2.5),
         )
     max_reincarnation_token = 4
+    __display_name = TranslatableString("Silver chest", french="Coffre argenté")
 
 
 class GoldenChest(Chest):
@@ -92,6 +97,7 @@ class GoldenChest(Chest):
         # Resources.ReincarnationToken(4),
         )
     max_reincarnation_token = 5
+    __display_name = TranslatableString("Golden chest", french="Coffre doré")
 
 
 class RecycleChest(Chest):
@@ -106,10 +112,12 @@ class RecycleChest(Chest):
         )
     _average_gold_base = 0.75
     _average_goods_base = 1.5
+    __display_name = TranslatableString("Recycle chest", french="Coffre de recyclage")
 
 
 class RaidChest(SilverChest):
-    pass  # TODO assert that RaidChests are in fact exactly equals to SilverChests
+    __display_name = TranslatableString("Raid chest", french="Coffre d'embuscade")
+    # TODO assert that RaidChests are in fact exactly equals to SilverChests
 
 
 # TODO Epic chest

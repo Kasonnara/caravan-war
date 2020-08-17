@@ -30,6 +30,7 @@ from common.resources import ResourcePacket, ResourceQuantity
 from common.resources import Resources as R
 
 from economy.gains.abstract_gains import Gain, Days, rank_param
+from lang.languages import TranslatableString
 from spells.defense_spells import ModuleBoost
 from spells.attack_spells import Storm
 from units.bandits import Bandit
@@ -93,6 +94,8 @@ class GateChallenge(ChallengeOfTheDay):
             assert 0 <= gates_passed <= 30
             raise NotImplementedError()
 
+    __display_name = TranslatableString("Gate challenge", french="Défi des portes")
+
 
 class BanditChallenge(ChallengeOfTheDay):
     parameter_dependencies = [rank_param]
@@ -112,6 +115,8 @@ class BanditChallenge(ChallengeOfTheDay):
             R.Gem(100),
             R.LotteryTicket(3),
             )
+
+    __display_name = TranslatableString("Bandit challenge", french="Défi de bandits")
 
 
 leaderboard_rank_param = UIParameter(
@@ -146,6 +151,8 @@ class BossChallenge(ChallengeOfTheDay):
             R.LotteryTicket(3),
             )
 
+    __display_name = TranslatableString("Boss challenge", french="Défi de boss")
+
 
 class ConvoyChallenge(ChallengeOfTheDay):
     parameter_dependencies = [rank_param]
@@ -161,6 +168,8 @@ class ConvoyChallenge(ChallengeOfTheDay):
             R.Gem(100),
             R.LotteryTicket(2),
             )
+
+    __display_name = TranslatableString("Convoy challenge", french="Défi de convoi")
 
 
 opponent_rank_param = UIParameter(
@@ -188,6 +197,8 @@ class ClanWarFights(ChallengeOfTheDay):
         # Need more data on it's internal logic
         opponent_rank = opponent_rank or rank
         return ResourcePacket(R.Gold(opponent_rank.clan_war_gold_bounty))
+
+    __display_name = TranslatableString("Clan war ambushes", french="Embuscades de guerre des clan")
 
 
 clan_rank_param = UIParameter(
@@ -220,6 +231,8 @@ class ClanWarReward(ChallengeOfTheDay):
             return ResourcePacket()
         return clan_rank.rewards(battle_ranking, rank)
 
+    __display_name = TranslatableString("Clan war rewards", french="Récompenses de guerre des clan")
+
 
 class ClanMission(ChallengeOfTheDay):
     start_day = Days.Sunday
@@ -236,6 +249,8 @@ class ClanMission(ChallengeOfTheDay):
             R.Gold(2 * 10 * rank.traiding_base),
             R.Gem(150),
             ) * (1/7)
+
+    __display_name = TranslatableString("Clan quests", french="Missions de clan")
 
 
 personal_boss_kill_per_fight_param = UIParameter(
@@ -281,6 +296,8 @@ class ClanBoss(ChallengeOfTheDay):
 
         return total_reward
 
+    __display_name = TranslatableString("Clan boss", french="Boss de clan")
+
 
 class WeeklyQuest(Gain):
 
@@ -300,3 +317,5 @@ class WeeklyQuest(Gain):
     @classmethod
     def daily_income(cls, rank: Rank = Rank.NONE, **kwargs) -> ResourcePacket:
         return cls.iteration_income(rank=rank) * (1/7)
+
+    __display_name = TranslatableString("Weekly quests", french="Quêtes hébdomadaires")

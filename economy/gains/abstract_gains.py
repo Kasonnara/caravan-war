@@ -29,6 +29,7 @@ from common.cards import MAX_LEVEL
 from common.leagues import Rank
 from common.resources import ResourcePacket
 from common.vip import VIP
+from utils.prettifying import Displayable
 from utils.ui_parameters import UIParameter
 
 
@@ -68,7 +69,7 @@ hq_param = UIParameter('hq_lvl', range(1, MAX_LEVEL+1), display_range=[str(vip_l
 
 # ------------------------ Gains abstract class ------------------------
 
-class Gain:
+class Gain(Displayable):
     """
     Abstract class for modeling regular incomes in the game
 
