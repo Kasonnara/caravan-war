@@ -47,8 +47,6 @@ def g(x, a, b):
 #a = (sum(armor_table.values()) - b*sum([log(k + 1) for k in armor_table])) / len(armor_table)
 #print(a, b)
 
-
-
 def f(x):
     #return sqrt(x) * armor_table[2]/sqrt(2)
     #return x**(5/7) * armor_table[2] / 2**(5/7)

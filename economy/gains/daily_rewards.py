@@ -399,6 +399,7 @@ class Ambushes(Gain):
         R.ReincarnationToken(26),
         ResourceQuantity(RaidChest, 1),
         )
+    # TODO add the 25% gold
 
     @classmethod
     def iteration_income(cls, rank: Rank = Rank.NONE, temple_lvl=None, hq_lvl=1, average_trophy=15, **kwargs) -> ResourcePacket:
