@@ -70,6 +70,7 @@ gates_passed_param = UIParameter(
     range(31),
     display_range=[str(x) for x in range(31)],
     default_value=30,
+    help_txt="Average number of gates you pass in the gate challenge",
     )
 
 
@@ -120,6 +121,8 @@ leaderboard_rank_param = UIParameter(
     display_range=["1st", "2nd", "3rd"] + ["{}th".format(x) for x in range(4, 11)] + ["Out of leaderboard"],
     display_txt="Boss leaderboard",
     default_value=10,
+    help_txt="If your regularly are in the boss challenge leaderboard, select your rank to include the extra gems "
+             "reward in the simulation.",
     )
 
 
@@ -168,6 +171,7 @@ opponent_rank_param = UIParameter(
     Rank,
     display_range=[rank.name if rank is not Rank.NONE else "Auto (= your rank)" for rank in Rank],
     display_txt="Clan War opponent",
+    help_txt="Select the average ranks of the player you attack during the Clan Wars. (Note: to make it simple the simulator assume you destroy 100% of your target's convoy)",
     )
 
 
@@ -195,6 +199,7 @@ clan_rank_param = UIParameter(
     ClanLeague,
     display_range=[league.name for league in ClanLeague],
     display_txt="League",
+    help_txt="Select the league of your clan.",
     )
 
 battle_ranking_param = UIParameter(
@@ -203,6 +208,7 @@ battle_ranking_param = UIParameter(
     display_range=["1st", "2nd", "3rd", "4th", "5th"],
     display_txt="Clan War result",
     default_value=2,
+    help_txt="Select the rank of your clan at the end of clan wars."
     )
 
 
@@ -243,6 +249,7 @@ personal_boss_kill_per_fight_param = UIParameter(
     int,
     display_txt="Clan boss kills per fight",
     default_value=0,
+    help_txt="Enter the average number of clan boss you kill per attack.\n(Note: the siumlator will then assume you always make 2 attacks)",
     )
 
 
@@ -251,6 +258,7 @@ clan_boss_kills_param = UIParameter(
     int,
     display_txt="Clan Boss total clan kills",
     default_value=0,
+    help_txt="Enter the average total boss kills your clan manage to score each week.",
     )
 
 

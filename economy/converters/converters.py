@@ -59,7 +59,10 @@ class Lottery(GainConverter):
             ) * resource_packet[R.LotteryTicket]
 
 
-lottery_convert_mode_param = ConverterModeUIParameter(Lottery, display_txt="Convert Lottery Tickets")
+lottery_convert_mode_param = ConverterModeUIParameter(
+    Lottery,
+    display_txt="Convert Lottery Tickets",
+    help_txt="Automatically exchange lottery tickets for resources.")
 GainConverter.ALL.append(Lottery)  # TODO use a Metaclass for that
 
 
@@ -78,7 +81,11 @@ class LegendarySoulExchange(GainConverter):
             ) * (resource_packet[R.LegendarySoul] / 1000)
 
 
-legendary_soul_convert_mode_param = ConverterModeUIParameter(LegendarySoulExchange, display_txt="Convert legendary souls")
+legendary_soul_convert_mode_param = ConverterModeUIParameter(
+    LegendarySoulExchange,
+    display_txt="Convert legendary souls",
+    help_txt="Automatically exchange legendary souls for cards.",
+    )
 GainConverter.ALL.append(LegendarySoulExchange)
 
 
@@ -134,6 +141,9 @@ defense_lost_convert_mode_param = ConverterModeUIParameter(
     DefenseLost,
     value_range=[ConverterModeUIParameter.ConversionMode.IN_PLACE, ConverterModeUIParameter.ConversionMode.EXTERNAL],
     display_txt="Resource stolen display",
+    help_txt="Reduce trading rewards to take into account the convoys you lost."
+             "\n\n*(Warning: not really accurate on trophy loses)  "
+             "\n(Note: Assume the worst case were you always lose your best tradings first)*",
     )
 GainConverter.ALL.append(DefenseLost)
 
@@ -164,6 +174,7 @@ chest_opener_convert_mode_param = ConverterModeUIParameter(
     ChestOpening,
     value_range=[ConverterModeUIParameter.ConversionMode.DISABLED, ConverterModeUIParameter.ConversionMode.IN_PLACE],
     display_txt="Open Chests",
+    help_txt="Automatically open chests for cards.  \n*(Warning: not really accurate on reborn medals loots)*",
     )
 GainConverter.ALL.append(ChestOpening)
 
@@ -200,6 +211,7 @@ recycle_target_type_param = UIParameter(
     [RecycleChest.recyclable_types[:1], RecycleChest.recyclable_types],  # Todo add more choices
     display_range=["All Common", "All Common and Rare"],
     display_txt="Cards to recycle",
+    help_txt="Select which cards category you recycle",
     )
 
 
@@ -234,6 +246,7 @@ recycle_convert_mode_param = ConverterModeUIParameter(
     # FIXME: WORKAROUND, converters currently badly behave with negative values in IN_PLACE mode
     #  (see AbstractConverter.apply_all for more details) so as long as this bug exists IN_PLACE mode is forbidden.
     display_txt="Recycle cards",
+    help_txt="Automatically exchange cards for recycle chests.",
     )
 GainConverter.ALL.append(Recycle)
 

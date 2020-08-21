@@ -53,6 +53,7 @@ pub_viewed_per_day_param = UIParameter(
     range(max_adds_per_day + 1),
     display_range=[str(x) for x in range(max_adds_per_day + 1)],
     display_txt="Daily adds",
+    help_txt="Select the average number of adds you view per day.",
     )
 
 

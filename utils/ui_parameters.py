@@ -34,6 +34,7 @@ class UIParameter:
                  display_txt: Optional[str] = None,
                  update_callback: Callable = None,
                  dependencies: Iterable['UIParameter'] = None,
+                 help_txt: Optional[str] = None,
                  ):
         """
         :param parameter_name: str, the name of the parameter. This is used as key in the parameter dictionary.
@@ -49,7 +50,9 @@ class UIParameter:
         :param update_callback: Callable(**kwargs) -> (List,List), a function that take all other uiparameter values in input and return the
             new value range and and display range to use after at least one of the dependencies changed
         :param dependencies: The list other parameters this parameter depends on, if they change a callback is
-            triggered. (Not implemented yet)
+            triggered.
+        :param help_txt: str, if given provide a text that can be displayed to the user for help him understand the
+            usage of the parameter.
         """
         assert isinstance(default_value, (int, bool)) or isinstance(value_range, collections.abc.Iterable)
 
@@ -81,6 +84,8 @@ class UIParameter:
 
         self._update_callback_function: Optional[Callable] = update_callback
         self.dependencies: Optional[List[UIParameter]] = dependencies
+
+        self.help_txt = help_txt
 
     def update(self, dependencie_values: list):
         """Callback to use to update the UIParameter attributes when values of one of its dependencies change"""

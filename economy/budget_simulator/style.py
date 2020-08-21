@@ -48,5 +48,11 @@ LABEL_SETTING_BOOTSTRAP_COL = {
     "bool": (10, 1),
     "default": (6, 6),
     }
+
+TOOLTIPS_STYLE = {
+    'max-width': "90%",
+    'text-align': "left",
+    }
+
 """Constants used by the build_parameter_selector function to set bootstrap columns grid widths of the label and 
 the interactive component for each possible UI parameter type"""

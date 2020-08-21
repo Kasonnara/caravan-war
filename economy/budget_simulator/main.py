@@ -36,7 +36,7 @@ from economy.budget_simulator.bs_ui_parameters import BUDGET_SIMULATION_PARAMETE
 from economy.budget_simulator.graphs import graphs_to_update, ResourceTable, ResourceBarPie
 from economy.budget_simulator.simulation import update_income, all_parameters
 from economy.budget_simulator.style import external_stylesheets, HEADER_STYLE, SIDEBAR_STYLE, \
-    LABEL_SETTING_BOOTSTRAP_COL
+    LABEL_SETTING_BOOTSTRAP_COL, TOOLTIPS_STYLE
 
 from utils.ui_parameters import UIParameter
 
@@ -185,10 +185,19 @@ def build_parameter_selector(parameter: UIParameter):
     label = html.Label(
         parameter.display_txt + ":",
         className="col-sm-{}".format(bootstrap_cols[0]),
+        id=parameter_selector_id+"_label",
         )
+    if parameter.help_txt is not None:
+        info_bubble = dbc.Tooltip(dcc.Markdown(parameter.help_txt),
+                                  target=parameter_selector_id+"_label",
+                                  container="body",
+                                  style=TOOLTIPS_STYLE,
+                                  )
+    else:
+        info_bubble = html.Div()
 
     # Build a Bootstrap Row container to encapsulate the parameter label with its interactive selector component.
-    return dbc.Row([label, selector])
+    return dbc.Row([label, selector, info_bubble])
 
 
 side_bar = html.Div(

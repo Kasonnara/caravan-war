@@ -88,6 +88,7 @@ daily_10km_trading_count_param = UIParameter(
     display_range=[str(x) for x in range(30)] + ["Max (Auto)"],
     display_txt="10km trading count",
     default_value=None,
+    help_txt="Select the average number of 10km tradings you sent each day.",
     )
 
 
@@ -125,6 +126,7 @@ daily_100km_trading_count_param = UIParameter(
     default_value=9,
     update_callback=functools.partial(update_tradings_parameter, 3),
     dependencies=[vip_param],
+    help_txt="Select the average number of 100km tradings you sent each day.",
     )
 
 
@@ -149,6 +151,7 @@ daily_1000km_trading_count_param = UIParameter(
     default_value=6,
     update_callback=functools.partial(update_tradings_parameter, 2),
     dependencies=[vip_param],
+    help_txt="Select the average number of 1000km tradings you sent each day.",
     )
 
 
@@ -173,6 +176,7 @@ daily_best_trading_count_param = UIParameter(
     default_value=3,
     update_callback=functools.partial(update_tradings_parameter, 1),
     dependencies=[vip_param],
+    help_txt="Select the average number of best tradings you sent each day.",
     )
 
 
@@ -193,7 +197,8 @@ selected_heroes_param = UIParameter(
     'selected_heroes',
     hero_pair_combinaisons,
     display_range=["{}-{}".format(h1.name[:-4], h2.name[:-4]) for h1, h2 in hero_pair_combinaisons],
-    display_txt="Lottery heroes"
+    display_txt="Lottery heroes",
+    help_txt="Select the pair of heroes selected for your lottery.",
     )
 
 
@@ -255,6 +260,8 @@ mill_lvl_param = UIParameter(
     default_value=None,
     update_callback=functools.partial(update_buidlding_level_param, 0),
     dependencies=[hq_param],
+    help_txt="Select the level of your mill "
+             "\n\n*(AUTO take the maximum level available with your current HQ level)*.",
     )
 
 
@@ -290,6 +297,8 @@ station_lvl_param = UIParameter(
     default_value=None,
     update_callback=functools.partial(update_buidlding_level_param, 0),
     dependencies=[hq_param],
+    help_txt="Select the level of your trading station "
+             "\n\n*(AUTO take the maximum level available with your current HQ level)*.",
     )
 
 
@@ -355,6 +364,9 @@ defense_lost_param = UIParameter(
     'defense_lost',
     int,
     display_txt="Defense lost (daily)",
+    help_txt="Enter the average number of 100% lost convoy (for example two 50% defense count as one).  "
+             "\n*Don't care if it's not really precise, it's already a rought approximation as we wanted to keep it simple. It doesn't have much impact on the overall anyway.*"
+             "\n\n*(Note: The simulator compute the worst case where you lost your best tradings first, and that you lost 8 trophy per ambush on average.)*",
     )
 
 ambush_won_param = UIParameter(
@@ -362,6 +374,10 @@ ambush_won_param = UIParameter(
     int,
     display_txt="Ambush won",
     default_value=20,
+    help_txt="Enter the average number of victorious ambushes you do per day."
+             "\n\n*(Advice: usually after about 20 successfull ambushes per day you do not gain gems, "
+             "reincarnation medals, legendary soul nor life potion. You only gain extra cargo, trophy and hero xp.)  "
+             "\n(Note: assume you do all your ambushes with a hero in your army)*",
     )
 
 
@@ -372,7 +388,10 @@ temple_lvl_param = UIParameter(
     display_range=temple_display_range,
     default_value=None,
     update_callback=functools.partial(update_buidlding_level_param, 6),
+    display_txt="Hero shrine level",
     dependencies=[hq_param],
+    help_txt="Select the level of your hero shrine "
+             "\n\n*(AUTO take the maximum level available with your current HQ level)*",
     )
 
 average_trophy_param = UIParameter(
@@ -380,6 +399,7 @@ average_trophy_param = UIParameter(
     [5, 10, 15, 20, 25, 30, 35, 40, 45],
     display_txt="Average trophy",
     default_value=2,
+    help_txt="Select the average trophy you won on ambushes.",
     )
 
 
@@ -443,6 +463,7 @@ ask_for_donation_param = UIParameter(
     bool,
     display_txt="Clan Donations",
     default_value=False,
+    help_txt="If you ask for donation in your clan each day, tick this",
     )
 
 
