@@ -34,9 +34,9 @@ class ConverterModeUIParameter(UIParameter):
     class ConversionMode(Enum):
         DISABLED = "Disabled"
         """Converter is disabled"""
-        IN_PLACE = "In place"
+        IN_PLACE = "In place"
         """Conversion are applied directly to the gain results"""
-        EXTERNAL = "As a separate gain"
+        EXTERNAL = "Separate gain"
         """Conversions appear as another separate gain"""
 
     def __init__(self, converter_class: Type['GainConverter'], value_range: Iterable[ConversionMode] = ConversionMode,
