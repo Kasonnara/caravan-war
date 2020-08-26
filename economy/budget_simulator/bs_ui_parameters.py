@@ -57,14 +57,6 @@ BUDGET_SIMULATION_PARAMETERS: Dict[str, List[UIParameter]] = {
         hq_param,
         pub_viewed_per_day_param,
         ],
-    'Conversions': [
-        lottery_convert_mode_param,
-        selected_heroes_param,
-        legendary_soul_convert_mode_param,
-        recycle_convert_mode_param,
-        recycle_target_type_param,
-        chest_opener_convert_mode_param,
-        ],
     'Trading': [
         daily_10km_trading_count_param,
         daily_100km_trading_count_param,
@@ -72,6 +64,11 @@ BUDGET_SIMULATION_PARAMETERS: Dict[str, List[UIParameter]] = {
         daily_best_trading_count_param,
         defense_lost_param,
         defense_lost_convert_mode_param,
+        ],
+    'Units': [
+        mill_lvl_param,
+        station_lvl_param,
+        temple_lvl_param,
         ],
     'Ambushes': [
         ambush_won_param,
@@ -93,13 +90,16 @@ BUDGET_SIMULATION_PARAMETERS: Dict[str, List[UIParameter]] = {
         clan_boss_attack_count_param,
         ask_for_donation_param,
         ],
+    'Conversions': [
+        lottery_convert_mode_param,
+        selected_heroes_param,
+        legendary_soul_convert_mode_param,
+        recycle_convert_mode_param,
+        recycle_target_type_param,
+        chest_opener_convert_mode_param,
+        ],
     'Purchase': [
         equipment_craft_number_param,
-        ],
-    'Units': [
-        mill_lvl_param,
-        station_lvl_param,
-        temple_lvl_param,
         ],
     }
 """Store all budget simulation UIParameters (sorted into categories)"""

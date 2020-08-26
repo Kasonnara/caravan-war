@@ -28,7 +28,7 @@ import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 
 from common.resources import Resources
 from economy.budget_simulator import heroku_footer
@@ -47,6 +47,7 @@ production_mode_on_heroku: bool = not (__name__ == '__main__')
 # Init the main application object (initialized early in order to allow creating callbacks)
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 """The main dash application object"""
+app.title = "WINS CaravanWar"
 
 # Register all persistent elements in order to build a callback that can disable all of them if the user disagree
 persistent_components_ids: List[str] = []
@@ -57,16 +58,65 @@ header = html.Div(
     children=[
         dbc.Container(
             children=[
-                html.H1(children='CaravanWar Budget Simulator'),
-
-                dcc.Markdown(children='''
-                A web application for planning your resource earnings and losses in the game CaravanWar *(by [Kasonnara](https://github.com/Kasonnara/caravan-war-center))*  
-                *(This is NOT an official application from Hiker Games)*
-                '''),
+                html.H1("When Is my Next Seraph?"),
+                #html.H3([dcc.Markdown("&ensp;&ensp;&ensp;&ensp;*CaravanWar income simulator*")]),
+                html.H5(
+                        dcc.Markdown("An opensource web application for planning your regular resource earnings in the "
+                                     "game [CaravanWar](https://play.google.com/store/apps/details?id=com.hikergames.caravanwar&hl=en_US)."),
+                        ),
+                dbc.Button("What is WINS?", color="link", id="about-wins-button", className="mr-1"),
+                dbc.Collapse(
+                    dbc.Card(dbc.CardBody(
+                        dcc.Markdown("""
+                            This application allow you to equalize in and out of cargo or gems, 
+                            predict when you will be able to afford your next HQ level, a hero or the next star of one of your unit,
+                            how worth is it to take the gate challenge, 
+                            or if your just cursious to see how much money your able to make each month.
+                
+                            The simulator take into account most regular incomes:
+                            - Mill and transport station
+                            - Tradings and ambushes
+                            - Weekly challenges
+                            - Clan Wars (4v4 and 1v1), clan missions and clan bosses
+                            - Recylcing chests
+                            - Lottery 
+                            - Forging
+                            - Watching adds
+                                 
+                            Better, the simulator handles a wide varity of incomes: 
+                            - Cargo, gold and gems (obviously)
+                            - Dust
+                            - Legendary souls
+                            - Heroes souls, xp and skill tokens
+                            - Reborn medals
+                            - Lottery tickets
+                            - Life bottles
+                            - Trophy (even if it a little bit limitted at the moment)
+                            - And even unit card loots!
+                            """),
+                        )),
+                    id="about-wins-collapse",
+                    ),
+                dcc.Markdown("*Made by [Kasonnara](https://github.com/Kasonnara/caravan-war-center)*, "
+                             "***this is NOT an official application from Hiker Games.***"),
                 ],
-                )],
+            ),
+        ],
     style=HEADER_STYLE,
     )
+
+
+# About-WINS callback
+@app.callback(
+    Output("about-wins-collapse", "is_open"),
+    [Input("about-wins-button", "n_clicks")],
+    [State("about-wins-collapse", "is_open")],
+)
+def toggle_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
 
 side_bar = html.Div(
     children=(
