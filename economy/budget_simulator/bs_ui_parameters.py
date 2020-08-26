@@ -31,10 +31,10 @@ from economy.gains.daily_purchases import equipment_craft_number_param
 from economy.gains.daily_rewards import daily_10km_trading_count_param, \
     daily_100km_trading_count_param, daily_1000km_trading_count_param, daily_best_trading_count_param, \
     selected_heroes_param, mill_lvl_param, station_lvl_param, ambush_won_param, ask_for_donation_param, \
-    average_trophy_param, temple_lvl_param, defense_lost_param
+    average_trophy_param, temple_lvl_param, defense_lost_param, fast_ambushes_param
 from economy.gains.weekly_rewards import gates_passed_param, leaderboard_rank_param, \
     opponent_rank_param, clan_rank_param, battle_ranking_param, personal_boss_kill_per_fight_param, \
-    clan_boss_kills_param
+    clan_boss_kills_param, clan_league_param, clanwar1v1_result_param, clan_boss_attack_count_param
 from utils.ui_parameters import UIParameter
 
 BUDGET_SIMULATION_PARAMETERS: Dict[str, List[UIParameter]] = {
@@ -63,6 +63,7 @@ BUDGET_SIMULATION_PARAMETERS: Dict[str, List[UIParameter]] = {
         ],
     'Ambushes': [
         ambush_won_param,
+        fast_ambushes_param,
         average_trophy_param,
         ],
     'Challenges': [
@@ -70,11 +71,14 @@ BUDGET_SIMULATION_PARAMETERS: Dict[str, List[UIParameter]] = {
         leaderboard_rank_param,
         ],
     'Clan': [
+        clan_league_param,
         clan_rank_param,
         battle_ranking_param,
+        clanwar1v1_result_param,
         opponent_rank_param,
         personal_boss_kill_per_fight_param,
         clan_boss_kills_param,
+        clan_boss_attack_count_param,
         ask_for_donation_param,
         ],
     'Purchase': [

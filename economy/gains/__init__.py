@@ -51,6 +51,7 @@ GAINS_DICTIONARY: Dict[str, List[Type[Gain]]] = {
         ClanMission,
         ClanWarFights,
         ClanWarReward,
+        ClanWar1v1Reward,
         ClanDonation,
         ],
     'others': [
