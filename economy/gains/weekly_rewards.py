@@ -91,21 +91,43 @@ class GateChallenge(ChallengeOfTheDay):
     parameter_dependencies = [rank_param, gates_passed_param]
     start_day = Days.Monday
 
+    REWARD_PER_GATE = []
+    """List of the rewards of each gate (Note: gold and goods rewards must be interpreted as N x 10km tradings)."""
+    for k, main_resource_qty, gem_qty in zip(range(5), [2.0, 2.5, 3.0, 3.5, 4.0], [20, 20, 25, 30, 30]):
+        for l, extra_resource in enumerate([None if k < 4 else R.Gem(gem_qty),
+                                          None if k < 4 else R.Gem(gem_qty),
+                                          ResourceQuantity(Equipment, 1),
+                                          R.LifePotion(1 if k < 2 else 2),
+                                          R.Gem(gem_qty),
+                                          ResourceQuantity(Equipment, 1)]):
+            if k*6+l < 29:
+                # Regular gate
+                next_gate = ResourcePacket((R.Goods if k%2 else R.Gold)(main_resource_qty))
+                if extra_resource is not None:
+                    next_gate[extra_resource.type] += extra_resource.quantity
+            else:
+                # Special case for the last gate
+                next_gate = ResourcePacket(
+                    R.Goods(main_resource_qty),
+                    R.Gold(main_resource_qty),
+                    R.Gem(40),
+                    ResourceQuantity(Equipment, 1),
+                    R.LotteryTicket(2),
+                    )
+            REWARD_PER_GATE.append(next_gate)
+    CUMULATIVE_REWARD_PER_GATE = [ResourcePacket()] + [x for x in ResourcePacket.cum_sum(*REWARD_PER_GATE)]
+    """Cumulative sum of the total reward earned at each gate
+    (Note: gold and goods rewards must be interpreted as N x 10km tradings)."""
+
     @classmethod
     def iteration_income(cls, rank: Rank = Rank.NONE, gates_passed: int = None, **kwargs) -> ResourcePacket:
-        if gates_passed is None or True: # TODO FIXME remove the 'or True' once implemented
-            return ResourcePacket(
-                R.Goods(rank.traiding_base * 45),
-                R.Gold(rank.traiding_base * 49),
-                R.LifePotion(8),
-                R.Gem(225),
-                ResourceQuantity(Equipment, 10),
-                R.LotteryTicket(2),
-                )
-        else:
-            # TODO allow partial reward?
-            assert 0 <= gates_passed <= 30
-            raise NotImplementedError()
+        if gates_passed is None:
+            gates_passed = 30
+        assert 0 <= gates_passed <= 30
+        reward = cls.CUMULATIVE_REWARD_PER_GATE[gates_passed].copy()
+        reward[R.Gold] *= rank.traiding_base
+        reward[R.Goods] *= rank.traiding_base
+        return reward
 
 
 class BanditChallenge(ChallengeOfTheDay):
