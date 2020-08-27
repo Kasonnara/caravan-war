@@ -133,12 +133,6 @@ class ResourceQuantity:
 
     @staticmethod
     def prettify_type(res_type: VALID_RESOURCE_TYPE) -> str:
-        # Simple test for common cases where ResourceQuantity are only of type Resources enum.
-        # Doesn't recognize cards or rarity and combinaison of both as valid types.
-        #  return res_type.name
-        # --- new implementation ---
-        # More complex test that also works for Card, rarities and (Card, Rarity) types
-        # (This function is surprisingly complex just to handle that)
         if isinstance(res_type, Resources):
             return res_type.name
 
@@ -247,7 +241,7 @@ class ResourcePacket(defaultdict):
             new_dict[res_type] = self[res_type]
         return new_dict
 
-    def __add__(self, other):
+    def __add__(self, other: Union['ResourcePacket', ResourceQuantity]):
         result = self.copy()
 
         if type(other) is type(self):
@@ -263,7 +257,7 @@ class ResourcePacket(defaultdict):
 
         return result
 
-    def __sub__(self, other):
+    def __sub__(self, other: Union['ResourcePacket', ResourceQuantity]):
         assert False, "By convention, you should not need to subtract resources, all gains must already be positive " \
                       "value while costs must be negative value from the very beginning"  # Remove this assert if you found cases where the convention cannot apply
         result = self.copy()
@@ -326,6 +320,26 @@ class ResourcePacket(defaultdict):
                     + [other_type for other_type in found_types if not isinstance(other_type, Resources)]
                 )
         return found_types
+
+    @classmethod
+    def sum(cls, *iterable: Union['ResourcePacket', ResourceQuantity]):
+        result = cls()
+        for elt in iterable:
+            if isinstance(elt, ResourceQuantity):
+                result[elt.type] += elt.quantity
+            elif isinstance(elt, cls):
+                for res_type in elt:
+                    result[res_type] += elt[res_type]
+            else:
+                raise ValueError("ResourcePacket.sum can only sum up ResourcePacket or ResourceQuantity, not {}"
+                                 .format(type(elt)))
+
+    @classmethod
+    def cum_sum(cls, *iterable: Union['ResourcePacket', ResourceQuantity]):
+        next_value = cls()
+        for elt in iterable:
+            next_value = next_value + elt
+            yield next_value
 
 
 def resourcepackets_gold(*golds: int):
