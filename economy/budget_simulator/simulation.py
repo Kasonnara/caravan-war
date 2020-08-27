@@ -32,6 +32,7 @@ from economy.gains import GAINS_DICTIONARY
 from economy.gains.abstract_gains import Gain
 from spells.common_spell import Spell
 from units.base_units import MovableUnit
+from units.equipments import Equipment
 
 all_parameters = [ui_param
                   for category in BUDGET_SIMULATION_PARAMETERS
@@ -57,6 +58,7 @@ RESOURCE_SORTING_MAP = {
     resource_type: order
     for order, resource_type in enumerate(
         [native_resource_type for native_resource_type in Resources]  # Prioritize native resources in the order of the enum
+        + [Equipment]
         + ALL_CHESTS
         + [rarity_type for rarity_type in Rarity]  # then unspecified rarity
         + [(card_category.card_base_class, rarity_type) for card_category in CardCategories for rarity_type in Rarity]

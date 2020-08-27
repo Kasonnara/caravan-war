@@ -146,6 +146,9 @@ class ResourceQuantity:
         from common.cards import Card
         from units.base_units import MovableUnit
         from economy.chests import Chest
+        from units.equipments import Equipment
+        from units.equipments import Armor
+        from units.equipments import Weapon
         if isinstance(res_type, Rarity):
             return "Unspecified{}Card".format(res_type.name)
         elif isinstance(res_type, tuple):
@@ -157,6 +160,8 @@ class ResourceQuantity:
             return "Unspecified{}{}".format(res_type[1].name, res_type[0].__name__)
         else:
             assert isinstance(res_type, Type), "Invalid resource type, expected one of: Ressources enum, Rarity enum, unit Card, a tuple(Card category base class, rarity) or a Chest. But {} was found".format(type(res_type))
+            if res_type is Equipment or res_type is Weapon or res_type is Armor:
+                return "Unspecified{}".format(res_type.__name__)
             if issubclass(res_type, Chest):
                 return res_type.__name__
             else:
