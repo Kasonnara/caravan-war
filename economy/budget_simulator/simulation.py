@@ -20,7 +20,7 @@
 """
 Manage the parameters of the simulator
 """
-from typing import Type, Dict, Set, Union
+from typing import Type, Dict, Union
 
 from common.card_categories import CardCategories
 from common.rarity import Rarity

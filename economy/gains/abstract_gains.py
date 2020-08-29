@@ -83,7 +83,7 @@ class Gain:
     parameter_dependencies: List[UIParameter] = []
 
     def __init__(self):
-        raise AssertionError("Gains classes are be static singletons and thus must not be instanced")
+        raise AssertionError("Gains classes should be static singletons and thus must not be instanced")
 
     @classmethod
     @abstractmethod
@@ -118,4 +118,4 @@ class Gain:
         :return: ResourcePacket, the average total income for this gain over the given period
         """
         assert 'day' not in kwargs.keys()
-        return cls.daily_income(**kwargs) * mesurement_range.value               # More economical
+        return cls.daily_income(**kwargs) * mesurement_range.value
