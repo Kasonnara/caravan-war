@@ -298,7 +298,7 @@ clan_boss_kills_param = UIParameter(
     help_txt="Enter the average total boss kills your clan manage to score each week.",
     )
 
-BOSS_ATTACK_GEM_COST = [0] + [0, 0, -100, -300, -600]
+BOSS_ATTACK_GEM_COST = [0] + [0, 0, -100, -300, -800]
 """Cumulative sum of the gems costs to pay to be able to attack the clan boss  
 (Note: the first value at index 0 is the cost for attacking the boss 0 times)"""
 clan_boss_attack_count_param = UIParameter(
