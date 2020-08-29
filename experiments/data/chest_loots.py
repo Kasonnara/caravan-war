@@ -118,7 +118,9 @@ chest_opening_examples = {
              (Guard, Guard, Drone, Drone, Balista)),
         Loot(19, L.Phenix1, 8, (6, 6), ResourcePacket(Resources.ReincarnationToken(0)),
              (Scout, Balista, Balista, Knight, Maraudeur)),
-        #  -- reset
+        #  -- reset
+        Loot(19, L.Phenix1, 8, (7, 7), ResourcePacket(Resources.ReincarnationToken(1)),
+             (Arrow, Alchimist, Guard, Archer, Guard)),
         # --- End test day 2 ---
         ],
 
@@ -167,7 +169,9 @@ chest_opening_examples = {
              (Drone, Drone, Jetpack, Hunter, Knight, Archer)),
         Loot(19, L.Phenix1, 8, (1, 4), ResourcePacket(Resources.ReincarnationToken(0)),
              (Maraudeur,) * 4 + (Archer, Knight)),
-        #  -- reset
+        #  -- reset
+        Loot(19, L.Phenix1, 8, (2, 5), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Archer, Healer, Hunter, Guard, Alchimist, Landmine)),
         # --- End test day 2 ---
         ],
 
@@ -201,10 +205,13 @@ chest_opening_examples = {
         # --- Test day 2 ---
         Loot(19, L.Phenix1, 8, (0, 0), ResourcePacket(Resources.ReincarnationToken(4)),
              (Maraudeur, Maraudeur, Hunter, DarkKnight, Archer, Mortar, Jetpack)),
-        #  -- reset
+        Loot(19, L.Phenix1, 8, (1, 1), ResourcePacket(), None),
+        #  -- reset
         Loot(19, L.Phenix1, 8, (0, 2), ResourcePacket(Resources.ReincarnationToken(0)),
              (Maraudeur, Scout, LifeBoost, Berserk, Shotgun, Drone, Drone)),
-        #  -- reset
+        #  -- reset
+        Loot(19, L.Phenix1, 8, (1, 3), ResourcePacket(Resources.ReincarnationToken(0)),
+             (Chaingun, Archer, Follet, Arrow, Shield, Guard, Guard)),
         # --- End test day 2 ---
         ],
 
@@ -231,8 +238,10 @@ chest_opening_examples = {
         #  -- reset
         Loot(19, L.Phenix1, 8, (0, 1), ResourcePacket(Resources.ReincarnationToken(1)),
              (Sword, Archer, Archer, Guard, Drone, Drone, Hunter, Arrow)),
-        #  -- reset
+        #  -- reset
         # --- End test day 2 ---
+        Loot(19, L.Phenix1, 8, (0, 4), ResourcePacket(Resources.ReincarnationToken(4)), (Drone, Sparte, Chariot, Chaman, Archer, Scout, Alchimist, Healer))
+
         ],
 
     RaidChest: [
