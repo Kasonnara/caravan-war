@@ -37,7 +37,9 @@ from economy.budget_simulator.graphs import graphs_to_update, ResourceTable, Res
 from economy.budget_simulator.simulation import update_income, all_parameters
 from economy.budget_simulator.style import external_stylesheets, HEADER_STYLE, SIDEBAR_STYLE, \
     LABEL_SETTING_BOOTSTRAP_COL
-from lang.languages import Language
+from lang.languages import Language, TranslatableString
+from lang.translation_dash_wrapper import wrap_dash_module_translation, \
+    build_language_selector, setup_language_callback, TranslatableComponentRegister
 
 from utils.ui_parameters import UIParameter
 
@@ -52,11 +54,16 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 """The main dash application object"""
 
 # Register all persistent elements in order to build a callback that can disable all of them if the user disagree
-persistent_components_ids: List[str] = ['lang_dropdown']
+persistent_components_ids: List[str] = ['language_selector']
 """Store ids of all persistent elements"""
 
-translatable_components_ids: List[str] = []
-"""Store ids of all elements affected by translations"""
+translatable_components = TranslatableComponentRegister()
+"""Store id, target attribute and TranslatableString of all translatable static elements"""
+# Wrap all Dash components to support translations
+dcct = wrap_dash_module_translation(dcc, translatable_components)
+htmlt = wrap_dash_module_translation(html, translatable_components)
+dbct = wrap_dash_module_translation(dbc, translatable_components)
+
 
 # Build the application TODO: move to another file
 header = html.Div(
@@ -65,17 +72,8 @@ header = html.Div(
             children=[
                 dbc.Row(
                     children=[
-                        html.Label("Language:"),
-                        dcc.Dropdown(
-                            options=[{'label': lang.display_name, 'value': lang.name}
-                                     for lang in Language
-                                    ],
-                            value=Language.ENGLISH.name,
-                            clearable=False,
-                            id="lang_dropdown",
-                            persistence=True,
-                            className="col-sm-1",
-                            ),
+                        htmlt.Label(TranslatableString("Language:", french="Langues:"), id="language_label"),
+                        build_language_selector(id='language_selector'),
                     ],
                 ),
                 html.H1(children='CaravanWar Budget Simulator'),
@@ -274,7 +272,7 @@ app.layout = html.Div(children=[
 @app.callback(
     [Output(graph.component_id, graph.target_attribute)
      for graph in graphs_to_update],
-    [Input('lang_dropdown', 'value')] + \
+    [Input('language_selector', 'value')] + \
     [Input(get_parameter_selector_id(ui_param),
            get_parameter_selector_value_attibute(ui_param))
      for ui_param in all_parameters],
@@ -299,6 +297,7 @@ def update_simulation(selected_lang_name, *ui_parameters_raw_values):
     incomes = update_income(ui_parameter_values)
     return [graph.update_func(incomes, selected_lang) for graph in graphs_to_update]
 
+update_language = setup_language_callback(app, translatable_components, language_selector_id="language_selector")
 
 if production_mode_on_heroku:
     # Define the variable collected by Heroku to know what to use as web application
