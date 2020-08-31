@@ -35,18 +35,33 @@ class ConverterModeUIParameter(UIParameter):
     class ConversionMode(Enum):
         DISABLED = "Disabled"
         """Converter is disabled"""
-        IN_PLACE = "In place"
+        IN_PLACE = "In place"
         """Conversion are applied directly to the gain results"""
-        EXTERNAL = "As a separate gain"
+        EXTERNAL = "Separate gain"
         """Conversions appear as another separate gain"""
 
     def __init__(self, converter_class: Type['GainConverter'], value_range: Iterable[ConversionMode] = ConversionMode,
                  display_range: Iterable[str] = None,
                  default_value: Union[ConversionMode, int] = 0,
                  display_txt: Optional[str] = None,
-                 update_callback: Callable = None, dependencies: Iterable['UIParameter'] = None):
-        super().__init__(converter_class.mode_parameter_name, value_range, display_range or [mode.value for mode in value_range], default_value,
-                         (display_txt or (converter_class.__name__ + " conversion")), update_callback, dependencies)
+                 update_callback: Callable = None,
+                 dependencies: Iterable['UIParameter'] = None,
+                 help_txt: Optional[str] = None,
+                 ):
+        super().__init__(
+            converter_class.mode_parameter_name,
+            value_range,
+            display_range=display_range or [mode.value for mode in value_range],
+            default_value=default_value,
+            display_txt=(display_txt or (converter_class.__name__ + " conversion")),
+            update_callback=update_callback,
+            dependencies=dependencies,
+            help_txt=((help_txt or "{} converter enable mode:".format(converter_class.__name__))
+                      + ("\n- **Disabled**: Do nothing." if self.ConversionMode.DISABLED in value_range else "")
+                      + ("\n- **In place**: Modify existing gains records in place." if self.ConversionMode.IN_PLACE in value_range else "")
+                      + ("\n- **As a separate gain**: Aggregate all consumed and produced resources into a new separated gain record."  if self.ConversionMode.EXTERNAL in value_range else "")
+                     ),
+            )
 
 
 class GainConverter(Displayable):

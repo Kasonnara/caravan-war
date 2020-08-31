@@ -1,4 +1,4 @@
-# Roadmap
+# Roadmap
 
 ## Core
 
@@ -82,12 +82,16 @@
 - Ergonomics
   - [X] Configuration persistence
   - [ ] tooltips bubble on every component
+    - [X] Simulation parameter selector 
+    - [ ] Gains reward detail in the table lines
+    - [ ] Card distribution on card groups type
   - [ ] Add a notification when something go wrong and raise an issue
   - [ ] FR translation (Work in progress)
   - [ ] Highlight what elements currently focused parameter will modify
   - [ ] Add a loading widget when processing
   - [ ] Improve/equalize overall design
-  - [ ] Add a favicon and some images
+  - [X] Add a favicon 
+  - [ ] Add some images
   - [ ] Make beginner/casual/advanced modes. From simpler most important parameters to more precise and exhaustive configuration. 
 - Make proper tests
   - [ ] Enable a clean way to run in development or production modes
@@ -104,6 +108,7 @@
 - Bugs
   - [X] Gains and resources order is messed up
   - [ ] Including positive and negative value in a pie chart mess the total sum (instead implement a double pie chart component)
+  - [ ] Images doesn't works on heroku
 
 ## Automatic data gathering
 

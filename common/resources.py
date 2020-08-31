@@ -146,6 +146,9 @@ class ResourceQuantity:
         from common.rarity import Rarity
         from common.cards import Card
         from economy.chests import Chest
+        from units.equipments import Equipment
+        from units.equipments import Armor
+        from units.equipments import Weapon
 
         if isinstance(res_type, Rarity):
             return (cls._UNSPECIFIED_RARITY_TEMPLATE
@@ -162,6 +165,8 @@ class ResourceQuantity:
                             rarity=res_type[1].display_name(language)))
         else:
             assert isinstance(res_type, Type), "Invalid resource type, expected one of: Ressources enum, Rarity enum, unit Card, a tuple(Card category base class, rarity) or a Chest. But {} was found".format(type(res_type))
+            if res_type is Equipment or res_type is Weapon or res_type is Armor:
+                return "Unspecified{}".format(res_type.__name__)
             if issubclass(res_type, Chest):
                 return res_type.display_name(language)
             else:
@@ -252,7 +257,7 @@ class ResourcePacket(defaultdict):
             new_dict[res_type] = self[res_type]
         return new_dict
 
-    def __add__(self, other):
+    def __add__(self, other: Union['ResourcePacket', ResourceQuantity]):
         result = self.copy()
 
         if type(other) is type(self):
@@ -268,7 +273,7 @@ class ResourcePacket(defaultdict):
 
         return result
 
-    def __sub__(self, other):
+    def __sub__(self, other: Union['ResourcePacket', ResourceQuantity]):
         assert False, "By convention, you should not need to subtract resources, all gains must already be positive " \
                       "value while costs must be negative value from the very beginning"  # Remove this assert if you found cases where the convention cannot apply
         result = self.copy()
@@ -331,6 +336,26 @@ class ResourcePacket(defaultdict):
                     + [other_type for other_type in found_types if not isinstance(other_type, Resources)]
                 )
         return found_types
+
+    @classmethod
+    def sum(cls, *iterable: Union['ResourcePacket', ResourceQuantity]):
+        result = cls()
+        for elt in iterable:
+            if isinstance(elt, ResourceQuantity):
+                result[elt.type] += elt.quantity
+            elif isinstance(elt, cls):
+                for res_type in elt:
+                    result[res_type] += elt[res_type]
+            else:
+                raise ValueError("ResourcePacket.sum can only sum up ResourcePacket or ResourceQuantity, not {}"
+                                 .format(type(elt)))
+
+    @classmethod
+    def cum_sum(cls, *iterable: Union['ResourcePacket', ResourceQuantity]):
+        next_value = cls()
+        for elt in iterable:
+            next_value = next_value + elt
+            yield next_value
 
 
 def resourcepackets_gold(*golds: int):

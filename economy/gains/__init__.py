@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from typing import Dict, Type, List
+from typing import Dict, List
 
 # In order to simplify development, the numerous gains are separated into different files.
 # But you will usually interact with all of them via the GAINS_DICTIONARY which is filled only if all files in this
@@ -51,6 +51,7 @@ GAINS_DICTIONARY: Dict[str, List[Type[Gain]]] = {
         ClanMission,
         ClanWarFights,
         ClanWarReward,
+        ClanWar1v1Reward,
         ClanDonation,
         ],
     'others': [

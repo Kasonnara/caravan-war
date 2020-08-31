@@ -52,8 +52,8 @@ adds_reward_per_hq_level = [
 pub_viewed_per_day_param = UIParameter(
     'pub_viewed_per_day',
     range(max_adds_per_day + 1),
-    display_range=[str(x) for x in range(max_adds_per_day + 1)],
     display_txt="Daily adds",
+    help_txt="Select the average number of adds you view per day.",
     )
 
 
@@ -68,4 +68,4 @@ class Adds(Gain):
     def daily_income(cls, hq_lvl: int = 1, pub_viewed_per_day: int = None, **kwargs) -> ResourcePacket:
         pub_viewed_per_day = pub_viewed_per_day or 0
         assert 0 <= pub_viewed_per_day <= 12
-        return cls.iteration_income(hq_lvl=hq_lvl, **kwargs) * 12
+        return cls.iteration_income(hq_lvl=hq_lvl, **kwargs) * pub_viewed_per_day

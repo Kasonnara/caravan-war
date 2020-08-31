@@ -89,6 +89,7 @@ daily_10km_trading_count_param = UIParameter(
     display_range=[str(x) for x in range(30)] + ["Max (Auto)"],
     display_txt="10km trading count",
     default_value=None,
+    help_txt="Select the average number of 10km tradings you sent each day.",
     )
 
 
@@ -128,6 +129,7 @@ daily_100km_trading_count_param = UIParameter(
     default_value=9,
     update_callback=functools.partial(update_tradings_parameter, 3),
     dependencies=[vip_param],
+    help_txt="Select the average number of 100km tradings you sent each day.",
     )
 
 
@@ -154,6 +156,7 @@ daily_1000km_trading_count_param = UIParameter(
     default_value=6,
     update_callback=functools.partial(update_tradings_parameter, 2),
     dependencies=[vip_param],
+    help_txt="Select the average number of 1000km tradings you sent each day.",
     )
 
 
@@ -180,6 +183,7 @@ daily_best_trading_count_param = UIParameter(
     default_value=3,
     update_callback=functools.partial(update_tradings_parameter, 1),
     dependencies=[vip_param],
+    help_txt="Select the average number of best tradings you sent each day.",
     )
 
 
@@ -202,7 +206,8 @@ selected_heroes_param = UIParameter(
     'selected_heroes',
     hero_pair_combinaisons,
     display_range=["{}-{}".format(h1.name[:-4], h2.name[:-4]) for h1, h2 in hero_pair_combinaisons],
-    display_txt="Lottery heroes"
+    display_txt="Lottery heroes",
+    help_txt="Select the pair of heroes selected for your lottery.",
     )
 
 
@@ -268,6 +273,8 @@ mill_lvl_param = UIParameter(
     default_value=None,
     update_callback=functools.partial(update_buidlding_level_param, 0),
     dependencies=[hq_param],
+    help_txt="Select the level of your mill "
+             "\n\n*(AUTO take the maximum level available with your current HQ level)*.",
     )
 
 
@@ -305,6 +312,10 @@ station_lvl_param = UIParameter(
     default_value=None,
     update_callback=functools.partial(update_buidlding_level_param, 0),
     dependencies=[hq_param],
+    help_txt="Select the level of your trading station "
+             "\n\n*(AUTO take the maximum level available with your current HQ level)*.  "
+             "\n*(Note: the transport station production assume that it produces 24/24, so that imply not leaving "
+             "it more than 8 hours without collecting gold, so in practice you will probably earn less)*",
     )
 
 
@@ -376,6 +387,9 @@ defense_lost_param = UIParameter(
     'defense_lost',
     int,
     display_txt="Defense lost (daily)",
+    help_txt="Enter the average number of 100% lost convoy (for example two 50% defense count as one).  "
+             "\n*Don't care if it's not really precise, it's already a rought approximation as we wanted to keep it simple. It doesn't have much impact on the overall anyway.*"
+             "\n\n*(Note: The simulator compute the worst case where you lost your best tradings first, and that you lost 8 trophy per ambush on average.)*",
     )
 
 ambush_won_param = UIParameter(
@@ -383,8 +397,25 @@ ambush_won_param = UIParameter(
     int,
     display_txt="Ambush won",
     default_value=20,
+    help_txt="Enter the average number of victorious ambushes you do per day (**including fast ambushes**)."
+             "\n\n*(Advice: usually after about 20 successful ambushes per day you do not gain gems, "
+             "reincarnation medals, legendary soul nor life potion. You only gain extra cargo, trophy and hero xp.)  "
+             "\n(Note: assume you do all your ambushes with a hero in your army and won with 3 stars score)*",
     )
 
+fast_ambushes_param = UIParameter(
+    'fast_ambushes',
+    range(21),
+    display_txt="Fast Ambushes",
+    default_value=0,
+    update_callback=lambda ambush_won: (
+        range(min(21, ambush_won + 1)),
+        [str(n) for n in range(min(21, ambush_won + 1))]
+    ),
+    dependencies=[ambush_won_param],
+    help_txt="Select the average number of fast ambushes you won per day  "
+             "\n(Note: assume you made 3 stars score on all of them)"
+    )
 
 temple_value_range, temple_display_range = update_buidlding_level_param(6, 30)
 temple_lvl_param = UIParameter(
@@ -393,7 +424,10 @@ temple_lvl_param = UIParameter(
     display_range=temple_display_range,
     default_value=None,
     update_callback=functools.partial(update_buidlding_level_param, 6),
+    display_txt="Hero shrine level",
     dependencies=[hq_param],
+    help_txt="Select the level of your hero shrine "
+             "\n\n*(AUTO take the maximum level available with your current HQ level)*",
     )
 
 average_trophy_param = UIParameter(
@@ -401,6 +435,7 @@ average_trophy_param = UIParameter(
     [5, 10, 15, 20, 25, 30, 35, 40, 45],
     display_txt="Average trophy",
     default_value=2,
+    help_txt="Select the average trophy you won on ambushes.",
     )
 
 
@@ -423,21 +458,27 @@ class Ambushes(Gain):
     # TODO add the 25% gold
 
     @classmethod
-    def iteration_income(cls, rank: Rank = Rank.NONE, temple_lvl=None, hq_lvl=1, average_trophy=15, **kwargs) -> ResourcePacket:
+    def iteration_income(cls, rank: Rank = Rank.NONE, temple_lvl=None, hq_lvl=1, average_trophy=15, fast_ambushe=False, **kwargs) -> ResourcePacket:
+        # This fucntion is not realy used in practice. It's simpler to compute everything into daily_income
         temple_lvl = temple_lvl or hq_lvl
         return (
             cls._ambush_reward
-            + buildings.HeroTemple.ambush_xp_incomes[temple_lvl - 1]  # Assume all ambush are made with a hero in the army
-            + R.Goods(rank.traiding_base * 2.5)  # Assume that on average you fight against enemies of the same rank as you, and attack 10km, 100km, 100km and best exchangez indiferently
+            # Assume all ambush are made with a hero in the army
+            + buildings.HeroTemple.ambush_xp_incomes[temple_lvl - 1]
+            # Assume that on average you fight against enemies of the same rank as you, and attack 10km, 100km, 100km and best exchangez indiferently
+            + R.Goods(rank.traiding_base * 2.5) * (0.75 if fast_ambushe else 1)
+            + R.Gold(rank.traiding_base * 2.5) * (0.25 if fast_ambushe else 0)
             + R.Trophy(average_trophy)
         )
 
     @classmethod
-    def daily_income(cls, ambush_won: int = None, rank: Rank = Rank.NONE, temple_lvl=None, hq_lvl=1, average_trophy=15, **kwargs) -> ResourcePacket:
+    def daily_income(cls, ambush_won: int = None, rank: Rank = Rank.NONE, temple_lvl=None, hq_lvl=1, average_trophy=15,
+                     fast_ambushes: int = 0, **kwargs) -> ResourcePacket:
         temple_lvl = temple_lvl or (hq_lvl - 6)
         if ambush_won is None:
             ambush_won = 20
         return ResourcePacket(
+            # Loots of resources with daily limits
             R.Gem(
                 min(cls._ambush_reward[R.Gem] * ambush_won,
                     cls._max_reward_per_day[R.Gem])),
@@ -450,12 +491,17 @@ class Ambushes(Gain):
             R.ReincarnationToken(
                 min(cls._ambush_reward[R.ReincarnationToken] * ambush_won,
                     cls._max_reward_per_day[R.ReincarnationToken])),
-            buildings.HeroTemple.ambush_xp_incomes[temple_lvl - 1] * ambush_won,   # Assume all ambush are made with a hero in the army
-            R.Goods(rank.traiding_base * 2.5 * ambush_won),  # Assume that on average you fight against enemies of the same rank as you, and attack 10km, 100km, 100km and best exchangez indiferently
+            # Raid chest (once per day, if there is more than 3 attacks per day)
+            ResourceQuantity(RaidChest, 1 if ambush_won > 3 else 0),
+            # Guaranted loots (assuming you always have hero in your army)
+            #   (Assume all ambush are made with a hero in the army)
+            buildings.HeroTemple.ambush_xp_incomes[temple_lvl - 1] * ambush_won,
             R.Trophy(average_trophy * ambush_won),
-            ResourceQuantity(RaidChest,
-                min(cls._ambush_reward[RaidChest] * ambush_won,
-                    cls._max_reward_per_day[RaidChest])),
+            # Goods and gold
+            #   (Assume that on average you fight against enemies of the same rank as you, and attack
+            #   10km, 100km, 100km and best trading indifferently
+            R.Goods(rank.traiding_base * 2.5 * (ambush_won - (0.25 * fast_ambushes))),
+            R.Gold(rank.traiding_base * 2.5 * (0.25 * fast_ambushes)),
             )
 
     __display_name = TranslatableString("Ambushes", french="Embuscades")
@@ -466,6 +512,7 @@ ask_for_donation_param = UIParameter(
     bool,
     display_txt="Clan Donations",
     default_value=False,
+    help_txt="If you ask for donation in your clan each day, tick this",
     )
 
 

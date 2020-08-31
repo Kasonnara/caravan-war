@@ -59,12 +59,15 @@ class MeasurementPeriod(Enum):
 # Just don't forget to add them to the BUDGET_SIMULATION_PARAMETERS for the UI to find them. You can also
 # creates new categories if you want just use str keys.
 
-mesurement_range_param = UIParameter('mesurement_range', MeasurementPeriod, display_txt="Average by")
-rank_param = UIParameter('rank', Rank, display_range=[rank.name for rank in Rank], default_value=Rank.NONE)
+mesurement_range_param = UIParameter('mesurement_range', MeasurementPeriod, display_txt="Average by",
+                                     help_txt="Select the period over which gains will be accumulated.")
+rank_param = UIParameter('rank', Rank, display_range=[rank.name for rank in Rank], default_value=Rank.NONE,
+                         help_txt="Select your rank. *(If you select NONE, gold and cargo of gains that depend on it "
+                                  "will be given as X time the reward of your 10km trading)*")
 vip_param = UIParameter('vip', VIP, display_range=[vip_lvl.name for vip_lvl in VIP],
-                        display_txt="VIP", default_value=7)
+                        display_txt="VIP", default_value=7, help_txt="Select your VIP level.")
 hq_param = UIParameter('hq_lvl', range(1, MAX_LEVEL+1), display_range=[str(vip_lvl) for vip_lvl in range(1, MAX_LEVEL+1)],
-                       display_txt="HQ", default_value=15)
+                       display_txt="HQ", default_value=15, help_txt="Select the level of your head quarters.")
 
 
 # ------------------------ Gains abstract class ------------------------
@@ -81,7 +84,7 @@ class Gain(Displayable):
     parameter_dependencies: List[UIParameter] = []
 
     def __init__(self):
-        raise AssertionError("Gains classes are be static singletons and thus must not be instanced")
+        raise AssertionError("Gains classes should be static singletons and thus must not be instanced")
 
     @classmethod
     @abstractmethod
@@ -116,4 +119,4 @@ class Gain(Displayable):
         :return: ResourcePacket, the average total income for this gain over the given period
         """
         assert 'day' not in kwargs.keys()
-        return cls.daily_income(**kwargs) * mesurement_range.value               # More economical
+        return cls.daily_income(**kwargs) * mesurement_range.value

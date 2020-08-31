@@ -48,7 +48,8 @@ equipment_craft_number_param = UIParameter(
     display_range=update_craft_number_range(VIP.lvl0)[1],
     display_txt="Equipment forging",
     update_callback=update_craft_number_range,
-    dependencies=[vip_param]
+    dependencies=[vip_param],
+    help_txt="Select the average number of equipment you forge per day.",
     )
 
 

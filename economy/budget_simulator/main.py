@@ -28,11 +28,12 @@ import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 
 from common.resources import Resources
 from economy.budget_simulator import heroku_footer
-from economy.budget_simulator.bs_ui_parameters import BUDGET_SIMULATION_PARAMETERS
+from economy.budget_simulator.bs_ui_parameters import get_parameter_selector_id, get_parameter_selector_value_attibute, \
+    get_parameter_value, build_parameters_selectors_list
 from economy.budget_simulator.graphs import graphs_to_update, ResourceTable, ResourceBarPie
 from economy.budget_simulator.simulation import update_income, all_parameters
 from economy.budget_simulator.style import external_stylesheets, HEADER_STYLE, SIDEBAR_STYLE, \
@@ -43,15 +44,17 @@ from lang.translation_dash_wrapper import wrap_dash_module_translation, \
 
 from utils.ui_parameters import UIParameter
 
+
 # Detect if we run in standalone mode or on heroku (because heroku import this file not run it)
 production_mode_on_heroku: bool = not (__name__ == '__main__')
-# FIXME: it's simple but this isn't probably the most clever way to do. It may be safer and more controlable to
+# FIXME: it's simple but this isn't probably the most clever way to do. It may be safer and more controlable to
 #   package everything in a main(args) function that takes configuration argument and an heroku_main() function or an
 #   heroku_main script for heroku specific configuration changes. (and an argparse command line if we are motivated)
 
 # Init the main application object (initialized early in order to allow creating callbacks)
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 """The main dash application object"""
+app.title = "WINS CaravanWar"
 
 # Register all persistent elements in order to build a callback that can disable all of them if the user disagree
 persistent_components_ids: List[str] = ['language_selector']
@@ -70,167 +73,82 @@ header = html.Div(
     children=[
         dbc.Container(
             children=[
+
                 dbc.Row(
                     children=[
-                        htmlt.Label(TranslatableString("Language:", french="Langues:"), id="language_label"),
-                        build_language_selector(id='language_selector'),
-                    ],
+                        html.H1("When Is my Next Seraph?"),
+                        dbc.Row([
+                            htmlt.Label(TranslatableString("Language:", french="Langues:"), id="language_label"),
+                            build_language_selector(id='language_selector'),
+                            ]),
+                        ],
+                    justify="between",
                 ),
-                html.H1(children='CaravanWar Budget Simulator'),
-
-                dcc.Markdown(children='''
-                A web application for planning your resource earnings and losses in the game CaravanWar *(by [Kasonnara](https://github.com/Kasonnara/caravan-war-center))*  
-                *(This is NOT an official application from Hiker Games)*
-                '''),
+                #html.H3([dcc.Markdown("&ensp;&ensp;&ensp;&ensp;*CaravanWar income simulator*")]),
+                html.H5(
+                        dcc.Markdown("An opensource web application for planning your regular resource earnings in the "
+                                     "game [CaravanWar](https://play.google.com/store/apps/details?id=com.hikergames.caravanwar&hl=en_US)."),
+                        ),
+                dbc.Button("What is WINS?", color="link", id="about-wins-button", className="mr-1"),
+                dbc.Collapse(
+                    dbc.Card(dbc.CardBody(
+                        dcc.Markdown("""
+                            This application allow you to equalize in and out of cargo or gems, 
+                            predict when you will be able to afford your next HQ level, a hero or the next star of one of your unit,
+                            how worth is it to take the gate challenge, 
+                            or if your just cursious to see how much money your able to make each month.
+                
+                            The simulator take into account most regular incomes:
+                            - Mill and transport station
+                            - Tradings and ambushes
+                            - Weekly challenges
+                            - Clan Wars (4v4 and 1v1), clan missions and clan bosses
+                            - Recylcing chests
+                            - Lottery 
+                            - Forging
+                            - Watching adds
+                                 
+                            Better, the simulator handles a wide varity of incomes: 
+                            - Cargo, gold and gems (obviously)
+                            - Dust
+                            - Legendary souls
+                            - Heroes souls, xp and skill tokens
+                            - Reborn medals
+                            - Lottery tickets
+                            - Life bottles
+                            - Trophy (even if it a little bit limitted at the moment)
+                            - And even unit card loots!
+                            """),
+                        )),
+                    id="about-wins-collapse",
+                    ),
+                dcc.Markdown("*Made by [Kasonnara](https://github.com/Kasonnara/caravan-war-center)*, "
+                             "***this is NOT an official application from Hiker Games.***"),
                 ],
-                )],
+            ),
+        ],
     style=HEADER_STYLE,
     )
 
 
-def get_parameter_selector_id(parameter: UIParameter):
-    """
-    Return the html id of the UIParameter's selector
-
-    Used to define dash callbacks triggered by a change of the selector value
-
-    :param parameter: UIParameter, the
-    :return: str
-    """
-    return parameter.parameter_name + "_selector"
-
-
-def get_parameter_selector_value_attibute(parameter: UIParameter):
-    """
-    For the given UIParameter's selector, return the name of the attribute to use as value.
-
-    Used to define dash callbacks triggered by a change of the selector value
-
-    :param parameter: UIParameter, the
-    :return: str
-    """
-    return 'value' if parameter.value_range is not bool else 'checked'
-
-
-def generate_dropdown_options(parameter: UIParameter):
-    assert isinstance(parameter.value_range, tuple)
-    return [{'label': txt, 'value': str(i)}
-            for i, txt in enumerate(parameter.display_range)
-            ]
-
-
-def get_parameter_value(parameter: UIParameter, raw_value):
-    if parameter.value_range is bool:
-        return bool(raw_value)
-    elif parameter.value_range is int:
-        return int(raw_value)
-    else:
-        return parameter.value_range[min(len(parameter.value_range)-1, int(raw_value))]
-
-
-def build_parameter_selector(parameter: UIParameter):
-    """
-    Generate a bootstrap row containing a title label and a selector for the given SimulationParameter
-
-    The function is able to generate 3 types of selectors:
-    - checkbox, for boolean type of UI parameter
-    - number input box for int type of UI parameter
-    - dropdown for list type of UI parameters
-
-    :param parameter: UIParameter the parameter for which a selector will be generated
-    :return: bcc.Row:  a Dash Bootstrap Row
-    """
-
-    parameter_selector_id = get_parameter_selector_id(parameter)
-    # Generate the interactive selector component that best fit the UI parameter type
-    if parameter.value_range is int:
-        # An input textbox for integers parameter
-        bootstrap_cols = LABEL_SETTING_BOOTSTRAP_COL['int']
-        selector = dcc.Input(
-            type="number",
-            value=parameter.default_value_index,
-            className="col-sm-{}".format(bootstrap_cols[1]),
-            id=parameter_selector_id,
-            persistence=True,
-            )
-    elif parameter.value_range is bool:
-        # A checkbox for boolean parameter
-        bootstrap_cols = LABEL_SETTING_BOOTSTRAP_COL['bool']
-        selector = dbc.Checkbox(
-            checked=parameter.default_value_index,
-            className="col-sm-{}".format(bootstrap_cols[1]),
-            id=parameter_selector_id,
-            persistence=True,
-            )
-    elif isinstance(parameter.value_range, tuple):
-        # A dropdown for other list like selection
-        assert parameter.display_range is not None
-        bootstrap_cols = LABEL_SETTING_BOOTSTRAP_COL["default"]
-        selector = html.Div([
-            dcc.Dropdown(
-                options=generate_dropdown_options(parameter),
-                value=str(parameter.default_value_index),
-                clearable=False,
-                id=parameter_selector_id,
-                persistence=True,
-                )],
-            className="col-sm-{}".format(bootstrap_cols[1]),
-            )
-        # Setup the selector update callback if this parameter have dependencies
-        if parameter.dependencies is not None:
-            @app.callback(
-                [Output(parameter_selector_id, 'options')],
-                [Input(get_parameter_selector_id(parent_parameter),
-                       get_parameter_selector_value_attibute(parent_parameter))
-                 for parent_parameter in parameter.dependencies],
-                )
-            def update_dropdown_selector(*dependencies_raw_values):
-                # Get the values of the parent parameter
-                dependencies_values = [get_parameter_value(parent_parameter, raw_value)
-                                       for parent_parameter, raw_value in zip(parameter.dependencies, dependencies_raw_values)]
-                # Update the UIParameter attributes
-                parameter.update(dependencies_values)
-                # Re-generate the dropdown options
-                return [generate_dropdown_options(parameter)]
-    else:
-        raise NotImplementedError("Cannot generate a selector for {} UIParameter of type {}".format(parameter.display_txt, type(parameter.value_range)))
-
-    # Register the persistent element
-    persistent_components_ids.append(parameter_selector_id)
-
-    # Generate a title label
-    label = html.Label(
-        parameter.display_txt + ":",
-        className="col-sm-{}".format(bootstrap_cols[0]),
-        )
-
-    # Build a Bootstrap Row container to encapsulate the parameter label with its interactive selector component.
-    return dbc.Row([label, selector])
+# About-WINS callback
+@app.callback(
+    Output("about-wins-collapse", "is_open"),
+    [Input("about-wins-button", "n_clicks")],
+    [State("about-wins-collapse", "is_open")],
+)
+def toggle_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
 
 
 side_bar = html.Div(
     children=(
         # Sidebar title
         [html.H3('Configuration')]
-        # Parameters categories
-        + [
-            line
-            for category_title in BUDGET_SIMULATION_PARAMETERS
-            for line in ([
-                # For each category put
-                #   - an horizontal line
-                html.Hr(),
-                #   - its title and optionaly the disabling checkbox
-                #dbc.Row([html.H4(category_title, className="col-sm-11"),
-                #         dbc.Checkbox(checked=True, className="col-sm-1")])
-                #if category_title != "General"
-                #else html.H4(category_title)
-                html.H4(category_title),
-             ]
-            #       - Followed by the selectors of its parameters
-             + [build_parameter_selector(parameter) for parameter in BUDGET_SIMULATION_PARAMETERS[category_title]])
-
-            ]
+        # Parameters categories and selectors
+        + build_parameters_selectors_list(app, persistent_components_ids)
         ),
     id='configurationSideBar',
     className="bg-light border-right col-lg-3",
@@ -243,7 +161,8 @@ content = html.Div(
         ResourceTable(app, 'global_resource_table'),
         ] + [elt
              for resource_type in (Resources.Gold, Resources.Goods, Resources.Gem)
-             for elt in (dcc.Markdown("## {}".format(resource_type.name)), ResourceBarPie(resource_type)) ],
+             for elt in (dcc.Markdown("## {}".format(resource_type.name)), ResourceBarPie(resource_type))
+             ],
     id='mainContent',
     className="col-lg-9",
     )
