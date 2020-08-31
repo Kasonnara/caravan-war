@@ -176,6 +176,7 @@ def build_language_selector(id="language_selector", persistence=True) -> dcc.Dro
         clearable=False,
         id=id,
         persistence=persistence,
+        style={"min-width": "7em"},  # Workaround: the dropdown strangely doesn't scale according to its content
         )
 
 
