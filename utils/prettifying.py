@@ -22,10 +22,11 @@
 """
 import math
 import re
-from typing import Optional
+from typing import Optional, Union
 
 import pandas
 
+from lang.languages import Language, TranslatableString
 
 _meta_unit_list = ['', 'K', 'M', 'B']
 """~= No meta unit, thousand, million, billion"""
@@ -64,3 +65,28 @@ def camelcase_2_spaced(camelcase_text: str, unbreakable_spaces=False) -> str:
     return re.sub('(?!^)([A-Z][a-z]+)', r' \1' if unbreakable_spaces else r' \1', camelcase_text)
 
 
+class Displayable:
+    """Mixxin class that add the display_name function
+
+    Subclass implementing Displayable must set the class attribute '__display_name' with an str or a TranslatableString.
+
+    If '__display_name' stay undefined, the class name itself is taken by default after a little prettifying process.
+    """
+
+    # FIXME this function should only be called by class, this doesn't have real meaning for class instances.
+
+    # TODO is there a clean way to also support ENUMs in the default code. Because at the moment many enums extends from
+    #  the Displayable mixin class, but only for the symbolic meaning as they all reimplement the display_name function
+    #  (always with almost the same code and without classmethod decorator)
+    @classmethod
+    def display_name(cls, language=Language.ENGLISH) -> str:
+        """Return a default Translatable object base on the class name"""
+        # Get the mangled class attribute if it has been defined
+        name: Optional[Union[str, TranslatableString]] = getattr(cls, "_" + cls.__name__ + "__display_name", None)
+
+        if name is None:
+            return camelcase_2_spaced(cls.__name__)
+        elif isinstance(name, TranslatableString):
+            return name.translated_into(language)
+        else:
+            return name

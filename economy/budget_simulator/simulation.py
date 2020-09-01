@@ -30,6 +30,7 @@ from economy.chests import ALL_CHESTS
 from economy.converters.abstract_converter import GainConverter
 from economy.gains import GAINS_DICTIONARY
 from economy.gains.abstract_gains import Gain
+from lang.languages import TranslatableString
 from spells.common_spell import Spell
 from units.base_units import MovableUnit
 from units.equipments import Equipment
@@ -39,7 +40,7 @@ all_parameters = [ui_param
                   for ui_param in BUDGET_SIMULATION_PARAMETERS[category]]
 
 
-def update_income(ui_parameters_values: dict) -> Dict[str, Dict[Union[Type[Gain], Type['GainConverter']], ResourcePacket]]:
+def update_income(ui_parameters_values: dict) -> Dict[Union[str, TranslatableString], Dict[Union[Type[Gain], Type['GainConverter']], ResourcePacket]]:
     # Recompute all gains
     incomes = {
         gain_category: {

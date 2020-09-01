@@ -28,6 +28,7 @@ from common.cards import Upgrade, MAX_LEVEL
 from common.card_categories import BUILDINGS
 from common.resources import ResourcePacket, resourcepackets
 from common.resources import Resources as R
+from lang.languages import TranslatableString
 
 
 class HQ(Building):
@@ -142,6 +143,8 @@ class HQ(Building):
     @property
     def guardian_power(self):
         return 6 * self.wave_lenght * sum(self.wave_number) # FIXME verify formulas for level > 15. Does the 2nd convoy follow the same rules?
+
+    __display_name = TranslatableString("HQ", french="QG")
 
 
 # Now that HQ is initialized, set it as base_building in Building

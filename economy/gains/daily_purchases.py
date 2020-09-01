@@ -29,6 +29,7 @@ from common.vip import VIP
 from economy.gains.abstract_gains import Gain, vip_param
 
 # TODO: daily shop
+from lang.languages import TranslatableString
 from units.bandits import Bandit
 from units.equipments import Equipment
 from utils.ui_parameters import UIParameter
@@ -45,14 +46,17 @@ equipment_craft_number_param = UIParameter(
     'equipment_craft_number',
     update_craft_number_range(VIP.lvl0)[0],
     display_range=update_craft_number_range(VIP.lvl0)[1],
-    display_txt="Equipment forging",
+    display_txt=TranslatableString("Equipment forging", french="Equipements forgés"),
     update_callback=update_craft_number_range,
     dependencies=[vip_param],
-    help_txt="Select the average number of equipment you forge per day.",
+    help_txt=TranslatableString("Select the average number of equipment you forge per day.",
+                                french="Sélectionner le nombre moyen d'équipements forgés par jour."),
     )
 
 
 class EquipmentCrafting(Gain):
+    __display_name = TranslatableString("Equipement crafting", french="Forger des équipements")
+
     common_card_costs = [-3, -3, -4, -5, -6] + [-6]*10
     common_spell_costs = [-1, -1, -2, -2, -3] + [-3]*10  # Fixme not used
     rare_card_costs = [-1, -1, -2, -2, -3] + [-3]*10
@@ -86,7 +90,5 @@ class EquipmentCrafting(Gain):
             ResourceQuantity(Rarity.Rare, -5 * equipment_craft_number),  # Fixme, check average values
             ResourceQuantity(Rarity.Common, -5 * equipment_craft_number),  # Fixme, check average values
             )
-
-# TODO: recycle chest
 
 # TODO: premium chest/offers

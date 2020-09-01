@@ -33,6 +33,7 @@ from common.resources import Resources as R
 from common.vip import VIP
 from economy.chests import WoodenChest, IronChest, SilverChest, GoldenChest, Chest, RaidChest
 from economy.gains.abstract_gains import Gain, rank_param, vip_param, Days, hq_param
+from lang.languages import TranslatableString
 from units.bandits import Bandit
 from units.guardians import Guardian
 from utils.ui_parameters import UIParameter
@@ -86,9 +87,10 @@ daily_10km_trading_count_param = UIParameter(
     'daily_10km_trading_count',
     list(range(30)) + [None],
     display_range=[str(x) for x in range(30)] + ["Max (Auto)"],
-    display_txt="10km trading count",
+    display_txt=TranslatableString("10km trading count", french="Échanges de 10km"),
     default_value=None,
-    help_txt="Select the average number of 10km tradings you sent each day.",
+    help_txt=TranslatableString("Select the average number of 10km tradings you sent each day.",
+                                french="Sélectionner le nombre moyen d'échange de 10km réalisés par jour."),
     )
 
 
@@ -102,6 +104,8 @@ class Trading10Km(Trading):
     @classmethod
     def daily_income(cls, daily_10km_trading_count: float = None, **kwargs):
         return super().daily_income(daily_trading_count=daily_10km_trading_count, **kwargs)
+
+    __display_name = TranslatableString("10km trading", french="Échange de 10km")
 
 
 def update_tradings_parameter(num_trading_per_reset: int, vip: VIP):
@@ -122,11 +126,12 @@ daily_100km_trading_count_param = UIParameter(
     'daily_100km_trading_count',
     values_range_100km,
     display_range=dispaly_range_100km,
-    display_txt="100km trading count",
+    display_txt=TranslatableString("100km trading count", french="Échanges de 100km"),
     default_value=9,
     update_callback=functools.partial(update_tradings_parameter, 3),
     dependencies=[vip_param],
-    help_txt="Select the average number of 100km tradings you sent each day.",
+    help_txt=TranslatableString("Select the average number of 100km tradings you sent each day.",
+                                french="Sélectionner le nombre moyen d'échange de 100km réalisés par jour."),
     )
 
 
@@ -141,17 +146,20 @@ class Trading100Km(Trading):
     def daily_income(cls, daily_100km_trading_count: float = 0, **kwargs):
         return super().daily_income(daily_trading_count=daily_100km_trading_count, **kwargs)
 
+    __display_name = TranslatableString("100km trading", french="Échange de 100km")
+
 
 values_range_1000km, dispaly_range_1000km = update_tradings_parameter(2, VIP.lvl0)
 daily_1000km_trading_count_param = UIParameter(
     'daily_1000km_trading_count',
     values_range_1000km,
     display_range=dispaly_range_1000km,
-    display_txt="1000km trading count",
+    display_txt=TranslatableString("1000km trading count", french="Échanges de 1000km"),
     default_value=6,
     update_callback=functools.partial(update_tradings_parameter, 2),
     dependencies=[vip_param],
-    help_txt="Select the average number of 1000km tradings you sent each day.",
+    help_txt=TranslatableString("Select the average number of 1000km tradings you sent each day.",
+                                french="Sélectionner le nombre moyen d'échange de 1000km réalisés par jour."),
     )
 
 
@@ -166,17 +174,20 @@ class Trading1000Km(Trading):
     def daily_income(cls, daily_1000km_trading_count: float = 0, **kwargs):
         return super().daily_income(daily_trading_count=daily_1000km_trading_count, **kwargs)
 
+    __display_name = TranslatableString("1000km trading", french="Échange de 1000km")
+
 
 values_range_best_exchange, dispaly_range_best_exchange = update_tradings_parameter(1, VIP.lvl0)
 daily_best_trading_count_param = UIParameter(
     'daily_best_trading_count',
     values_range_best_exchange,
     display_range=dispaly_range_best_exchange,
-    display_txt="Best trading count",
+    display_txt=TranslatableString("Best trading count", french="Meilleurs échanges"),
     default_value=3,
     update_callback=functools.partial(update_tradings_parameter, 1),
     dependencies=[vip_param],
-    help_txt="Select the average number of best tradings you sent each day.",
+    help_txt=TranslatableString("Select the average number of best tradings you sent each day.",
+                                french="Sélectionner le nombre moyen de meilleur échanges réalisés par jour."),
     )
 
 
@@ -191,14 +202,17 @@ class BestTrading(Trading):
     def daily_income(cls, daily_best_trading_count: float = 0, **kwargs):
         return super().daily_income(daily_trading_count=daily_best_trading_count, **kwargs)
 
+    __display_name = TranslatableString("Best trading", french="Meilleur échange")
+
 
 # Declare an additional UI parameter for the lottery gains
 selected_heroes_param = UIParameter(
     'selected_heroes',
     hero_pair_combinaisons,
     display_range=["{}-{}".format(h1.name[:-4], h2.name[:-4]) for h1, h2 in hero_pair_combinaisons],
-    display_txt="Lottery heroes",
-    help_txt="Select the pair of heroes selected for your lottery.",
+    display_txt=TranslatableString("Lottery heroes", french="Héros sélectionnés"),
+    help_txt=TranslatableString("Select the pair of heroes selected for your lottery.",
+                                french="Sélectionner les deux héros choisis pour la lotterie.")
     )
 
 
@@ -229,6 +243,8 @@ class TradingResets(Gain):
         n = max(0, reset_count_same_day - vip.traiding_quota_free_reset - 1)
         return cls.cumulative_reset_costs[n]
 
+    __display_name = TranslatableString("Trading quota resets", french="Renouvellement du quota d'échange")
+
 
 class Lottery(Gain):
     """Gain for the three daily free lottery runs, see economy.converters.converters.Lottery for run reward details"""
@@ -241,6 +257,8 @@ class Lottery(Gain):
     @classmethod
     def daily_income(cls, **kwargs) -> ResourcePacket:
         return ResourcePacket(R.LotteryTicket(3))
+
+    __display_name = TranslatableString("Lottery", french="Lotterie")
 
 
 def update_buidlding_level_param(building_difference_with_hq, hq_lvl):
@@ -260,8 +278,11 @@ mill_lvl_param = UIParameter(
     default_value=None,
     update_callback=functools.partial(update_buidlding_level_param, 0),
     dependencies=[hq_param],
-    help_txt="Select the level of your mill "
-             "\n\n*(AUTO take the maximum level available with your current HQ level)*.",
+    display_txt=TranslatableString("Mill", french="Moulin"),
+    help_txt=TranslatableString("Select the level of your mill "
+                                "\n\n*(AUTO take the maximum level available with your current HQ level)*.",
+                                french="Sélectionner le niveau de votre moulin."
+                                       "\n\n*(AUTO choisi le niveau maximum disponnible selon votre niveau de QG)*"),
     )
 
 
@@ -288,6 +309,8 @@ class MillProduction(Gain):
             income = min(income, Mill.storage_limits[mill_lvl or hq_lvl] * daily_collect_count)
         return income
 
+    __display_name = TranslatableString("Mill", french="Moulin")
+
 
 station_value_range, station_display_range = update_buidlding_level_param(0, 30)
 station_lvl_param = UIParameter(
@@ -297,10 +320,17 @@ station_lvl_param = UIParameter(
     default_value=None,
     update_callback=functools.partial(update_buidlding_level_param, 0),
     dependencies=[hq_param],
-    help_txt="Select the level of your trading station "
-             "\n\n*(AUTO take the maximum level available with your current HQ level)*.  "
-             "\n*(Note: the transport station production assume that it produces 24/24, so that imply not leaving "
-             "it more than 8 hours without collecting gold, so in practice you will probably earn less)*",
+    display_txt=TranslatableString("Transport station", french="Station de transport"),
+    help_txt=TranslatableString(
+        "Select the level of your trading station "
+        "\n\n*(AUTO take the maximum level available with your current HQ level)*.  "
+        "\n*(Note: the transport station production assume that it produces 24/24, so that imply not leaving "
+        "it more than 8 hours without collecting gold, so in practice you will probably earn less)*",
+        french="Sélectionner le niveau de votre station de transport."
+               "\n\n*(AUTO choisi le niveau maximum disponnible selon votre niveau de QG)*  "
+               "\n*(Note: le simulateur assume que la station de transport tourne 24h/24, ce qui implqiue de ne jamais"
+               "la laisser tourner plus de 8 heures sans récupérer l'or. Donc en pratique vous gagnerez probablement moins)*",
+        ),
     )
 
 
@@ -330,6 +360,8 @@ class TransportStationProduction(Gain):
             income = min(income, Mill.storage_limits[station_lvl or hq_lvl] * daily_collect_count)
         return income
 
+    __display_name = TranslatableString("Transport station", french="Station de transport")
+
 
 class DailyQuest(Gain):
 
@@ -350,6 +382,8 @@ class DailyQuest(Gain):
     def daily_income(cls, rank: Rank = Rank.NONE, **kwargs) -> ResourcePacket:
         return cls.iteration_income(rank=rank)
 
+    __display_name = TranslatableString("Daily quests", french="Quêtes du jour")
+
 
 class FreeDailyOffer(Gain):
 
@@ -361,39 +395,62 @@ class FreeDailyOffer(Gain):
     def daily_income(cls, rank: Rank = Rank.NONE, **kwargs) -> ResourcePacket:
         return cls.iteration_income(rank=rank, **kwargs)
 
+    __display_name = TranslatableString("Free daily offer", french="Offre du jour gratuite")
+
 
 defense_lost_param = UIParameter(
     'defense_lost',
     int,
-    display_txt="Defense lost (daily)",
-    help_txt="Enter the average number of 100% lost convoy (for example two 50% defense count as one).  "
-             "\n*Don't care if it's not really precise, it's already a rought approximation as we wanted to keep it simple. It doesn't have much impact on the overall anyway.*"
-             "\n\n*(Note: The simulator compute the worst case where you lost your best tradings first, and that you lost 8 trophy per ambush on average.)*",
+    display_txt=TranslatableString("Defense lost (daily)", french="Défense par jour"),
+    help_txt=TranslatableString(
+        "Enter the average number of 100% lost convoy (for example two 50% defense count as one).  "
+        "\n*Don't care if it's not really precise, it's already a rought approximation as we wanted to keep it simple. It doesn't have much impact on the overall anyway.*"
+        "\n\n*(Note: The simulator compute the worst case where you lost your best tradings first, and that you lost 8 trophy per ambush on average.)*",
+        french="Entrer le nombre moyen de convoi 100% perdus par jour (par exemple deux convoi a 50% comptent comme un seul).  "
+               "\n*Ne vous creusez pas trop la tête si c'est pas super précis, c'est déjà une grosse approximation et "
+               "de toute façon ça a rarement un gros impacte sur votre revenu global.*"
+               "\n\n*(Note: Le simulateur choisi le pire scénario, où vos plus gros convois sont toujours attaqués en "
+               "premier. Et il compte -8 TR en moyenne par défaite.)*",
+        ),
+
     )
 
 ambush_won_param = UIParameter(
     'ambush_won', 
     int,
-    display_txt="Ambush won",
+    display_txt=TranslatableString("Ambush won", "Embuscades réussies"),
     default_value=20,
-    help_txt="Enter the average number of victorious ambushes you do per day (**including fast ambushes**)."
-             "\n\n*(Advice: usually after about 20 successful ambushes per day you do not gain gems, "
-             "reincarnation medals, legendary soul nor life potion. You only gain extra cargo, trophy and hero xp.)  "
-             "\n(Note: assume you do all your ambushes with a hero in your army and won with 3 stars score)*",
+    help_txt=TranslatableString(
+        "Enter the average number of victorious ambushes you do per day (**including fast ambushes**)."
+        "\n\n*(Advice: usually after about 20 successful ambushes per day you do not gain gems, "
+        "reincarnation medals, legendary soul nor life potion. You only gain extra cargo, trophy and hero xp.)  "
+        "\n(Note: assume you do all your ambushes with a hero in your army and won with 3 stars score)*",
+        french="Entrer le nombre moyen d'attaque victorieuse faites par jour (**en incluant les embuscades rapides**)."
+               "\n\n*(Conseil: en général le quota maximal journalier de gemmes, médailles de réincarnation, âmes "
+               "légendaires et flacon de vie est atteint au bout de 20 attaques environ. Après cela vous ne gagner "
+               "plus que des marchandises, de l'xp de héros et des trophés)  "
+               "\n(Note: Le simulateur choisi qu'il y a toujours un héro dans votre armée, que vous détruisez toujours "
+               "100% du convoi adverse et que vous attaques des joueur du même rang que vous aléatoirement "
+               "(c.à.d sans uniquement viser les gros convois de 4h par exemple)*",
+        ),
     )
 
 fast_ambushes_param = UIParameter(
     'fast_ambushes',
     range(21),
-    display_txt="Fast Ambushes",
+    display_txt=TranslatableString("Fast Ambushes", french="Embuscades rapides"),
     default_value=0,
     update_callback=lambda ambush_won: (
         range(min(21, ambush_won + 1)),
         [str(n) for n in range(min(21, ambush_won + 1))]
     ),
     dependencies=[ambush_won_param],
-    help_txt="Select the average number of fast ambushes you won per day  "
-             "\n(Note: assume you made 3 stars score on all of them)"
+    help_txt=TranslatableString(
+        "Select the average number of fast ambushes you won per day  "
+        "\n*(Note: assume you made 3 stars score on all of them)*",
+        french="Sélectionner votre nombre moyen d'embuscade rapide journalière.  "
+               "\n*(Note: Le simulateur considère que vous détruisez toujours 100% du convoi)*",
+        ),
     )
 
 temple_value_range, temple_display_range = update_buidlding_level_param(6, 30)
@@ -403,18 +460,23 @@ temple_lvl_param = UIParameter(
     display_range=temple_display_range,
     default_value=None,
     update_callback=functools.partial(update_buidlding_level_param, 6),
-    display_txt="Hero shrine level",
+    display_txt=TranslatableString("Hero shrine level", french="Temple de héros"),
     dependencies=[hq_param],
-    help_txt="Select the level of your hero shrine "
-             "\n\n*(AUTO take the maximum level available with your current HQ level)*",
+    help_txt=TranslatableString(
+        "Select the level of your hero shrine "
+        "\n\n*(AUTO take the maximum level available with your current HQ level)*",
+        french="Sélectionner le niveau de votre temple de héros."
+               "\n\n*(AUTO choisi le niveau maximum disponnible selon votre niveau de QG)*",
+        ),
     )
 
 average_trophy_param = UIParameter(
     'average_trophy',
     [5, 10, 15, 20, 25, 30, 35, 40, 45],
-    display_txt="Average trophy",
+    display_txt=TranslatableString("Average trophy", french="Trophés par attaque"),
     default_value=2,
-    help_txt="Select the average trophy you won on ambushes.",
+    help_txt=TranslatableString("Select the average trophy you won on ambushes.",
+                                french="Sélectionner le nombre moyen de trophés obtenus par embuscade."),
     )
 
 
@@ -434,6 +496,7 @@ class Ambushes(Gain):
         R.ReincarnationToken(26),
         ResourceQuantity(RaidChest, 1),
         )
+    # TODO add the 25% gold
 
     @classmethod
     def iteration_income(cls, rank: Rank = Rank.NONE, temple_lvl=None, hq_lvl=1, average_trophy=15, fast_ambushe=False, **kwargs) -> ResourcePacket:
@@ -482,13 +545,16 @@ class Ambushes(Gain):
             R.Gold(rank.traiding_base * 2.5 * (0.25 * fast_ambushes)),
             )
 
+    __display_name = TranslatableString("Ambushes", french="Embuscades")
+
 
 ask_for_donation_param = UIParameter(
     'ask_for_donation',
     bool,
-    display_txt="Clan Donations",
+    display_txt=TranslatableString("Donations received", french="Donnations reçues"),
     default_value=False,
-    help_txt="If you ask for donation in your clan each day, tick this",
+    help_txt=TranslatableString("If you ask for donation in your clan each day, tick this",
+                                french="Cocher si vous avez demander tous les jours des donnations de clan."),
     )
 
 
@@ -507,6 +573,8 @@ class ClanDonation(Gain):
     @classmethod
     def daily_income(cls, hq_lvl: int = 1, ask_for_donation: bool = False, **kwargs) -> ResourcePacket:
         return cls.iteration_income(hq_lvl=hq_lvl, ask_for_donation=ask_for_donation, **kwargs) * 5
+
+    __display_name = "Donations"
 
 
 # TODO daily connection reward

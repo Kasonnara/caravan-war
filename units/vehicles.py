@@ -22,6 +22,7 @@ from common.alignment import Alignment
 from common.card_categories import VEHICLES
 from common.rarity import Rarity
 from common.resources import resourcepackets_gold
+from lang.languages import TranslatableString
 from units.base_units import MovableUnit, reincarnation
 from common.target_types import TargetType
 
@@ -31,6 +32,7 @@ class Vehicle(MovableUnit):
     alignment = Alignment.DEFENDER
     move_speed = 1.2
     weapon_slot = 1
+    __display_name = TranslatableString("Vehicle", french="Véhicule")
 
 
 class Charrette(Vehicle):
@@ -48,6 +50,7 @@ class Charrette(Vehicle):
         -238750000, -407200000, -671510000, -1121970000, -1896460000,  # 21 -> 26
         -3198090000, -4931310000, -6907360000, -9679380000,
         )
+    __display_name = TranslatableString("Cart", french="Charrette")
 
 
 class Chariot(Vehicle):
@@ -66,6 +69,7 @@ class Chariot(Vehicle):
         -214880000, -366480000, -604360000, -1009770000, -1706810000,  # 21 -> 26
         -2878280000, -4438180000, -6216630000, -8711450000,
         )
+    __display_name = "Chariot"
 
 
 class Dirigeable(Vehicle):
@@ -84,6 +88,7 @@ class Dirigeable(Vehicle):
         -477510000, -814400000, -1343030000, -2243930000, -3792920000,  # 21 -> 26
         -6396180000, -9862630000, -13814730000, -19358770000,
         )
+    __display_name = TranslatableString("Air Ship", french="Dirigeable")
 
 
 class Speeder(Vehicle):
@@ -103,6 +108,7 @@ class Speeder(Vehicle):
         -501380000, -855120000, -1410180000, -2356130000, -3982570000,  # 21 -> 26
         -6715990000, -10355760000, -14505460000, -20326710000,
         )
+    __display_name = "Speeder"
 
 
 class Train(Vehicle):
@@ -121,6 +127,7 @@ class Train(Vehicle):
         -537200000, -916200000, -1510910000, -2524430000, -4267030000,  # 21 -> 26
         -7195710000, -11095460000, -15541570000, -21778610000,
         )
+    __display_name = TranslatableString("Steam Van", french="Fourgon à vapeur")
 
     def hp_score(self, *args, **kwargs):
         return (
@@ -144,6 +151,7 @@ class Helicopter(Vehicle):
         -358130000, -610800000, -1007270000, -1682950000, -2844690000,  # 21 -> 26
         -4797140000, -7396970000, -10361050000, -14519080000,
         )
+    __display_name = "Helicopter"
 
 
 @reincarnation
@@ -166,6 +174,7 @@ class Wagon(Vehicle):
         -417820000, -712600000, -1175150000, -1963440000, -3318800000,  # 21 -> 26
         -5596660000, -8629800000, -12087890000, -16938920000,
         )
+    __display_name = "Wagon"
 
 
 @reincarnation
@@ -189,6 +198,7 @@ class Buggy(Vehicle):
         -393940000, -671880000, -1108000000, -1851250000, -3129160000,  # 21 -> 26
         -5276850000, -8136670000, -11397150000, -15970980000,
         )
+    __display_name = "Buggy"
 
 
 @reincarnation

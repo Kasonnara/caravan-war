@@ -30,7 +30,7 @@ from economy.gains.weekly_rewards import *
 from economy.gains.abstract_gains import Gain
 
 GAINS_DICTIONARY: Dict[str, List[Type[Gain]]] = {
-    'tradings': [
+    TranslatableString('tradings', french="échanges"): [
         Trading10Km,
         Trading100Km,
         Trading1000Km,
@@ -40,7 +40,7 @@ GAINS_DICTIONARY: Dict[str, List[Type[Gain]]] = {
         TradingResets,
         Ambushes,
         ],
-    'challenges': [
+    TranslatableString('challenges', french="défis"): [
         GateChallenge,
         BanditChallenge,
         BossChallenge,
@@ -54,14 +54,14 @@ GAINS_DICTIONARY: Dict[str, List[Type[Gain]]] = {
         ClanWar1v1Reward,
         ClanDonation,
         ],
-    'others': [
+    TranslatableString('others', french="divers"): [
         DailyQuest,
         WeeklyQuest,
         Lottery,
         Adds,
         FreeDailyOffer,
         ],
-    'purchases': [
+    TranslatableString('purchases', french="achats"): [
         EquipmentCrafting,
         ],
     }

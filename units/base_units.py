@@ -26,6 +26,7 @@ from common.armor import armor_reduction
 from common.cards import Card
 from common.rarity import Rarity
 from common.target_types import TargetType
+from lang.languages import TranslatableString
 from units.equipments import Weapon, Armor
 from utils.class_property import classproperty
 
@@ -143,6 +144,8 @@ class BaseUnit(Card):
     def score(self, enemies: Union['MovableUnit', List['MovableUnit']]):
         return (self.dps_score(enemies) or 0) / DPS_SCORE_FACTOR
 
+    __display_name = TranslatableString("unit/tower", "unité/tour")
+
     def __repr__(self):
         if self._repr is None:
             # Compute and cache representation value
@@ -219,6 +222,8 @@ class MovableUnit(BaseUnit):
             self._repr = self.__class__.__name__.lower() + ('['+','.join(internal_values)+']' if len(internal_values) > 0 else "")
         return self._repr
 
+    __display_name = TranslatableString("Unit", french="Unité")
+
     def chase_distance(self, target: 'MovableUnit') -> Optional[float]:
         """
         Return the distance walked by the target, between two hits while chased by self
@@ -293,6 +298,8 @@ class FakeMovableUnit(MovableUnit):
                 '[' + ','.join(internal_values) + ']' if len(internal_values) > 0 else "")
         return self._repr
 
+    __display_name = TranslatableString("bunny unit", french="unité virtuelle")
+
 
 class Heal:
     base_heal = None
@@ -344,4 +351,14 @@ def reincarnation(cls: Type[BaseUnit]):
 
     # Set new unit rarity
     cls.rarity = Rarity.Legendary
+
+    # Set new display and names
+    parent_display_name = getattr(cls.__base__, "_" + cls.__base__.__name__ + "__display_name", cls.__name__)
+    if isinstance(parent_display_name, TranslatableString):
+        display_name = TranslatableString(None)
+        for language in parent_display_name:
+            display_name[language] = parent_display_name[language] + "+"
+    else:
+        display_name = parent_display_name + "+"
+    setattr(cls, "_" + cls.__name__ + "__display_name", display_name)
     return cls

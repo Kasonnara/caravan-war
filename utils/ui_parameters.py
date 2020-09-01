@@ -20,6 +20,8 @@ import collections
 from enum import EnumMeta
 from typing import Type, Union, Iterable, Optional, Callable, TypeVar, List
 
+from lang.languages import TranslatableString
+
 T = TypeVar('T')
 
 
@@ -31,10 +33,10 @@ class UIParameter:
                  value_range: Union[Type[int], Type[bool], Iterable[T]],
                  display_range: Optional[Iterable[str]] = None,
                  default_value: Union[T, int] = 0,
-                 display_txt: Optional[str] = None,
+                 display_txt: Optional[Union[str, TranslatableString]] = None,
                  update_callback: Callable = None,
                  dependencies: Iterable['UIParameter'] = None,
-                 help_txt: Optional[str] = None,
+                 help_txt: Optional[Union[str, TranslatableString]] = None,
                  ):
         """
         :param parameter_name: str, the name of the parameter. This is used as key in the parameter dictionary.

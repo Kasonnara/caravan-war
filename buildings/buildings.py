@@ -23,6 +23,7 @@ from buildings.headquarters import HQ
 from common.card_categories import BUILDINGS
 from common.resources import resourcepackets_gold, resourcepackets_goods, ResourcePacket, Resources, resourcepackets
 from common.resources import Resources as R
+from lang.languages import TranslatableString
 from utils.utils import get_index_greather_than
 
 _MILL_TRANSPORTSTATION_HOURLY_INCOMES = (
@@ -49,6 +50,7 @@ class Mill(Building):
     bihourly_incomes = resourcepackets_goods(*(x * 2 for x in _MILL_TRANSPORTSTATION_HOURLY_INCOMES))
     # MEMORY SAVING possible here if necessary
     storage_limits = [x * 8 for x in _MILL_TRANSPORTSTATION_HOURLY_INCOMES]
+    __display_name = TranslatableString("Mill", french="Moulin")
 
 
 class TransportStation(Building):
@@ -65,6 +67,7 @@ class TransportStation(Building):
     bihourly_incomes = resourcepackets_gold(*(x * 2 for x in _MILL_TRANSPORTSTATION_HOURLY_INCOMES))
     # MEMORY SAVING possible here if necessary
     storage_limits = Mill.storage_limits
+    __display_name = TranslatableString("Transport Station", french="Station de Transport")
 del _MILL_TRANSPORTSTATION_HOURLY_INCOMES
 
 
@@ -112,6 +115,8 @@ class Bank(Building):
         44999990000, 65999990000, 94999990000, 129999990000, 139999990000,
         )
 
+    __display_name = TranslatableString("Tresury", french="Trésorerie")
+
 
 class Storage(Building):
     upgrade_costs = resourcepackets_gold(
@@ -133,6 +138,8 @@ class Storage(Building):
         8999990000, 14999990000, 19999990000, 29999990000, 39999990000,
         )
 
+    __display_name = TranslatableString("Warehouse", french="Entrepôts")
+
 
 class Laboratory(Building):
     upgrade_costs = resourcepackets_gold(
@@ -144,6 +151,7 @@ class Laboratory(Building):
         -748100000, -1275900000, -2104080000, -3515500000, -5942240000,
         -10020690000, -15451460000, -21643070000, -30328740000,
         )
+    __display_name = TranslatableString("Laboratory", french="Laboratoire")
 
 
 class Tavern(Building):
@@ -156,6 +164,7 @@ class Tavern(Building):
         -2693150000, -4593230000, -7574680000, -12655790000, -21392070000,
         -36074470000, -55625230000, -77915050000, -109183450000,
         )
+    __display_name = TranslatableString("Tavern", french="Taverne")
 
     @property
     def bandit_power(self):
@@ -178,6 +187,7 @@ class Camp(Building):
         -2992380000, -5103590000, -8416310000, -14061980000, -23768960000,
         -40082740000, -61805810000, -86572280000, -121314940000,
         )
+    __display_name = TranslatableString("Bandit Camp", french="Camp de Bandits")
 
 
 class Academy(Building):
@@ -190,6 +200,7 @@ class Academy(Building):
         -1870240000, -3189740000, -5260200000, -8788740000, -14855600000,
         -25051720000, -38628630000, -54107680000, -75821840000,
         )
+    __display_name = TranslatableString("Academy", french="Académie")
 
 
 class Weaponsmith(Building):
@@ -225,6 +236,7 @@ class Weaponsmith(Building):
         (-4929500000, -43286140000),
         (-6907900000, -60657470000),
         )
+    __display_name = TranslatableString("Weaponsmith", french="Fabricant d'armes")
 
 
 class Garage(Building):
@@ -260,6 +272,7 @@ class Garage(Building):
         (-4107900000, -38957530000),
         (-5756600000, -54591730000),
         )
+    __display_name = "Garage"
 
 
 class WorkShop(Building):
@@ -272,6 +285,7 @@ class WorkShop(Building):
         -2842770000, -4848410000, -7995490000, -13358880000, -22580880000,
         -38078610000, -58715520000, -82243660000, -115249190000,
         )
+    __display_name = TranslatableString("Workshop", french="Atelier")
     
     @property
     def tower_power(self):
@@ -290,6 +304,7 @@ class Forge(Building):
         -2945708500, -3921693000, -8319136000, -14028959000, -21632033500,
         -30300298000, -42460229000,
         )
+    __display_name = "Forge"
 
 
 class HeroTemple(Building):
@@ -312,6 +327,7 @@ class HeroTemple(Building):
             814, 920, 1026,
             )
         ]
+    __display_name = TranslatableString("Hero Shrine", french="Temple des Héros")
 
 
 class Altar(Building):
@@ -324,6 +340,7 @@ class Altar(Building):
         -1496200000, -2551800000, -4208160000, -7031000000, -11884480000,
         -20041380000, -30902920000, -43286140000,
         )
+    __display_name = TranslatableString("Altar", french="Autel")
 
 
 # Register all defined cards

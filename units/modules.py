@@ -22,6 +22,7 @@ from common.alignment import Alignment
 from common.card_categories import MODULES
 from common.rarity import Rarity
 from common.resources import resourcepackets_gold
+from lang.languages import TranslatableString
 from units.base_units import AOE, COE, BaseUnit, reincarnation, MovableUnit
 from common.target_types import TargetType
 from units.towers import Tower
@@ -34,6 +35,8 @@ class ModuleWeapon(BaseUnit):
 
     def __init__(self, level: int, stars=0):
         super().__init__(level, stars, None)
+
+    __display_name = TranslatableString("Addon", french="Module")
 
 
 class Balista(ModuleWeapon):
@@ -52,6 +55,7 @@ class Balista(ModuleWeapon):
         -136020000, -231980000, -382560000, -639180000, -1080410000,  # 21 -> 26
         -1821940000, -2809350000, -3935100000, -5514320000,
         )
+    __display_name = TranslatableString("Ballista", french="Baliste")
 
 
 class Mortar(AOE, ModuleWeapon):
@@ -71,6 +75,7 @@ class Mortar(AOE, ModuleWeapon):
         -272030000, -463960000, -765120000, -1278360000, -2160810000,  # 21 -> 26
         -3643890000, -5618710000, -7870210000, -11028630000,
         )
+    __display_name = TranslatableString("Mortar", french="Mortier")
 
 
 class Shotgun(COE, ModuleWeapon):
@@ -90,6 +95,7 @@ class Shotgun(COE, ModuleWeapon):
         -244830000, -417570000, -688610000, -1150530000, -1944730000,  # 21 -> 26
         -3279500000, -5056840000, -7083190000, -9925770000,
         )
+    __display_name = TranslatableString("Scatter Gun", french="Fusil à dispersion")
 
 
 class Chaingun(ModuleWeapon):
@@ -115,6 +121,8 @@ class Chaingun(ModuleWeapon):
         if dmg is None:
             return None
         return dmg * (1 if target.shooted_as is TargetType.GROUND else self.anti_air_bonus)  # Damage boost against air unit
+
+    __display_name = TranslatableString("Machine Gun", french="Mitrailleuse")
 
 
 @reincarnation
@@ -148,6 +156,7 @@ class Laser(ModuleWeapon):
         -408050000, -695940000, -1147680000, -1917540000, -3241220000,  # 21 -> 26
         -5465830000, -8428060000, -11805310000, -16542950000,
         )
+    __display_name = "Laser"
 
 
 @reincarnation
@@ -172,6 +181,7 @@ class FlameTrower(COE, ModuleWeapon):
         -435260000, -742340000, -1224190000, -2045380000, -3457300000,  # 21 -> 26
         -5830220000, -8989940000, -12592330000, -17645810000,
         )
+    __display_name = TranslatableString("Flame", french="Lance-flamme")
 
 
 @reincarnation
@@ -207,6 +217,8 @@ class Tesla(COE, ModuleWeapon):
             * (1.7 if target.is_summoned else 1)  # Damage boost against summoned targets
             )
 
+    __display_name = "Tesla"
+
 
 class Barrier(ModuleWeapon):
     attack_base = 300
@@ -225,6 +237,7 @@ class Barrier(ModuleWeapon):
         -503260000, -858330000, -1415470000, -2364970000, -3997510000,  # 21 -> 26
         -6741190000, -10394610000, -14559880000, -20402970000,
         )
+    __display_name = TranslatableString("Barrier", french="Barrière")
 
 
 class Harpon(ModuleWeapon):
@@ -244,6 +257,7 @@ class Harpon(ModuleWeapon):
         -516870000, -881530000, -1453730000, -2428890000, -4105550000,  # 21 -> 26
         -6923380000, -10675550000, -14953400000, -20954400000,
         )
+    __display_name = TranslatableString("Harpoon", french="Harpon")
 
 
 class Cryomancer(ModuleWeapon):
@@ -269,6 +283,7 @@ class Cryomancer(ModuleWeapon):
         -1710000, -2990000, -5280000, -9040000, -15700000,  # 11 -> 16
         -27870000,
         )
+    __display_name = TranslatableString("Cryomancer", french="Cryomancien")
 
 
 class Archidruid(ModuleWeapon):
@@ -287,6 +302,8 @@ class Archidruid(ModuleWeapon):
 
     upgrade_costs = Cryomancer.upgrade_costs  # new modules seem to have the same costs
 
+    __display_name = TranslatableString("Arch Druid", french="Archidruide")
+
 
 class ShieldInvoker(ModuleWeapon):
     attack_base = 150
@@ -300,6 +317,8 @@ class ShieldInvoker(ModuleWeapon):
     shield_miss_factor = 0.5
 
     upgrade_costs = Cryomancer.upgrade_costs  # new modules seem to have the same costs
+
+    __display_name = TranslatableString("Shield Caster", french="Invocatrice de bouclier")
 
 
 class MirrorWizard(ModuleWeapon):
@@ -316,6 +335,8 @@ class MirrorWizard(ModuleWeapon):
             # TODO damage are reflected to a nearby bandits
         else:
             return 1.0
+
+    __display_name = TranslatableString("Mirror Mage", french="Mage miroir")
 
 
 # Register all defined cards

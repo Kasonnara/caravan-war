@@ -18,18 +18,20 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from collections import namedtuple, defaultdict
-from typing import List, Type, Dict, Set, Union
+from typing import List, Type, Dict, Set, Union, Optional
 
 from common.rarity import Rarity
 from common.resources import ResourcePacket
+from lang.languages import TranslatableString
 from utils.class_property import classproperty
+from utils.prettifying import Displayable
 
 Upgrade = namedtuple('Upgrade', 'costs requirements')
 
 MAX_LEVEL = 30
 
 
-class Upgradable:
+class Upgradable(Displayable):
     """This top class define the upgrade logic at the core of most units.
 
     Note: in documentation when I say "units" or "cards" I often mean to refer to this class (which includes buildings
@@ -130,6 +132,14 @@ class Upgradable:
     def __repr__(self):
         return "{}[lvl={}]".format(self.__class__.__name__, self.level)
 
+    # This attribute is mangled with "__" because we never want subclass to inherit display name
+    __display_name: Optional[Union[str, TranslatableString]] = TranslatableString("unit/tower/building/spell",
+                                                                                  french="unité/tour/batiment/sort")
+    """The name to use when displaying results to the user.  
+    This is not inherited and must be redefined for each class.  
+    You may never read this attribute directly, but prefer the display_name class method which automatically apply 
+    translation if provided and fallback on class name if the attribute have been defined"""
+
     @classmethod
     def total_upgrade_cost(cls, required_items: List['Upgradable'], inital_items: Union[Dict['CardCategories', Set['Upgradable']], List['Upgradable']], verbose=False) -> ResourcePacket:
         """
@@ -196,3 +206,5 @@ class Card(Upgradable):
     @classmethod
     def gold_cost(cls, ligue: 'Ligue'):
         return cls.rarity.gold_cost(ligue)
+
+    __display_name = TranslatableString("card", french="carte")

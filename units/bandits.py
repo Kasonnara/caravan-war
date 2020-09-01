@@ -22,6 +22,7 @@ from common.alignment import Alignment
 from common.card_categories import BANDITS
 from common.rarity import Rarity
 from common.resources import resourcepackets_gold
+from lang.languages import TranslatableString
 from units.base_units import MovableUnit, AOE, reincarnation
 from common.target_types import TargetType
 from units.vehicles import Vehicle
@@ -30,6 +31,7 @@ from units.vehicles import Vehicle
 class Bandit(MovableUnit):
     base_building = Camp
     alignment = Alignment.ATTACKER
+    __display_name = "Bandit"
 
 
 class Maraudeur(Bandit):
@@ -53,6 +55,7 @@ class Maraudeur(Bandit):
         -193060000, -329260000, -542990000, -907230000, -1533480000,  # 21 -> 26
         -2585980000, -3987470000, -5585310000, -7826770000,
         )
+    __display_name = TranslatableString("Marauder", french="Maraudeur")
 
 
 class Archer(Bandit):
@@ -76,6 +79,7 @@ class Archer(Bandit):
         -231670000, -395120000, -651590000, -1088670000, -1840180000,  # 21 -> 26
         -3103180000, -4784970000, -6702370000, -9392120000,
         )
+    __display_name = TranslatableString("Archer", french="Archère")
 
 
 class Drone(Bandit):
@@ -99,6 +103,7 @@ class Drone(Bandit):
         -250970000, -428040000, -705880000, -1179390000, -1993530000,  # 21 -> 26
         -3361780000, -5183710000, -7260900000, -10174800000,
         )
+    __display_name = "Drone"
 
 
 class Brute(Bandit):
@@ -122,6 +127,7 @@ class Brute(Bandit):
         -328200000, -559750000, -923080000, -1542280000, -2606920000,  # 21 -> 26
         -4396170000, -6778700000, -9495020000, -13305510000,
         )
+    __display_name = "Brute"
 
 
 class Lutin(Bandit):
@@ -145,6 +151,7 @@ class Lutin(Bandit):
         -366810000, -625600000, -1031680000, -1723730000, -2913610000,  # 21 -> 26
         -4913370000, -7576200000, -10612090000, -14870860000,
         )
+    __display_name = TranslatableString("Imp", french="Lutin")
 
 
 class Berserk(Bandit):
@@ -167,6 +174,7 @@ class Berserk(Bandit):
         -347500000, -592670000, -977380000, -1633010000, -2760270000,  # 21 -> 26
         -4654770000, -7177450000, -10053550000, -14088190000,
         )
+    __display_name = TranslatableString("Berserker", french="Berserk")
 
 
 class Hunter(Bandit):
@@ -190,6 +198,7 @@ class Hunter(Bandit):
         -386110000, -658530000, -1085980000, -1841450000, -3066960000,  # 21 -> 26
         -5171970000, -7974940000, -11170620000, -15653540000,
         )
+    __display_name = TranslatableString("Hunter", french="Chasseur")
 
 
 class Spider(AOE, Bandit):
@@ -206,6 +215,7 @@ class Spider(AOE, Bandit):
     aoe_radius = 1
     rarity = Rarity.Rare
     upgrade_costs = Lutin.upgrade_costs
+    __display_name = TranslatableString("Weaver", french="Tisseuse")
 
 
 class Alchimist(AOE, Bandit):
@@ -222,6 +232,7 @@ class Alchimist(AOE, Bandit):
     aoe_radius = 1
     rarity = Rarity.Rare
     upgrade_costs = Hunter.upgrade_costs
+    __display_name = TranslatableString("Alchemist", french="Alchimiste")
 
 
 class Viking(Bandit):
@@ -247,6 +258,7 @@ class Viking(Bandit):
         -540560000, -921940000, -1520370000, -2540230000, -4293750000,  # 21 -> 26
         -7240750000, -11164920000, -15638860000, -21914960000,
         )
+    __display_name = "Viking"
 
 
 @reincarnation
@@ -277,6 +289,7 @@ class Momie(Bandit):
         -521250000, -889010000, -1466070000, -2449510000, -4140400000,  # 21 -> 26
         -6982160000, -10766170000, -15080330000, -21132280000,
         )
+    __display_name = TranslatableString("Cursed Sorcerer", french="Ensorceleuse Maudite")
 
 
 @reincarnation
@@ -305,6 +318,7 @@ class DarkKnight(Bandit):
         -559870000, -954860000, -1574660000, -2630950000, -4447100000,  # 21 -> 26
         -7499350000, -11563670000, -16197390000, -22697630000,
         )
+    __display_name = TranslatableString("Dark Knight", french="Chevalier Noir")
 
 
 @reincarnation
@@ -335,6 +349,7 @@ class Condor(Bandit):
         -579170000, -987790000, -1628960000, -2721680000, -4600440000,  # 21 -> 26
         -7757950000, -11962420000, -16755920000, -23480310000,
         )
+    __display_name = "Condor"
 
 
 @reincarnation
@@ -356,6 +371,7 @@ class Stealer(Bandit):
     vehicule_damage_factor = 2  # Fixme: check if it's "200% damages" or "200% additional damages"
     rarity = Rarity.Epic
     upgrade_costs = Condor.upgrade_costs
+    __display_name = TranslatableString("Rogue", french="Voleur")
 
     # TODO: invisibility effect
 
@@ -401,6 +417,7 @@ class Lich(Bandit):
         -540560000, -921940000, -1520370000, -2540230000, -4293750000,  # 21 -> 26
         -7240750000, -11164920000, -15638860000, -21914960000,
         )
+    __display_name = "Lich"
 
 
 @reincarnation
@@ -430,6 +447,7 @@ class Inferno(Bandit):
         -868760000, -1481690000, -2443450000, -4082510000, -6900670000,  # 21 -> 26
         -11636930000, -17943620000, -25133890000, -35220470000,
         )
+    __display_name = TranslatableString("Infernal", french="Inferno")
 
 
 class Demon(Bandit):
@@ -454,6 +472,7 @@ class Demon(Bandit):
         -810840000, -1382910000, -2280550000, -3810350000, -6440620000,  # 21 -> 26
         -10861130000, -16747380000, -23458290000, -32872430000,
         )
+    __display_name = TranslatableString("Archdevil", french="Démon")
 
 
 class Chaman(Bandit):
@@ -478,6 +497,7 @@ class Chaman(Bandit):
         -772230000, -1317050000, -2171950000, -3628900000, -6133930000,  # 21 -> 26
         -10343940000, -15949890000, -22341230000, -31307080000,
         )
+    __display_name = TranslatableString("Witch Doctor", french="Shaman")
 
 
 class Djin(Bandit, AOE):
@@ -509,6 +529,7 @@ class Djin(Bandit, AOE):
         -791530000, -1349980000, -2226250000, -3719620000, -6287270000,  # 21 -> 26
         -10602530000, -16348630000, -22899760000, -32089760000,
         )
+    __display_name = "Djinn"
 
 
 class Mecha(Bandit):
@@ -536,6 +557,7 @@ class Mecha(Bandit):
         -830150000, -1415830000, -2334850000, -3901070000, -6593970000,  # 21 -> 26
         -11119730000, -17146130000, -24016820000, -33655110000,
         )
+    __display_name = TranslatableString("Mech", french="Mecha")
 
 
 class Vampire(Bandit):
@@ -560,6 +582,8 @@ class Vampire(Bandit):
         -868760000, -1481690000, -2443450000, -4082510000, -6900670000,  # 21 -> 26
         -11636930000, -17943620000, -25133890000, -35220470000,
         )
+    __display_name = TranslatableString("Vampire Lord", french="Seigneur Vampire")
+
 
 # Register all defined cards
 BANDITS.register_cards_in_module(Bandit, __name__)

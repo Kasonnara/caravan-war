@@ -30,6 +30,7 @@ from common.resources import ResourcePacket, ResourceQuantity, hero_souls
 from common.resources import Resources as R
 
 from economy.gains.abstract_gains import Gain, Days, rank_param
+from lang.languages import TranslatableString
 from spells.defense_spells import ModuleBoost
 from spells.attack_spells import Storm
 from units.bandits import Bandit
@@ -82,8 +83,10 @@ gates_passed_param = UIParameter(
     'gates_passed',
     range(31),
     display_range=[str(x) for x in range(31)],
+    display_txt=TranslatableString("Gates passed", french="Portes réussies"),
     default_value=30,
-    help_txt="Average number of gates you pass in the gate challenge",
+    help_txt=TranslatableString("Average number of gates you pass in the gate challenge.",
+                                french="Nombre moyen de portes réussies dans le défi des portes."),
     )
 
 
@@ -129,6 +132,8 @@ class GateChallenge(ChallengeOfTheDay):
         reward[R.Goods] *= rank.traiding_base
         return reward
 
+    __display_name = TranslatableString("Gate challenge", french="Défi des portes")
+
 
 class BanditChallenge(ChallengeOfTheDay):
     parameter_dependencies = [rank_param]
@@ -149,15 +154,17 @@ class BanditChallenge(ChallengeOfTheDay):
             R.LotteryTicket(3),
             )
 
+    __display_name = TranslatableString("Bandit challenge", french="Défi de bandits")
+
 
 leaderboard_rank_param = UIParameter(
     'leaderboard_rank',
     range(11),
     display_range=["1st", "2nd", "3rd"] + ["{}th".format(x) for x in range(4, 11)] + ["Out of leaderboard"],
-    display_txt="Boss leaderboard",
+    display_txt=TranslatableString("Boss leaderboard", french="Classement au boss"),
     default_value=10,
-    help_txt="If your regularly are in the boss challenge leaderboard, select your rank to include the extra gems "
-             "reward in the simulation.",
+    help_txt=TranslatableString("If your regularly are in the boss challenge top 10, select your rank to include the extra gems "
+             "reward in the simulation.", french="Si vous êtes régulièrement dans le top 10 du défi de boss, sélectionner votre rang moyen pour inclure les gemmes bonus."),
     )
 
 
@@ -184,6 +191,8 @@ class BossChallenge(ChallengeOfTheDay):
             R.LotteryTicket(3),
             )
 
+    __display_name = TranslatableString("Boss challenge", french="Défi de boss")
+
 
 class ConvoyChallenge(ChallengeOfTheDay):
     parameter_dependencies = [rank_param]
@@ -200,13 +209,18 @@ class ConvoyChallenge(ChallengeOfTheDay):
             R.LotteryTicket(2),
             )
 
+    __display_name = TranslatableString("Convoy challenge", french="Défi de convoi")
+
 
 opponent_rank_param = UIParameter(
     'opponent_rank',
     Rank,
     display_range=[rank.name if rank is not Rank.NONE else "Auto (= your rank)" for rank in Rank],
-    display_txt="Clan War opponent",
-    help_txt="Select the average ranks of the player you attack during the Clan Wars. (Note: to make it simple the simulator assume you destroy 100% of your target's convoy)",
+    display_txt=TranslatableString("Clan War target", french="Cible en GDC"),
+    help_txt=TranslatableString("Select the average rank of your targets during the 4v4 Clan Wars. "
+                                "(Note: to keep it simple the simulator assume you destroy 100% of your target's convoy)",
+                                french="Sélectionner le rang moyen de vos cible en GDC 4v4. (Note: pour simplifier, "
+                                       "le simulateur assume que vous détruisez toujours 100% du convoi)"),
     )
 
 
@@ -229,22 +243,24 @@ class ClanWarFights(ChallengeOfTheDay):
         return ResourcePacket(R.Gold(opponent_rank.clan_war_gold_bounty)) * 0.5
         #   We divide by 2 since the last update were only half of th convoy cargo is raidable.
 
+    __display_name = TranslatableString("Clan war ambushes", french="Embuscades de guerre des clan")
+
 
 clan_league_param = UIParameter(
     'clan_league',
     ClanLeague,
     display_range=[league.name for league in ClanLeague],
-    display_txt="League",
-    help_txt="Select the league of your clan.",
+    display_txt=TranslatableString("League", french="Ligue"),
+    help_txt=TranslatableString("Select the league of your clan.", french="Sélectionner la ligue de votre clan"),
     )
 
 battle_ranking_param = UIParameter(
     'battle_ranking',
     range(5),
     display_range=["1st", "2nd", "3rd", "4th", "5th"],
-    display_txt="Clan War result",
+    display_txt=TranslatableString("4v4 Clan War results", french="Résultats de GDC 4v4"),
     default_value=2,
-    help_txt="Select the rank of your clan at the end of clan wars."
+    help_txt=TranslatableString("Select the rank of your clan at the end of clan wars.", "Sélectionner le rang de votre clan à la fin de la GDC.")
     )
 
 
@@ -263,6 +279,8 @@ class ClanWarReward(ChallengeOfTheDay):
             return ResourcePacket()
         return clan_league.rewards(battle_ranking, rank)
 
+    __display_name = TranslatableString("Clan war rewards", french="Récompenses de guerre des clan")
+
 
 class ClanMission(ChallengeOfTheDay):
     start_day = Days.Sunday
@@ -280,22 +298,25 @@ class ClanMission(ChallengeOfTheDay):
             R.Gem(150),
             ) * (1/7)
 
+    __display_name = TranslatableString("Clan quests", french="Missions de clan")
+
 
 personal_boss_kill_per_fight_param = UIParameter(
     'personal_boss_kill_per_fight',
     int,
-    display_txt="Clan boss kills per fight",
+    display_txt=TranslatableString("Clan boss kills per fight", french="BDC score par attaque"),
     default_value=50,
-    help_txt="Enter the average number of clan boss you kill per attack.\n(Note: the siumlator will then assume you always make 2 attacks)",
+    help_txt=TranslatableString("Enter the average number of clan boss you kill per attack.",
+                                french="Entrer votre score moyen sur le boss de clan."),
     )
 
 
 clan_boss_kills_param = UIParameter(
     'clan_boss_kills',
     int,
-    display_txt="Clan Boss total clan kills",
+    display_txt=TranslatableString("Clan Boss total clan kills", "Total BDC score"),
     default_value=0,
-    help_txt="Enter the average total boss kills your clan manage to score each week.",
+    help_txt=TranslatableString("Enter the average total boss kills your clan manage to score each week.", french="Entrez le score moyen total par semaine de votre clan."),
     )
 
 BOSS_ATTACK_GEM_COST = [0] + [0, 0, -100, -300, -800]
@@ -307,9 +328,10 @@ clan_boss_attack_count_param = UIParameter(
     display_range=[str(x) + (" ({} gems)".format(BOSS_ATTACK_GEM_COST[x])
                              if BOSS_ATTACK_GEM_COST[x] != 0 else "")
                    for x in range(0, len(BOSS_ATTACK_GEM_COST))],
-    display_txt="Boss attack count",
+    display_txt=TranslatableString("Boss attack count", french="Nombre de BDC"),
     default_value=2,
-    help_txt="Select the number of time you attack the boss each week.",
+    help_txt=TranslatableString("Select the number of time you attack the boss each week.",
+                                french="Sélectionner le nombre d'embuscade que vous faites chaque semaine sur le boss de clan"),
     )
 
 
@@ -351,6 +373,8 @@ class ClanBoss(ChallengeOfTheDay):
 
         return total_reward
 
+    __display_name = TranslatableString("Clan boss", french="Boss de clan")
+
 
 class WeeklyQuest(ChallengeOfTheDay):
     start_day = Days.Monday
@@ -373,6 +397,8 @@ class WeeklyQuest(ChallengeOfTheDay):
     def daily_income(cls, rank: Rank = Rank.NONE, **kwargs) -> ResourcePacket:
         return cls.iteration_income(rank=rank) * (1/7)
 
+    __display_name = TranslatableString("Weekly quests", french="Quêtes hébdomadaires")
+
 
 CLAN_RANKING_BOUNDARIES = [1, 3, 7, 15, 31, 63, 127, 255, 511, 1023, 2047]
 clan_rank_param = UIParameter(
@@ -380,18 +406,20 @@ clan_rank_param = UIParameter(
     range(len(CLAN_RANKING_BOUNDARIES) - 1),
     display_range=["#{}-{}".format(begin, end-1)
                    for begin, end in zip(CLAN_RANKING_BOUNDARIES[:-1], CLAN_RANKING_BOUNDARIES[1:])],
-    display_txt="Clan rank",
+    display_txt=TranslatableString("Clan rank", french="Rang du clan"),
     default_value=len(CLAN_RANKING_BOUNDARIES) - 2,
-    help_txt="Select your clan ranking for the 1v1 clan war."
+    help_txt=TranslatableString("Select your clan ranking for the 1v1 clan war.",
+                                french="Sélectionner le rang de votre clan pour les guerres de clans 1v1"),
     )
 
 clanwar1v1_result_param = UIParameter(
     'clanwar1v1_result',
     [0, 0.5, 1],
     display_range=["Always won", "1/2", "Always lose"],
-    display_txt="1v1 results",
+    display_txt=TranslatableString("1v1 results", french="Résultats 1v1"),
     default_value=1,
-    help_txt="What are the results of th 1v1 clan wars."
+    help_txt=TranslatableString("What are the scores of the clan during 1v1 clan wars?",
+                                french="Quels sont les résultats du clan aux guerres de clan 1v1?")
     )
 
 
@@ -414,3 +442,4 @@ class ClanWar1v1Reward(ChallengeOfTheDay):
             R.LegendarySoul(cls.LEGENDARY_SOUL_REWARD_BASE),
             ) * cls.REWARD_REDUCTION_RATIO ** (clan_rank + clanwar1v1_result)
 
+    __display_name = TranslatableString("1v1 clan war", french="Guerre de clan 1v1")
