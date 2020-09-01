@@ -67,6 +67,7 @@ Languages and translation support
 # So I goes for the last one
 
 from enum import Enum
+from typing import Union
 
 
 class Language(Enum):
@@ -89,9 +90,25 @@ class TranslatableString(dict):
         if french is not None:
             self[Language.FRENCH] = french
 
-    def translated_into(self, target_language: Language):
+    def translated_into(self, target_language: Language) -> str:
         translation = self.get(target_language)
         if translation is None:
             translation = self[Language.ENGLISH]
             print("Warning: '{}' has no translation in {}".format(translation, target_language.name.lower()))
         return translation
+
+    def __str__(self):
+        """Return the static default translation"""
+        return self[Language.ENGLISH]
+
+    def __add__(self, other: Union['TranslatableString', str]):
+        if isinstance(other, TranslatableString):
+            return TranslatableString(self[Language.ENGLISH]+other[Language.ENGLISH],
+                                      french=self.translated_into(Language.FRENCH) + other.translated_into(Language.FRENCH))
+        elif isinstance(other, str):
+            return TranslatableString(self[Language.ENGLISH]+other, french=self.translated_into(Language.FRENCH) + other)
+        else:
+            raise ValueError("TranslatableString can only be concatenated with TranslatableString and str, not {}".format(type(other)))
+
+    def __hash__(self):
+        return self[Language.ENGLISH].__hash__()
