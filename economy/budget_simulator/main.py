@@ -197,7 +197,7 @@ side_bar = html.Div(
         # Sidebar title
         [htmlt.H3(TranslatableString('Configuration'), id="configuration-title")]
         # Parameters categories and selectors
-        + build_parameters_selectors_list(app, persistent_components_ids)
+        + build_parameters_selectors_list(app, persistent_components_ids, translatable_components)
         ),
     id='configurationSideBar',
     className="bg-light border-right col-lg-3",

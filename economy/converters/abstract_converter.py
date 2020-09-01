@@ -23,6 +23,7 @@ from typing import List, Union, Type, Iterable, Optional, Dict, Any, Callable
 
 from common.resources import ResourcePacket
 from economy.gains import Gain
+from lang.languages import TranslatableString
 from utils.class_property import classproperty
 from utils.prettifying import Displayable
 from utils.ui_parameters import UIParameter, T
@@ -43,11 +44,31 @@ class ConverterModeUIParameter(UIParameter):
     def __init__(self, converter_class: Type['GainConverter'], value_range: Iterable[ConversionMode] = ConversionMode,
                  display_range: Iterable[str] = None,
                  default_value: Union[ConversionMode, int] = 0,
-                 display_txt: Optional[str] = None,
+                 display_txt: Optional[Union[str, TranslatableString]] = None,
                  update_callback: Callable = None,
                  dependencies: Iterable['UIParameter'] = None,
-                 help_txt: Optional[str] = None,
+                 help_txt: Optional[Union[str, TranslatableString]] = None,
                  ):
+        if help_txt is None:
+            help_txt = TranslatableString("{} converter possible modes:",
+                                          french="Modes possibles du convertiseur {}",
+                                          ).format(converter_class.display_name())
+        elif not isinstance(help_txt, TranslatableString):
+            help_txt = TranslatableString(help_txt)
+        help_txt = (help_txt
+                    + (TranslatableString(
+                           "\n- **Disabled**: Do nothing.",
+                           french="\n- **Disabled**: Ne fait rien.",
+                           ) if self.ConversionMode.DISABLED in value_range else "")
+                    + (TranslatableString(
+                           "\n- **In place**: Modify existing gains records in place.",
+                           french="\n- **In place**: Modifie le gain existant correspondant.",
+                           ) if self.ConversionMode.IN_PLACE in value_range else "")
+                    + (TranslatableString(
+                           "\n- **As a separate gain**: Aggregate all consumed and produced resources into a new separated gain record.",
+                           french="\n- **As a separate gain**: Additionne toutes les conversions comme un gain à part.",
+                           ) if self.ConversionMode.EXTERNAL in value_range else "")
+                    )
         super().__init__(
             converter_class.mode_parameter_name,
             value_range,
@@ -56,11 +77,7 @@ class ConverterModeUIParameter(UIParameter):
             display_txt=(display_txt or (converter_class.__name__ + " conversion")),
             update_callback=update_callback,
             dependencies=dependencies,
-            help_txt=((help_txt or "{} converter enable mode:".format(converter_class.__name__))
-                      + ("\n- **Disabled**: Do nothing." if self.ConversionMode.DISABLED in value_range else "")
-                      + ("\n- **In place**: Modify existing gains records in place." if self.ConversionMode.IN_PLACE in value_range else "")
-                      + ("\n- **As a separate gain**: Aggregate all consumed and produced resources into a new separated gain record."  if self.ConversionMode.EXTERNAL in value_range else "")
-                     ),
+            help_txt=help_txt,
             )
 
 

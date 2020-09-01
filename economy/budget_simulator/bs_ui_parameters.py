@@ -21,7 +21,7 @@
 This module list budget simulator user defined parameters
 and their corresponding GUI selector component automatic generation.
 """
-from typing import List, Dict
+from typing import List, Dict, Union
 
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
@@ -45,19 +45,25 @@ from economy.gains.daily_rewards import daily_10km_trading_count_param, \
 from economy.gains.weekly_rewards import gates_passed_param, leaderboard_rank_param, \
     opponent_rank_param, clan_rank_param, battle_ranking_param, personal_boss_kill_per_fight_param, \
     clan_boss_kills_param, clan_league_param, clanwar1v1_result_param, clan_boss_attack_count_param
+from lang.languages import TranslatableString
+from lang.translation_dash_wrapper import wrap_dash_module_translation, TranslatableComponentRegister
 from utils.ui_parameters import UIParameter
+
+dcct = wrap_dash_module_translation(dcc)
+htmlt = wrap_dash_module_translation(html)
+dbct = wrap_dash_module_translation(dbc)
 
 # ----- List and organize simulation parameters of the UI -----
 
-BUDGET_SIMULATION_PARAMETERS: Dict[str, List[UIParameter]] = {
-    'General': [
+BUDGET_SIMULATION_PARAMETERS: Dict[Union[str, TranslatableString], List[UIParameter]] = {
+    TranslatableString('General', french="Géneral"): [
         mesurement_range_param,
         rank_param,
         vip_param,
         hq_param,
         pub_viewed_per_day_param,
         ],
-    'Trading': [
+    TranslatableString('Tradings', french="Échanges"): [
         daily_10km_trading_count_param,
         daily_100km_trading_count_param,
         daily_1000km_trading_count_param,
@@ -65,21 +71,21 @@ BUDGET_SIMULATION_PARAMETERS: Dict[str, List[UIParameter]] = {
         defense_lost_param,
         defense_lost_convert_mode_param,
         ],
-    'Units': [
+    TranslatableString('Units', french="Unités"): [
         mill_lvl_param,
         station_lvl_param,
         temple_lvl_param,
         ],
-    'Ambushes': [
+    TranslatableString('Ambushes', french="Embuscades"): [
         ambush_won_param,
         fast_ambushes_param,
         average_trophy_param,
         ],
-    'Challenges': [
+    TranslatableString('Challenges', french="Défis"): [
         gates_passed_param,
         leaderboard_rank_param,
         ],
-    'Clan': [
+    TranslatableString('Clan'): [
         clan_league_param,
         clan_rank_param,
         battle_ranking_param,
@@ -90,7 +96,7 @@ BUDGET_SIMULATION_PARAMETERS: Dict[str, List[UIParameter]] = {
         clan_boss_attack_count_param,
         ask_for_donation_param,
         ],
-    'Conversions': [
+    TranslatableString('Conversions'): [
         lottery_convert_mode_param,
         selected_heroes_param,
         legendary_soul_convert_mode_param,
@@ -98,7 +104,7 @@ BUDGET_SIMULATION_PARAMETERS: Dict[str, List[UIParameter]] = {
         recycle_target_type_param,
         chest_opener_convert_mode_param,
         ],
-    'Purchase': [
+    TranslatableString('Purchases', french="Achats"): [
         equipment_craft_number_param,
         ],
     }
@@ -142,7 +148,8 @@ def get_parameter_value(parameter: UIParameter, raw_value):
         return parameter.value_range[min(len(parameter.value_range)-1, int(raw_value))]
 
 
-def build_parameters_selectors_list(app: Dash, persistent_components_ids: List[str]) -> List[Component]:
+def build_parameters_selectors_list(app: Dash, persistent_components_ids: List[str],
+                                    translatable_components: TranslatableComponentRegister) -> List[Component]:
     """
     Generate the list of dash components to produce the list of simulation parameters' selectors
 
@@ -222,13 +229,15 @@ def build_parameters_selectors_list(app: Dash, persistent_components_ids: List[s
         persistent_components_ids.append(parameter_selector_id)
 
         # Generate a title label
-        label = html.Label(
+        label = htmlt.Label(
             parameter.display_txt + ":",
             className="col-sm-{}".format(bootstrap_cols[0]),
             id=parameter_selector_id+"_label",
+            translatable_components=translatable_components,
             )
         if parameter.help_txt is not None:
-            info_bubble = dbc.Tooltip(dcc.Markdown(parameter.help_txt),
+            info_bubble = dbc.Tooltip(dcct.Markdown(parameter.help_txt, id=parameter_selector_id+"_tooltip-content",
+                                                     translatable_components=translatable_components,),
                                       target=parameter_selector_id+"_label",
                                       container="body",
                                       style=TOOLTIPS_STYLE,
@@ -245,7 +254,8 @@ def build_parameters_selectors_list(app: Dash, persistent_components_ids: List[s
         for category_title in BUDGET_SIMULATION_PARAMETERS
         for line in (
             # Put an horizontal line, the name of this category
-            [html.Hr(), html.H4(category_title)]
+            [html.Hr(), htmlt.H4(category_title, id="{}-parameters-category-title".format(category_title),
+                                 translatable_components=translatable_components)]
             # And follow with this category's parameters selectors.
             + [build_parameter_selector(parameter) for parameter in BUDGET_SIMULATION_PARAMETERS[category_title]]
             )

@@ -29,6 +29,7 @@ from common.cards import MAX_LEVEL
 from common.leagues import Rank
 from common.resources import ResourcePacket
 from common.vip import VIP
+from lang.languages import TranslatableString
 from utils.prettifying import Displayable
 from utils.ui_parameters import UIParameter
 
@@ -59,15 +60,40 @@ class MeasurementPeriod(Enum):
 # Just don't forget to add them to the BUDGET_SIMULATION_PARAMETERS for the UI to find them. You can also
 # creates new categories if you want just use str keys.
 
-mesurement_range_param = UIParameter('mesurement_range', MeasurementPeriod, display_txt="Average by",
-                                     help_txt="Select the period over which gains will be accumulated.")
-rank_param = UIParameter('rank', Rank, display_range=[rank.name for rank in Rank], default_value=Rank.NONE,
-                         help_txt="Select your rank. *(If you select NONE, gold and cargo of gains that depend on it "
-                                  "will be given as X time the reward of your 10km trading)*")
-vip_param = UIParameter('vip', VIP, display_range=[vip_lvl.name for vip_lvl in VIP],
-                        display_txt="VIP", default_value=7, help_txt="Select your VIP level.")
-hq_param = UIParameter('hq_lvl', range(1, MAX_LEVEL+1), display_range=[str(vip_lvl) for vip_lvl in range(1, MAX_LEVEL+1)],
-                       display_txt="HQ", default_value=15, help_txt="Select the level of your head quarters.")
+mesurement_range_param = UIParameter(
+    'mesurement_range',
+    MeasurementPeriod,
+    display_txt=TranslatableString("Average by", french="Revenus par"),
+    help_txt=TranslatableString("Select the period over which gains will be accumulated.",
+                                french="Sélectionner la période sur laquel sera fait la simulation."),
+    )
+rank_param = UIParameter(
+    'rank',
+    Rank,
+    display_range=[rank.name for rank in Rank],
+    default_value=Rank.NONE,
+    display_txt=TranslatableString("League", french="Ligue"),
+    help_txt=TranslatableString("Select your league. *(If you select NONE, gold and cargo of gains that depend on it "
+                                "will be given as X time the reward of your 10km trading)*",
+                                french="Sélectionner votre ligue. *(Si vous selectioner NONE, les gains d'or et de "
+                                       "marchandises qui en dépendent seront affichés en multiples de votre échange de 10km)*"),
+    )
+vip_param = UIParameter(
+    'vip',
+    VIP,
+    display_range=[vip_lvl.name for vip_lvl in VIP],
+    display_txt=TranslatableString("VIP"),
+    default_value=7,
+    help_txt=TranslatableString("Select your VIP level.", "Sélectionner votre niveau de VIP."),
+    )
+hq_param = UIParameter(
+    'hq_lvl',
+    range(1, MAX_LEVEL+1),
+    display_range=[str(vip_lvl) for vip_lvl in range(1, MAX_LEVEL+1)],
+    display_txt=TranslatableString("HQ"),
+    default_value=15,
+    help_txt=TranslatableString("Select the level of your head quarters.", french="Sélectionner le niveau de votre QG."),
+    )
 
 
 # ------------------------ Gains abstract class ------------------------

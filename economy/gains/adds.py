@@ -52,8 +52,9 @@ adds_reward_per_hq_level = [
 pub_viewed_per_day_param = UIParameter(
     'pub_viewed_per_day',
     range(max_adds_per_day + 1),
-    display_txt="Daily adds",
-    help_txt="Select the average number of adds you view per day.",
+    display_txt=TranslatableString("Daily adds", french="Pub par jour"),
+    help_txt=TranslatableString("Select the average number of adds you view per day.",
+                                french="Sélectionner votre nombre moyen de pub visionnées par jour."),
     )
 
 

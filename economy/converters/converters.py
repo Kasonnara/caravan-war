@@ -64,8 +64,10 @@ class Lottery(GainConverter):
 
 lottery_convert_mode_param = ConverterModeUIParameter(
     Lottery,
-    display_txt="Convert Lottery Tickets",
-    help_txt="Automatically exchange lottery tickets for resources.")
+    display_txt=TranslatableString("Convert Lottery Tickets", french="Utiliser les tickets de lotterie"),
+    help_txt=TranslatableString("Automatically exchange lottery tickets for resources.",
+                                french="Utilise automatiquement les tickets de lotterie contre des resource."),
+    )
 GainConverter.ALL.append(Lottery)  # TODO use a Metaclass for that
 
 
@@ -83,13 +85,14 @@ class LegendarySoulExchange(GainConverter):
             ResourceQuantity(Rarity.Legendary, 1),
             ) * (resource_packet[R.LegendarySoul] / 1000)
 
-    __display_name = TranslatableString("Souls exchanges", french="Échanges d'âmes")
+    __display_name = TranslatableString("Souls exchanges", french="Échanges d'âmes légendaires")
 
 
 legendary_soul_convert_mode_param = ConverterModeUIParameter(
     LegendarySoulExchange,
-    display_txt="Convert legendary souls",
-    help_txt="Automatically exchange legendary souls for cards.",
+    display_txt=TranslatableString("Convert legendary souls", french="Échanges d'âmes légendaires"),
+    help_txt=TranslatableString("Automatically exchange legendary souls for cards.",
+                                french="Échange automatiquement les âmes legendaires contre des cartes"),
     )
 GainConverter.ALL.append(LegendarySoulExchange)
 
@@ -147,10 +150,17 @@ class DefenseLost(GainConverter):
 defense_lost_convert_mode_param = ConverterModeUIParameter(
     DefenseLost,
     value_range=[ConverterModeUIParameter.ConversionMode.IN_PLACE, ConverterModeUIParameter.ConversionMode.EXTERNAL],
-    display_txt="Resource stolen display",
-    help_txt="Reduce trading rewards to take into account the convoys you lost."
-             "\n\n*(Warning: not really accurate on trophy loses)  "
-             "\n(Note: Assume the worst case were you always lose your best tradings first)*",
+    display_txt=TranslatableString("Convoy stolen", french="Convoi pillés"),
+    help_txt=TranslatableString(
+        "Your trading gains are reduce to take into account the convoys you lost. "
+        "Select how you want this reduction to be applyied."
+        "\n\n*(Warning: not really accurate on trophy loses)  "
+        "\n(Note: Assume the worst case were you always lose your best tradings first)*",
+        french="Les gains de vos échange sont réduit pour prendre en compte vos convois attaqués pas d'autres joueur. "
+               "Sélectionner comment vous voulez que cette réduction soit appliqué."
+               "\n\n*(Attention: l'estimation de trophés perdue est très très approximative)*  "
+               "\n*(Note: Le simulateur choisi le pire cas où vos plus gros convois sont pillés en priorité)*",
+        ),
     )
 GainConverter.ALL.append(DefenseLost)
 
@@ -180,8 +190,11 @@ class ChestOpening(GainConverter):
 chest_opener_convert_mode_param = ConverterModeUIParameter(
     ChestOpening,
     value_range=[ConverterModeUIParameter.ConversionMode.DISABLED, ConverterModeUIParameter.ConversionMode.IN_PLACE],
-    display_txt="Open Chests",
-    help_txt="Automatically open chests for cards.  \n*(Warning: not really accurate on reborn medals loots)*",
+    display_txt=TranslatableString("Open Chests", french="Ouvrir les coffres"),
+    help_txt=TranslatableString(
+        "Automatically open chests for cards.  \n*(Warning: not really accurate on reborn medals loots)*",
+        french="Ouvre automatiquement les coffres  \n*(Attention: très approximatif pour les médailles de reincarnation)*",
+        ),
     )
 GainConverter.ALL.append(ChestOpening)
 
@@ -217,8 +230,8 @@ recycle_target_type_param = UIParameter(
     'recycle_target_type',
     [RecycleChest.recyclable_types[:1], RecycleChest.recyclable_types],  # Todo add more choices
     display_range=["All Common", "All Common and Rare"],
-    display_txt="Cards to recycle",
-    help_txt="Select which cards category you recycle",
+    display_txt=TranslatableString("Cards to recycle", french="Carte à recycler"),
+    help_txt=TranslatableString("Select which cards category you recycle", french="Sélectionner les cartes à recycler."),
     )
 
 
@@ -254,8 +267,9 @@ recycle_convert_mode_param = ConverterModeUIParameter(
     value_range=[ConverterModeUIParameter.ConversionMode.DISABLED, ConverterModeUIParameter.ConversionMode.EXTERNAL],
     # FIXME: WORKAROUND, converters currently badly behave with negative values in IN_PLACE mode
     #  (see AbstractConverter.apply_all for more details) so as long as this bug exists IN_PLACE mode is forbidden.
-    display_txt="Recycle cards",
-    help_txt="Automatically exchange cards for recycle chests.",
+    display_txt=TranslatableString("Do recycle", french="Recyclage"),
+    help_txt=TranslatableString("Automatically exchange cards for recycle chests.",
+                                french="Échange automatiquement des cartes contre des coffres de recyclage"),
     )
 GainConverter.ALL.append(Recycle)
 
