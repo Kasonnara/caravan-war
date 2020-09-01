@@ -34,7 +34,7 @@ from common.resources import ResourceQuantity, Resources, ResourcePacket
 from economy.budget_simulator.simulation import RESOURCE_SORTING_MAP
 from economy.converters.abstract_converter import GainConverter
 from economy.gains import Gain
-from lang.languages import Language
+from lang.languages import Language, TranslatableString
 from utils.prettifying import camelcase_2_spaced, human_readable
 
 GraphsUpdates = namedtuple('GraphsUpdates', 'update_func component_id target_attribute')
@@ -86,7 +86,8 @@ class ResourceTable(dbc.Table):
             }
 
     @staticmethod
-    def figures_updates(incomes: Dict[str, Dict[Union[Type[Gain], Type[GainConverter]], ResourcePacket]],
+    def figures_updates(incomes: Dict[Union[str, TranslatableString],
+                                      Dict[Union[Type[Gain], Type[GainConverter]], ResourcePacket]],
                         language: Language) -> List[Union[html.Table, html.Tbody]]:
         # Compute total
         total = ResourcePacket()
@@ -96,7 +97,8 @@ class ResourceTable(dbc.Table):
                 total = total + incomes[gain_category][key]
 
         incomes = incomes.copy()
-        incomes['totals'] = {None: total}
+        TOTALS_CATEGORY = TranslatableString('totals', french="totaux")
+        incomes[TOTALS_CATEGORY] = {None: total}
 
         all_res_types = [res_type for res_type in RESOURCE_SORTING_MAP.keys() if res_type in total.keys()]
         """List all resource types present in incomes, sorted according to the RESOURCE_SORTING_MAP"""
@@ -119,8 +121,9 @@ class ResourceTable(dbc.Table):
             Thead_or_Tbody
             for k, category in enumerate(incomes)
             for Thead_or_Tbody in [
-                html.Thead(html.Tr([html.Th(category.upper())]
-                                   + (columns_names if k == 0 or category == 'totals' else ([html.Th()] * len(columns_names))),
+                html.Thead(html.Tr([html.Th((category if not isinstance(category, TranslatableString)
+                                            else category.translated_into(language)).upper())]
+                                   + (columns_names if k == 0 or category is TOTALS_CATEGORY else ([html.Th()] * len(columns_names))),
                                    className='thead-light')),
                 html.Tbody([
                     html.Tr(
@@ -167,7 +170,8 @@ class ResourceBarPie(dcc.Graph):
         # Register the graph
         graphs_to_update.append(GraphsUpdates(self.figures_updates, id, 'figure'))
 
-    def figures_updates(self, incomes: Dict[str, Dict[Union[Type[Gain], Type[GainConverter]], ResourcePacket]],
+    def figures_updates(self, incomes: Dict[Union[str, TranslatableString],
+                                            Dict[Union[Type[Gain], Type[GainConverter]], ResourcePacket]],
                         language: Language) -> List:
         # Extract incomes for the target resource, erase too small values, prettify gains names and sort them
         target_incomes_label, target_incomes_values = zip(

@@ -95,6 +95,8 @@ class GainConverter(Displayable):
     """
     # TODO auto registering via Metaclass
 
+    CONVERTER_CATEGORY = TranslatableString("converters", french="convertisseurs")
+
     @classmethod
     @abstractmethod
     def get_diff(cls, resource_packet: ResourcePacket, gain: Type[Gain] = None, **kwargs) -> ResourcePacket:
@@ -145,9 +147,9 @@ class GainConverter(Displayable):
         #   init keys for the converter configured in EXTERNAL mode
         for converter in converters:
             if ui_parameters.get(converter.mode_parameter_name, None) is ConverterModeUIParameter.ConversionMode.EXTERNAL:
-                if 'converters' not in resources_dict.keys():
-                    resources_dict['converters'] = {}
-                resources_dict['converters'][converter] = ResourcePacket()
+                if cls.CONVERTER_CATEGORY not in resources_dict.keys():
+                    resources_dict[cls.CONVERTER_CATEGORY] = {}
+                resources_dict[cls.CONVERTER_CATEGORY][converter] = ResourcePacket()
 
         # Apply each converter
         for converter in converters:
@@ -165,6 +167,6 @@ class GainConverter(Displayable):
                         if converter_mode is ConverterModeUIParameter.ConversionMode.IN_PLACE:
                             target_category, target_key = gain_category, gain
                         else:  # converter_mode is ConverterModeUIParameter.ConversionMode.EXTERNAL
-                            target_category, target_key = 'converters', converter
+                            target_category, target_key = cls.CONVERTER_CATEGORY, converter
                         resources_dict[target_category][target_key] = resources_dict[target_category][target_key] + converter.get_diff(resources_dict[gain_category][gain], gain=gain, **ui_parameters)
 
