@@ -99,7 +99,8 @@ def wrap_translation(
             This isn't really useful as it will be overridden as soon as the translation callback is setup.
     :return:
     """
-    assert not translatable_components.callback_built, "Error: once the language callback have been built you must " \
+    assert translatable_components is None or not translatable_components.callback_built, \
+        "Error: once the language callback have been built you must " \
         "not register new dash component with translatable string. As a consequence, all these components must be " \
         "statically defined and the callback setup must be the last instruction."
 
