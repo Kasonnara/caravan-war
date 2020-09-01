@@ -86,7 +86,11 @@
     - [ ] Gains reward detail in the table lines
     - [ ] Card distribution on card groups type
   - [ ] Add a notification when something go wrong and raise an issue
-  - [ ] FR translation (Work in progress)
+  - [X] FR translation
+    - [X] for static text
+    - [X] for static automatically generated simulation parameters
+    - [X] for dynamic results  
+    - [ ] for dynamic simulation parameters dropdown options
   - [ ] Highlight what elements currently focused parameter will modify
   - [ ] Add a loading widget when processing
   - [ ] Improve/equalize overall design
