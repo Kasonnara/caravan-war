@@ -22,7 +22,7 @@ This module add global static text translation to dash component.
 """
 from collections import namedtuple
 from modulefinder import Module
-from typing import Type, Callable, TypeVar, Union, Any, Dict, TypedDict, Optional, OrderedDict
+from typing import Type, Callable, Union, Any, Dict, Optional
 
 from dash import dash
 from dash.dependencies import Input, Output
@@ -35,7 +35,7 @@ from lang.languages import TranslatableString, Language
 TranslatableComponentAttribute = namedtuple('TranslatableComponentAttribute', ['id', 'attr_name', 'translations'])
 
 
-class TranslatableComponentRegister(OrderedDict[str, TranslatableComponentAttribute]):
+class TranslatableComponentRegister(Dict[str, TranslatableComponentAttribute]):
     def __init__(self):
         super().__init__()
         self.callback_built = False  # todo change into a slot
