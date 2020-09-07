@@ -22,7 +22,7 @@ Definition of all the graphs functions present in the application and their call
 """
 import os
 from collections import namedtuple
-from typing import List, Union, Dict, Type
+from typing import List, Union, Dict, Type, Optional
 
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
@@ -32,6 +32,7 @@ from plotly.subplots import make_subplots
 
 from common.resources import ResourceQuantity, Resources, ResourcePacket
 from economy.budget_simulator.simulation import RESOURCE_SORTING_MAP
+from economy.chests import Chest
 from economy.converters.abstract_converter import GainConverter
 from economy.gains import Gain
 from lang.languages import Language, TranslatableString
@@ -47,19 +48,45 @@ resource_colors = {
     Resources.Dust: "green",
     }
 
-# (Init later when an dash.Dash instance exists)
-resource_icons: Dict[Resources, List[html.Img]] = None
-"""Map the resource to the corresponding html.Img tag for the icon of that resource"""
 
-# default_colorway = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]
-# negative_default_colorway = ["#" + "".join(hex(int(int(i, 16)*0.5))[2:] for i in (color[1:3], color[3:5], color[5:7])) for color in default_colorway]
-# _next_color_index = -1
-# def _get_next_color() -> Tuple[str, str]:
-#     global _next_color_index
-#     _next_color_index += 1
-#     return negative_default_colorway[_next_color_index % len(default_colorway)], default_colorway[_next_color_index % len(default_colorway)]
-#
-# gains_colors = {camelcase_2_spaced(gain.__name__): _get_next_color() for gain in list(all_gains)}
+def resource_icons(app: dash.Dash, resource: ResourceQuantity.VALID_RESOURCE_TYPE, fail_safe=False,
+                    **dash_img_extra_parameters) -> Optional[html.Img]:
+    """
+    Return a dash component displaying an icon for the given resource. If no image exist on disk for this resource, None
+    is returned insted, except if fail_safe is to true where in this case a dummy component (an empty html Div) is
+    returned insted.
+
+    :param app: the main dash application
+    :param resource: the target resource
+    :param fail_safe: (default False) if set tu True, ensure you always have a dash component returned.
+    :param dash_img_extra_parameters: extra parameter to forwed to the html.Img object (like height="20px", etc)
+    """
+    if isinstance(resource, Resources):
+        resource_icon_filename = "{}.png".format(resource.name)
+    elif isinstance(resource, Type):
+        if issubclass(resource, Chest):
+            resource_icon_filename = "{}.png".format(resource.__name__)
+        else:
+            resource_icon_filename = "random_{}.png".format(resource.__name__)
+    # TODO handle all other VALID_RESOURCE_TYPE
+    else:
+        resource_icon_filename = None
+        #raise NotImplemented("Resource type not supported")
+
+    if resource_icon_filename is not None \
+       and os.path.isfile(os.path.join("assets", "resources", resource_icon_filename)):
+
+        # Target resource exists
+        return html.Img(
+            src=app.get_asset_url(os.path.join("resources", resource_icon_filename)),
+            **dash_img_extra_parameters,
+            )
+    else:
+        if fail_safe:
+            # return a dummy component
+            return html.Div()
+        else:
+            return None
 
 
 graphs_to_update: List[GraphsUpdates] = []
@@ -69,26 +96,15 @@ class ResourceTable(dbc.Table):
 
     EMPTY_TABLE = (html.Thead(html.Tr([])), html.Tbody([]))
 
-    def __init__(self, app: dash.Dash, id: str, bordered=True, striped=False, hover=True, responsive=True, **kwargs):
+    def __init__(self, id: str, bordered=True, striped=False, hover=True, responsive=True, **kwargs):
         super().__init__(self.EMPTY_TABLE, id, bordered=bordered, striped=striped, hover=hover, responsive=responsive, **kwargs)
         # Register the graph
         graphs_to_update.append(GraphsUpdates(self.figures_updates, id, 'children'))
 
-        # Init resource_icons
-        global resource_icons
-        resource_icons = {
-            resource: [html.Img(
-                src=app.get_asset_url(os.path.join("resources", "{}.png".format(resource.name))),
-                height="20px",  # FIXME do not hard-code values like that
-                )]
-            for resource in Resources
-            if os.path.isfile(os.path.join("..", "..", "assets", "resources", "{}.png".format(resource.name)))  # FIXME there is probably a better solution
-            }
-
     @staticmethod
     def figures_updates(incomes: Dict[Union[str, TranslatableString],
                                       Dict[Union[Type[Gain], Type[GainConverter]], ResourcePacket]],
-                        language: Language) -> List[Union[html.Table, html.Tbody]]:
+                        language: Language, app: dash.Dash) -> List[Union[html.Table, html.Tbody]]:
         # Compute total
         total = ResourcePacket()
         for gain_category in incomes:
@@ -112,10 +128,15 @@ class ResourceTable(dbc.Table):
                 className='text-danger' if len(pretty_value) > 0 and pretty_value[0] == '-' else 'text-success',
                 )
 
-        columns_names = [html.Th(resource_icons.get(res_type, [])  # Add the resource icon if it exists
-                                 + [html.Div(ResourceQuantity.prettify_type(res_type, language=language))],
-                                 className='text-center',)
-                         for res_type in all_res_types]
+        columns_names = [
+            # Add the resource icon if it exists
+            html.Th([
+                resource_icons(app, res_type, height="20px", fail_safe=True),
+                html.Div(ResourceQuantity.prettify_type(res_type, language=language))
+                ],
+                className='text-center',)
+            for res_type in all_res_types
+            ]
 
         return [
             Thead_or_Tbody
@@ -172,7 +193,7 @@ class ResourceBarPie(dcc.Graph):
 
     def figures_updates(self, incomes: Dict[Union[str, TranslatableString],
                                             Dict[Union[Type[Gain], Type[GainConverter]], ResourcePacket]],
-                        language: Language) -> List:
+                        language: Language, app: dash.Dash) -> List:
         # Extract incomes for the target resource, erase too small values, prettify gains names and sort them
         target_incomes_label, target_incomes_values = zip(
             *sorted(

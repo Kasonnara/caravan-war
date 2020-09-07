@@ -34,10 +34,11 @@ from common.resources import Resources, ResourceQuantity
 from economy.budget_simulator import heroku_footer
 from economy.budget_simulator.bs_ui_parameters import get_parameter_selector_id, get_parameter_selector_value_attibute, \
     get_parameter_value, build_parameters_selectors_list
-from economy.budget_simulator.graphs import graphs_to_update, ResourceTable, ResourceBarPie
+from economy.budget_simulator.graphs import graphs_to_update, ResourceTable, ResourceBarPie, resource_icons
 from economy.budget_simulator.simulation import update_income, all_parameters
 from economy.budget_simulator.style import external_stylesheets, HEADER_STYLE, SIDEBAR_STYLE, \
     LABEL_SETTING_BOOTSTRAP_COL
+from economy.chests import GoldenChest
 from lang.languages import Language, TranslatableString
 from lang.translation_dash_wrapper import wrap_dash_module_translation, \
     build_language_selector, setup_language_callback, TranslatableComponentRegister
@@ -128,8 +129,10 @@ Encore mieux, le simulateur prend en compte un très large éventaille de resour
 
 
 # Build the application TODO: move to another file
-header = html.Div(
+header = dbc.Row(
     children=[
+        html.Div(resource_icons(app, GoldenChest), style={'margin': "1em", 'transform': "scaleX(-1)"}),
+
         dbc.Container(
             children=[
                 dbc.Row(
@@ -207,14 +210,22 @@ side_bar = html.Div(
 content = html.Div(
     children=[
         #dcct.Markdown(TranslatableString("## Global incomes", french="## Tableau général"), id="table-title"),
-        ResourceTable(app, 'global_resource_table'),
+        ResourceTable('global_resource_table'),
         ] + [elt
              for resource_type in (Resources.Gold, Resources.Goods, Resources.Gem)
-             for elt in (dcct.Markdown(TranslatableString(*("## {}".format(ResourceQuantity.prettify_type(resource_type, language))
-                                                            for language in Language)),
-                                       id="{}-plot-title".format(resource_type.name),
-                                       ),
-                         ResourceBarPie(resource_type))
+             for elt in (
+                dbc.Row([
+                    resource_icons(app, resource_type, style={'margin-right': "2em"},),
+                    dcct.Markdown(
+                        TranslatableString(*("## {}".format(ResourceQuantity.prettify_type(resource_type, language))
+                                             for language in Language)),
+                        id="{}-plot-title".format(resource_type.name),
+                        ),
+                    ],
+                    style={'margin': "0.5em"},
+                    ),
+                ResourceBarPie(resource_type),
+                )
              ],
     id='mainContent',
     className="col-lg-9",
@@ -267,7 +278,7 @@ def update_simulation(selected_lang_name, *ui_parameters_raw_values):
         }
     # Get the new resources incomes
     incomes = update_income(ui_parameter_values)
-    return [graph.update_func(incomes, selected_lang) for graph in graphs_to_update]
+    return [graph.update_func(incomes, selected_lang, app) for graph in graphs_to_update]
 
 update_language = setup_language_callback(app, translatable_components, language_selector_id="language_selector")
 

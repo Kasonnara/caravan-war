@@ -93,9 +93,9 @@
     - [ ] for dynamic simulation parameters dropdown options
   - [ ] Highlight what elements currently focused parameter will modify
   - [ ] Add a loading widget when processing
-  - [ ] Improve/equalize overall design
+  - [X] Improve/equalize overall design
   - [X] Add a favicon 
-  - [ ] Add some images
+  - [X] Add some images
   - [ ] Make beginner/casual/advanced modes. From simpler most important parameters to more precise and exhaustive configuration. 
 - Make proper tests
   - [ ] Enable a clean way to run in development or production modes
@@ -107,12 +107,12 @@
   - [X] Allow disabling persistence
   - [ ] 13 month cookie storage limitation
   - [ ] Allow re-accessing this disclaimer
-  - [ ] Ask for images copyright
+  - [X] Ask for images copyright
   - [ ] Check everything is ok
 - Bugs
   - [X] Gains and resources order is messed up
   - [ ] Including positive and negative value in a pie chart mess the total sum (instead implement a double pie chart component)
-  - [ ] Images doesn't works on heroku
+  - [X] Images doesn't works on heroku
 
 ## Automatic data gathering
 
