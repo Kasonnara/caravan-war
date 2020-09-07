@@ -103,9 +103,11 @@ def build(app: dash.Dash, persisting_components_ids: List[str]) -> html.Div:
         children=[
             dbc.Container(
                 children=[
+                    dcc.Markdown("Contacting me: [wins@kasonnara.fr](mailto:wins@kasonnara.fr)"),
                     heroku_host_legal_informations,
                     cookie_footer,
                     ],
+                style={'margin': "2em"},
                 ),
             ],
         style=HEADER_STYLE,

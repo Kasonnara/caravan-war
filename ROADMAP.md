@@ -74,7 +74,7 @@
   - [X] Parameters dependencies callbacks
   - [ ] Extend with a growth simulator
   - [ ] Add custom growth strategies
-  - [ ] Add contact and github source links
+  - [X] Add contact and github source links
   - [ ] Allow disabling each gain individually
 - [X] Hosting (Heroku)
   - [X] Automatically deploy from github
