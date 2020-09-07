@@ -1,4 +1,4 @@
-# Core requirements, needed by core modules and consequently any applications
+# Core requirements, needed by core modules and consequently any applications
 matplotlib
 numpy
 pandas

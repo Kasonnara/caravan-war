@@ -39,6 +39,7 @@ class TranslatableComponentRegister(Dict[str, TranslatableComponentAttribute]):
     def __init__(self):
         super().__init__()
         self.callback_built = False  # todo change into a slot
+    # TODO override setter to avoid adding item if self.callback_built has already been flagged
 
 
 class FakeModule(Dict[str, Callable[..., DashComponent]]):

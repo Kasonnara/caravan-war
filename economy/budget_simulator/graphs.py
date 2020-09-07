@@ -36,7 +36,7 @@ from economy.chests import Chest
 from economy.converters.abstract_converter import GainConverter
 from economy.gains import Gain
 from lang.languages import Language, TranslatableString
-from utils.prettifying import camelcase_2_spaced, human_readable
+from utils.prettifying import human_readable
 
 GraphsUpdates = namedtuple('GraphsUpdates', 'update_func component_id target_attribute')
 

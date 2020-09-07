@@ -96,7 +96,8 @@
   - [X] Improve/equalize overall design
   - [X] Add a favicon 
   - [X] Add some images
-  - [ ] Make beginner/casual/advanced modes. From simpler most important parameters to more precise and exhaustive configuration. 
+  - [ ] Make beginner/casual/advanced modes. From simpler most important parameters to more precise and exhaustive configuration.
+  - [ ] Use some clientside callbacks
 - Make proper tests
   - [ ] Enable a clean way to run in development or production modes
   - [ ] Tests

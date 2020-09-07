@@ -172,7 +172,7 @@ header = dbc.Row(
                     "*Made by [Kasonnara](https://github.com/Kasonnara/caravan-war-center)*, "
                     "***this is NOT an official application from Hiker Games.***",
                     french="*Développé par [Kasonnara](https://github.com/Kasonnara/caravan-war-center)*, "
-                           "***ceci n'est PAS une application officiel d'Hiker Games.***",
+                           "***ceci n'est PAS une application officielle d'Hiker Games.***",
                     ),
                     id="credits",
                     ),
@@ -280,7 +280,9 @@ def update_simulation(selected_lang_name, *ui_parameters_raw_values):
     incomes = update_income(ui_parameter_values)
     return [graph.update_func(incomes, selected_lang, app) for graph in graphs_to_update]
 
+
 update_language = setup_language_callback(app, translatable_components, language_selector_id="language_selector")
+
 
 if production_mode_on_heroku:
     # Define the variable collected by Heroku to know what to use as web application
