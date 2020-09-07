@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # This is a personal project to understand and improve my knowledge/tactics in the game Caravan War.
-# Copyright (C) 2019  Kasonnara <kasonnara@laposte.net>
+# Copyright (C) 2019  Kasonnara <wins@kasonnara.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -105,6 +105,7 @@ def build(app: dash.Dash, persisting_components_ids: List[str]) -> html.Div:
                 children=[
                     dcc.Markdown("Contacting me: [wins@kasonnara.fr](mailto:wins@kasonnara.fr)"),
                     heroku_host_legal_informations,
+                    dcc.Markdown("Copyright (c) 2019 Kasonnara / Images Copyright (c) Hiker Games"),
                     cookie_footer,
                     ],
                 style={'margin': "2em"},

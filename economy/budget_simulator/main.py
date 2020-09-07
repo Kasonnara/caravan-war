@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # This is a personal project to understand and improve my knowledge/tactics in the game Caravan War.
-# Copyright (C) 2019  Kasonnara <kasonnara@laposte.net>
+# Copyright (C) 2019  Kasonnara <wins@kasonnara.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,10 +16,12 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+print("Copyright (c) 2019 Kasonnara (wins@kasonnara.fr)")
 
 """
 Main scrit of the dash application to simulate regular earnings and losses.
 """
+
 from typing import List
 
 import dash
@@ -282,6 +284,7 @@ def update_simulation(selected_lang_name, *ui_parameters_raw_values):
 
 
 update_language = setup_language_callback(app, translatable_components, language_selector_id="language_selector")
+
 
 
 if production_mode_on_heroku:
